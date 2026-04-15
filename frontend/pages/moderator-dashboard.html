@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Mooden | Кабінет модератора</title>
+    <meta name="page-role" content="moderator">
+    
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+
+    <script src="../js/auth-guard.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header style="display: flex; justify-content: space-between; padding: 20px 0; align-items: center;">
+            <div class="logo">Mooden <span class="text-gold">Moderator</span></div>
+            <button id="logoutBtn" class="btn-secondary">Вийти</button>
+        </header>
+
+        <main class="dashboard-content">
+            <span class="badge" style="background: var(--gold-dark); color: white;">МОДЕРАТОР</span>
+            <h1>Панель <span class="text-gold">керування</span></h1>
+            
+            <div class="card" style="margin-top: 30px; padding: 20px; border: 1px solid var(--border-color); border-radius: 12px;">
+                <h3>Статус системи: <span id="userStatus" class="text-gold">...</span></h3>
+                <p>Тут ви зможете керувати системою.</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/teacher-dashboard.js"></script>
+</body>
+</html>

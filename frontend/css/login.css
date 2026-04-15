@@ -1,0 +1,155 @@
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+}
+
+.auth-grid {
+    display: flex;
+    gap: 4rem;
+    width: 100%;
+    align-items: center;
+}
+
+.auth-left {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 3rem;
+}
+
+.hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid var(--accent-gold);
+    border-radius: 6rem;
+    color: var(--text-gold);
+    font-size: 0.7rem;
+    letter-spacing: 0.1rem;
+}
+
+.hero-subtitle {
+    font-size: 0.9rem;
+}
+
+.stats {
+    display: flex;
+    gap: 3.5rem;
+}
+
+.stat-value {
+    display: block;
+    font-size: 2rem;
+    font-family: var(--font-heading);
+    color: var(--text-gold);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+.auth-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.login-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background-color: var(--bg-right);
+    padding: 3rem;
+    border-radius: 1rem;
+    border: 1px solid var(--border-main);
+}
+
+.login-header p {
+    font-size: 0.9rem;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Елементи форми */
+.input-group label {
+    display: block;
+    font-size: 0.75rem;
+    margin-bottom: 0.4rem;
+}
+
+.label-row {
+    display: flex;
+    justify-content: space-between;
+    
+}
+
+.forgot-link {
+    font-size: 0.9rem;
+}
+
+.remember-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.remember-row input[type="checkbox"] {
+    width: 0.9rem;
+    height: 0.9rem;
+    accent-color: var(--accent-gold);
+    cursor: pointer;
+}
+
+.remember-row label {
+    cursor: pointer;
+    user-select: none;
+}
+
+.btn-primary {
+    width: 100%;
+    background-color: var(--accent-gold);
+    box-shadow: 0 4px 14px 0 rgba(212, 175, 55, 0.2);
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-gold-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 16px rgba(212, 175, 55, 0.3);
+}
+
+.signup-text {
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+/* вибір мови */
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
+.lang-slider {
+    width: 100px;
+}

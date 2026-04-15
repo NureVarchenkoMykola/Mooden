@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mooden | Вхід</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script src="js/redirect-if-logged.js"></script>
+    <script src="js/translations.js"></script>
+    <script src="js/i18n-manager.js"></script>
+    <script src="js/theme-manager.js"></script>
+    
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+
+<main class="auth-page">
+    <div class="container main-flow">
+        <div class="header-row">
+            <div class="logo">Mooden</div>
+            
+            <div class="lang-switch-container">
+                <div class="lang-slider">
+                    <input type="radio" name="lang" id="lang-uk" value="uk">
+                    <label for="lang-uk">UA</label>
+                    
+                    <input type="radio" name="lang" id="lang-en" value="en">
+                    <label for="lang-en">EN</label>
+                    
+                    <div class="slider-bg"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="auth-grid">
+            <section class="auth-left">
+                <div class="hero-content">
+                    <span class="badge" data-i18n="login.welcome_badge">ЛАСКАВО ПРОСИМО</span>
+                    <h1 data-i18n="login.hero_title">З поверненням до <span class="text-gold">навчання</span></h1>
+                    <p class="hero-subtitle" data-i18n="login.hero_subtitle">Ваші курси, завдання та оцінки чекають на вас. Увійдіть, щоб продовжити.</p>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-value" id="count-students">???</span>
+                        <span class="stat-label" data-i18n="login.stat_students">Студентів</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="count-hours">???</span>
+                        <span class="stat-label" data-i18n="login.stat_hours">Годин навчання</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="count-tasks">???</span>
+                        <span class="stat-label" data-i18n="login.stat_tasks_today">Виконано сьогодні</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="auth-right">
+                <div class="login-box">
+                    <header class="login-header">
+                        <h2 data-i18n="login.title">Вхід</h2>
+                        <p data-i18n="login.subtitle">Введіть ваші облікові дані</p>
+                    </header>
+
+                    <form id="loginForm">
+                        <div class="input-group">
+                            <label data-i18n="login.email_label">ЕЛЕКТРОННА ПОШТА</label>
+                            <input type="email" id="emailInput" placeholder="you@university.edu.ua" required>
+                        </div>
+
+                        <div class="input-group">
+                            <div class="label-row">
+                                <label data-i18n="login.password_label">ПАРОЛЬ</label>
+                                <a href="#" class="forgot-link" data-i18n="login.forgot_link">Забули пароль?</a>
+                            </div>
+                            <div class="input-wrapper">
+                                <input type="password" id="passwordInput" placeholder="••••••••" required>
+                                <button type="button" class="password-toggle">
+                                    </button>
+                            </div>
+                        </div>
+
+                        <div class="remember-row">
+                            <input type="checkbox" id="remember">
+                            <label for="remember" data-i18n="login.remember_me">Запам'ятати мене</label>
+                        </div>
+
+                        <button type="submit" class="btn-primary" data-i18n="login.login_btn">Увійти →</button>
+                    </form>
+
+                    <p class="signup-text">
+                        <span data-i18n="login.no_account">Немає акаунту?</span> 
+                        <a href="#" data-i18n="login.register_link">Зареєструватись</a>
+                    </p>
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
+
+<script src="js/toast.js"></script>
+<script src="js/toggle-password.js"></script>
+<script src="js/login-script.js"></script>
+</body>
+</html>

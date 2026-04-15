@@ -1,0 +1,251 @@
+html {
+    font-size: 16px; 
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-muted);
+    font-family: var(--font-main);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.logo {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    color: var(--text-gold);
+}
+
+.container {
+    width: 85%;
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+h1, h2 {
+    font-family: var(--font-heading);
+    color: var(--text-main);
+}
+
+h1 {
+    font-size: 3rem;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+h3 {
+    font-size: 1.2rem;
+}
+
+a {
+    text-decoration: none;
+    color: var(--text-gold);
+    transition: 0.3s;
+}
+
+a:hover {
+    color: var(--accent-gold-hover);
+}
+
+/* інструмент для золотого тексту */
+.text-gold {
+    color: var(--text-gold);
+}
+
+button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    outline: none;
+}
+
+input {
+    width: 100%;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-main);
+    border-radius: 0.5rem;
+    padding: 0.8rem 1rem;
+    color: var(--text-main);
+    font-size: 0.875rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    width: auto;
+    cursor: pointer;
+}
+
+input:focus {
+    border-color: var(--border-focus);
+}
+
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-main);
+    border-radius: 0.5rem;
+    padding: 0 1rem;
+    transition: all 0.3s ease;
+}
+
+.input-wrapper input {
+    border: none !important;
+    background: transparent !important;
+    padding: 0.8rem 0;
+    width: 100%;
+}
+
+.input-wrapper:has(input:focus) {
+    border-color: var(--border-focus);
+}
+
+.password-toggle {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.password-toggle:hover {
+    color: var(--accent-gold-hover);
+}
+
+.eye-open {
+    display: none;
+}
+
+.eye-closed {
+    display: block;
+}
+
+.password-toggle.is-visible .eye-open {
+    display: block;
+}
+
+.password-toggle.is-visible .eye-closed {
+    display: none;
+}
+
+/* убрать білий фон інпутів при автозаповненні */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px var(--bg-input) inset !important;
+    
+    -webkit-text-fill-color: var(--text-main) !important;
+    
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.toast-container {
+    position: fixed;
+    top: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8rem);
+    max-width: 80vw;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    color: var(--text-main);
+    font-family: var(--font-main);
+    font-weight: 500;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 10000;  /* можно будет убрать */
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+    pointer-events: none;
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.3);
+}
+
+.toast-container.show {
+    transform: translateX(-50%) translateY(0) !important;
+}
+
+.toast-container.error {
+    background-color: var(--color-error);
+}
+
+.toast-container.success {
+    background-color: var(--color-success);
+}
+
+/* выбор языка */
+.lang-switch-container {
+    display: flex;
+    justify-content: center;
+}
+
+.lang-slider {
+    position: relative;
+    display: flex;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-main);
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+    cursor: pointer;
+}
+
+.lang-slider input[type="radio"] {
+    display: none;
+}
+
+.lang-slider label {
+    flex: 1;
+    padding: 0.5rem 0;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 500;
+    z-index: 2;
+    cursor: pointer;
+    transition: 0.2s ease;
+    color: var(--text-muted);
+}
+
+.lang-slider input[value="uk"]:checked ~ label[for="lang-uk"],
+.lang-slider input[value="en"]:checked ~ label[for="lang-en"] {
+    color: var(--text-main);
+}
+
+.slider-bg {
+    position: absolute;
+    z-index: 1;
+    top: 0.25rem;
+    left: 0.25rem;
+    width: calc(50% - 0.25rem);
+    height: calc(100% - 0.5rem);
+    background: var(--accent-gold);
+    border-radius: 0.5rem;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lang-slider input[value="uk"]:checked ~ .slider-bg {
+    transform: translateX(0);
+}
+
+.lang-slider input[value="en"]:checked ~ .slider-bg {
+    transform: translateX(100%);
+}

@@ -1,0 +1,51 @@
+:root {
+    /* BACKGROUNDS*/
+    --bg-main: #0B1220;        /* Лівий бік (найтемніший, White Ebony) */
+    --bg-right: #111C2E;        /* Правий бік (трохи світліший, Big Stone второй) */
+    --bg-input: #172035;       /* Поле вводу (Big Stone) */
+    /* --bg-button-google: #XXXXXX; Кнопка Google (Ebony 85%) */
+
+    /* TEXT */
+    --text-main: #EBE5D5;      /* Основний білий заголовок (WhiteRock) */
+    --text-muted: #7A90AA;     /* Другорядний текст (Bali Hai) */
+    --text-gold: #E8A44A;      /* Золотий текст/акценти (Tulip Tree) */
+    --text-placeholder: #3D5470; /* Текст всередині інпутів (Fiord) */
+    /* --text-button: #0B1220; Текст всередині кнопок (Ebony) */
+
+    /* ACCENTS */
+    --accent-gold: var(--text-gold);    /* Основна кнопка "Увійти" */
+    --accent-gold-hover: #EDA94F; /* Колір кнопки при наведенні (Sandy Brown был(F0B060)) */
+    --border-main: rgba(255, 255, 255, 0.07);    /* Рамка інпутів (білий з 0.07 опасіті) */
+    --border-focus: var(--text-gold); /* Рамка при кліку на інпут */
+
+    /* STATUS */
+    --color-error: #802a2a;    /* Помилки (Sunglo старый E87070) */
+    --color-success: #106e52;  /* Успіх (Puerto Rico 4EC9A4) */
+
+    /* ШРИФТИ */
+    --font-heading: 'Cormorant Garamond', serif;
+    --font-main: 'DM Sans', sans-serif;
+}
+
+.light-theme {
+    /* BACKGROUNDS */
+    --bg-main: #F8F4EA;        /* Основний фон (теплий білий) */
+    --bg-right: #FFFDFA;      /* Правий блок (чистий білий) */
+    --bg-input: #f8f2e9;      /* Поля вводу (легкий беж) */
+
+    /* TEXT */
+    --text-main: #0B1220;     /* Основний текст (той самий темний, що в dark bg) */
+    --text-muted: #586c86;    /* Другорядний текст */
+    --text-gold: #C88A2F;     /* Трохи приглушене золото */
+    --text-placeholder: #9AA8B8;
+
+    /* ACCENTS */
+    --accent-gold: #E8A44A;
+    --accent-gold-hover: #D8953F;
+    --border-main: rgba(11, 18, 32, 0.1);
+    --border-focus: #E8A44A;
+
+    /* STATUS */
+    --color-error: #D64545;
+    --color-success: #2E8B6B;
+}
