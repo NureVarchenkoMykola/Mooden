@@ -1,0 +1,416 @@
+.profile-hero-card {
+    border: 1px solid var(--border-main);
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 1rem;
+    background: linear-gradient(135deg, rgba(232, 164, 74, 0.05) 0%, var(--bg-right) 100%);
+}
+
+.hero-left {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.hero-avatar {
+    width: 7.5rem;
+    height: 7.5rem;
+    border-radius: 1.8rem;
+    border: 1px solid var(--border-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--text-gold);
+    box-shadow: 0 10px 30px rgba(232, 164, 74, 0.15);
+}
+
+.hero-info h1 {
+    font-size: 2.2rem;
+    color: var(--text-main);
+    margin-bottom: 0.3rem;
+}
+
+.hero-subtext {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+}
+
+.hero-tags {
+    display: flex;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+}
+
+.tag {
+    padding: 0.4rem 0.9rem;
+    background: var(--bg-input);
+    border-radius: 0.7rem;
+    font-size: 0.8rem;
+    color: var(--text-main);
+}
+
+.tag.accent {
+    color: var(--accent-gold);
+    font-weight: 500;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.profile-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+}
+
+.p-stat-card {
+    background: var(--bg-right);
+    border: 1px solid var(--border-main);
+    padding: 1.2rem;
+    border-radius: 1.2rem;
+    text-align: center;
+}
+
+.p-stat-val {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    color: var(--text-main);
+}
+
+.p-stat-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+    margin-top: 0.3rem;
+}
+
+.profile-tabs {
+    display: flex;
+    gap: 2.5rem;
+    border-bottom: 1px solid var(--border-main);
+    margin-bottom: 2rem;
+    padding-left: 0.5rem;
+}
+
+.tab-item {
+    background: none;
+    border: none;
+    padding: 0.8rem 0;
+    color: var(--text-muted);
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+}
+
+.tab-item.active {
+    color: var(--text-gold);
+}
+
+.tab-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--text-gold);
+}
+
+.profile-content-layout {
+    display: grid;
+    grid-template-columns: 1.7fr 1fr;
+    gap: 2rem;
+}
+
+.p-card {
+    background: var(--bg-right);
+    border: 1px solid var(--border-main);
+    border-radius: 1.2rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.2rem;
+}
+
+.p-course-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.p-course-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem;
+    background: var(--bg-input);
+    border-radius: 0.3rem 1rem 1rem 0.3rem;
+    border-left: 1px solid var(--accent-color, transparent);
+    text-decoration: none;
+    color: inherit;
+    transition: 0.2s ease;
+}
+
+.p-course-item:hover {
+    transform: translateX(2px);
+    background: rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+}
+
+.p-course-info {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.p-course-title {
+    font-size: 1rem;
+    color: var(--text-main);
+}
+
+.p-progress-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.p-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 0.7rem;
+    overflow: hidden;
+}
+
+.p-progress-fill {
+    height: 100%;
+    border-radius: 0.7rem;
+    transition: width 1s ease-out;
+    width: var(--progress-width, 0%); 
+    background-color: var(--accent-color, #ccc);
+}
+
+.p-progress-val {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.p-btn-enter {
+    text-decoration: none;
+    color: var(--accent-gold);
+    font-size: 1.2rem;
+    margin-left: 1.5rem;
+    padding: 0.5rem;
+    transition: 0.2s;
+}
+
+.p-empty-msg {
+    color: var(--text-muted);
+    text-align: center;
+    padding: 1.5rem;
+    font-style: italic;
+}
+
+.achievements-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.ach-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--bg-input);
+    border-radius: 0.8rem;
+}
+
+.ach-icon {
+    font-size: 1.5rem;
+}
+
+.ach-text {
+    flex: 1;
+}
+
+.ach-name {
+    font-weight: 500;
+}
+
+.ach-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.ach-reward {
+    color: var(--text-gold);
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.skill-badge {
+    background: var(--bg-input);
+    border: 1px solid var(--border-main);
+    padding: 0.5rem 1rem;
+    border-radius: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+}
+
+.skill-check {
+    color: var(--text-gold);
+    margin-right: 0.4rem;
+    font-weight: 500;
+}
+
+.mini-deadlines {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.2rem;
+}
+.p-deadline-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem;
+    border-radius: 0.7rem;
+    background: var(--bg-input);
+}
+
+.p-deadline-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--dot-color, var(--accent-gold));
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.p-deadline-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.p-deadline-task {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+.p-deadline-course {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.p-deadline-time {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-main);
+    text-align: right;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--border-main);
+    color: var(--text-main);
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.8rem;
+    cursor: pointer;
+}
+
+.btn-outline:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.btn-gold {
+    background: var(--accent-gold);
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-gold:hover {
+    background: var(--accent-gold-hover);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.activity-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.4rem;
+    height: 7.5rem;
+    margin-top: 1.2rem;
+    background: var(--bg-input);
+    border-radius: 0.7rem;
+    padding: 0.5rem 0.3rem;
+}
+
+.activity-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+}
+
+.bar-wrapper {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.activity-bar {
+    width: 0.5rem;
+    background: var(--accent-gold);
+    border-radius: 3px 3px 0 0;
+    transition: height 0.3s ease;
+}
+
+.activity-date {
+    font-size: 0.7rem;
+    margin-top: 0.3rem;
+    height: 1rem;
+    display: block;
+}

@@ -4,10 +4,10 @@ const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
-    if (!token) return res.status(401).json({ message: 'Токен відсутній' });
+    if (!token) return res.status(401).json({ message: 'UNAUTHORIZED' });
 
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-        if (err) return res.status(403).json({ message: 'Недійсний токен' });
+        if (err) return res.status(403).json({ message: 'INVALID_TOKEN' });
         req.user = user;
         next();
     });

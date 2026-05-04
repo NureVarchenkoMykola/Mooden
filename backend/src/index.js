@@ -4,6 +4,8 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/authRoutes');
 const studentRoutes = require('./routes/studentRoutes');
+const teacherRoutes = require('./routes/teacherRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
@@ -12,6 +14,8 @@ app.use(express.json());
 
 app.use('/api', authRoutes);
 app.use('/api/student', studentRoutes);
+app.use('/api/teacher', teacherRoutes);
+app.use('/api/user', userRoutes);
 
 // Статистика (винести пізніше)
 app.get('/api/stats', (req, res) => {

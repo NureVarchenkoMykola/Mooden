@@ -1,15 +1,158 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const role = localStorage.getItem('userRole') || sessionStorage.getItem('userRole');
-    
-    const statusElem = document.getElementById('userStatus');
-    if (statusElem) statusElem.textContent = role;
+let currentAnnouncements = [];
 
-    const logoutBtn = document.getElementById('logoutBtn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-            localStorage.clear();
-            sessionStorage.clear();
-            window.location.href = '../index.html';
+document.addEventListener('DOMContentLoaded', async () => {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/teacher/dashboard`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
         });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            const currentLang = document.documentElement.lang || 'uk';
+            showToast(getTranslation(currentLang, `errors.${errorData.message}`), 'error');
+
+            if (response.status === 401 || response.status === 403) {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = '../index.html';
+            }
+            return;
+        }
+
+        const data = await response.json();
+        currentAnnouncements = data.announcements;
+        renderDashboard(data);
+    } catch (error) {
+        const currentLang = document.documentElement.lang || 'uk';
+        showToast(getTranslation(currentLang, 'errors.SERVER_ERROR_DASHBOARD'), 'error');
+        console.error('[Dev Mode] Teacher dashboard error:', error);
     }
 });
+
+function renderDashboard(data) {
+    if (!data) return;
+    const lang = data.user.lang || 'uk';
+    
+    const firstName = data.user.full_name.split(' ')[0];
+    document.getElementById('welcomeName').textContent = firstName;
+
+    const statusPrefix = getTranslation(lang, 'dashboard.teacher_status_info');
+    document.getElementById('headerStatus').textContent = `${statusPrefix} ${data.user.department}.`;
+
+    document.getElementById('activeCourses').textContent = data.stats.activeCourses;
+    document.getElementById('totalStudents').textContent = data.stats.totalStudents;
+    document.getElementById('pendingGrading').textContent = data.stats.pendingGrading;
+    document.getElementById('avgRating').textContent = Number(data.stats.avgRating).toFixed(1);
+
+    const coursesContainer = document.getElementById('coursesContainer');
+    if (data.courses && data.courses.length > 0) {
+        coursesContainer.innerHTML = data.courses.map(course => `
+            <a href="course-manage.html?id=${course.id}" class="course-item" style="--accent-color: ${course.color_accent}">
+                <div class="course-info">
+                    <p class="course-title"><strong>${course.title}</strong></p>
+                    <div class="progress-wrapper">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="--progress-width: ${course.group_avg_progress}%"></div>
+                        </div>
+                        <span class="progress-val">${course.group_avg_progress}%</span>
+                    </div>
+                </div>
+                <span class="btn-enter">➔</span>
+            </a>
+        `).join('');
+    } else {
+        coursesContainer.innerHTML = `<p class="empty-msg">${getTranslation(lang, 'dashboard.empty_courses_teacher')}</p>`;
+    }
+
+    const scheduleContainer = document.getElementById('scheduleContainer');
+    if (data.schedule && data.schedule.length > 0) {
+        scheduleContainer.innerHTML = data.schedule.map(item => `
+            <div class="deadline-card" style="--dot-color: ${item.color_accent}">
+                <div class="deadline-dot"></div>
+                <div class="deadline-info">
+                    <p class="deadline-task">${item.title}</p>
+                    <p class="deadline-course">${item.type} • ${item.group_name}</p>
+                    <div class="deadline-time">${item.time_start.substring(0, 5)} - ${item.time_end.substring(0, 5)}</div>
+                </div>
+            </div>
+        `).join('');
+    } else {
+        scheduleContainer.innerHTML = `<p class="empty-msg">${getTranslation(lang, 'dashboard.no_classes_today')}</p>`;
+    }
+
+    const gradingContainer = document.getElementById('gradingContainer');
+    if (data.stats.pendingGrading > 0) {
+        gradingContainer.innerHTML = `
+            <div class="deadline-card" style="--dot-color: var(--color-error)">
+                <div class="deadline-dot"></div>
+                <div class="deadline-info">
+                    <p class="deadline-task">${getTranslation(lang, 'dashboard.pending_submissions')}</p>
+                    <p class="deadline-course">${data.stats.pendingGrading} ${getTranslation(lang, 'dashboard.items')}</p>
+                </div>
+            </div>
+        `;
+    } else {
+        gradingContainer.innerHTML = `<p class="empty-msg">${getTranslation(lang, 'dashboard.all_graded')}</p>`;
+    }
+
+    const announcementsContainer = document.getElementById('announcementsContainer');
+
+    if (data.announcements && data.announcements.length > 0) {
+        announcementsContainer.innerHTML = data.announcements.map(info => {
+            const previewText = info.content.length > 100 
+                ? info.content.substring(0, 100) + '...' 
+                : info.content;
+
+            return `
+                <div class="announcement-card" onclick="openAnnouncement(${info.id})">
+                    <div class="announcement-header">
+                        <span class="announcement-label">${info.course_name || getTranslation(lang, 'dashboard.label_general')}</span>
+                        <span class="announcement-date">${new Date(info.created_at).toLocaleDateString(lang === 'en' ? 'en-US' : 'uk-UA')}</span>
+                    </div>
+                    <h4 class="announcement-title">${info.title}</h4>
+                    <p class="announcement-text">${previewText}</p>
+                </div>
+            `;
+        }).join('');
+    } else {
+        announcementsContainer.innerHTML = `<p class="empty-msg">${getTranslation(lang, 'dashboard.empty_announcements')}</p>`;
+    }
+}
+
+async function openAnnouncement(id) {
+    const info = currentAnnouncements.find(a => a.id === id);
+    if (!info) return;
+    
+    const modal = document.getElementById('announcementModal');
+    const lang = document.documentElement.lang || 'uk';
+
+    document.getElementById('modalTitle').innerText = info.title;
+    document.getElementById('modalFullText').innerText = info.content;
+    document.getElementById('modalLabel').innerText = info.course_name || getTranslation(lang, 'dashboard.label_general');
+    
+    modal.style.display = 'flex';
+
+    try {
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        await fetch(`${API_BASE_URL}/teacher/announcements/${info.id}/read`, {
+            method: 'POST',
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+    } catch (err) {
+        console.error("Mark read error:", err);
+    }
+}
+
+function closeAnnouncementModal() {
+    document.getElementById('announcementModal').style.display = 'none';
+    location.reload(); 
+}

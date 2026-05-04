@@ -14,7 +14,20 @@ const translations = {
             logout_btn: "🚪 Вийти з акаунту",
             theme_dark: "Темна тема",
             theme_light: "Світла тема",
-            student_role: "Студент"
+            roles_for_redirect: {
+                student: "студента",
+                teacher: "викладача",
+                moderator: "модератора"
+            },
+            roles: {
+                student: "Студент",
+                teacher: "Викладач",
+                moderator: "Модератор"
+            },
+            go_back: "Перейти",
+            redirecting: " Повертаємо вас до вашого кабінету...",
+            nav_grading: "📝 Перевірка",
+            nav_constructor: "🔧 Конструктор"
         },
         login: {
             welcome_badge: "ЛАСКАВО ПРОСИМО",
@@ -31,37 +44,86 @@ const translations = {
             remember_me: "Запам'ятати мене",
             login_btn: "Увійти →",
             no_account: "Немає акаунту?",
-            register_link: "Зареєструватись"
+            register_link: "Зверніться до адміністратора"
         },
         dashboard: {
             welcome: "Вітаю",
-            status_loading: "Завантажуємо ваші успіхи за тиждень...",
-            status_info: "Ви навчаєтесь у групі",
+            status_loading: "Отримуємо актуальну інформацію...",
             user_loading: "Завантаження...",
+            title_courses: "Мої курси",
+            link_all: "Всі курси →",
+            link_calendar: "Календар",
+            today: "Сьогодні",
+            title_announcements: "Оголошення",
+            link_announcements: "Всі оголошення",
+            empty_announcements: "Немає нових оголошень",
+            not_available: "Н/Д",
             stat_active: "Активних курсів",
+
+            // ТІЛЬКИ СТУДЕНТ
+            student_status_info: "Ви навчаєтесь у групі",
             stat_completed: "Виконано завдань",
             stat_grade: "Середній бал",
             stat_coins: "Монети",
-            title_courses: "Мої курси",
             title_deadlines: "Дедлайни",
-            title_announcements: "Оголошення",
-            link_all: "Всі курси →",
-            link_calendar: "Календар",
-            link_announcements: "Всі оголошення",
-            empty_courses: "Ви ще не записані на жоден курс.",
+            empty_courses_student: "Ви ще не записані на жоден курс.",
             empty_deadlines: "Активних дедлайнів немає",
             label_general: "Загальне",
-            not_available: "Н/Д",
-            today: "Сьогодні"
+
+            // ТІЛЬКИ ВИКЛАДАЧ
+            stat_students: "Студентів",
+            stat_grading: "На перевірці",
+            stat_rating: "Рейтинг",
+            title_schedule: "Розклад сьогодні",
+            title_grading_list: "Черга перевірки",
+            link_grading: "Перевірити →",
+            teacher_status_info: "Викладає на: ",
+            no_classes_today: "Пар на сьогодні немає",
+            all_graded: "Всі роботи перевірено",
+            empty_courses_teacher: "Ви ще не ведете жоден курс",
+            pending_submissions: "Роботи чекають на перевірку",
+            items: "шт."
+        },
+        profile: {
+            loading: "Завантаження...",
+            course_suffix: "курс",
+            btn_edit: "✏️ Редагувати",
+            btn_share: "🤝 Поділитись",
+            stat_avg: "Середній бал",
+            stat_courses: "Активних курсів",
+            stat_tasks: "Завдань здано",
+            stat_attendance: "Відвідуваність",
+            stat_coins: "Монети",
+            stat_achievements: "Досягнень",
+            tab_overview: "Огляд",
+            tab_grades: "Оцінки",
+            tab_achievements: "Досягнення",
+            tab_activity: "Активність",
+            tab_settings: "Налаштування",
+            card_courses: "📚 Поточні курси",
+            card_achievements: "🏆 Останні досягнення",
+            card_activity: "📊 Активність за тиждень",
+            card_skills: "🧠 Навички",
+            card_deadlines: "⏰ Найближчі дедлайни",
+            link_all: "Всі →",
+            empty_achievements: "У вас поки немає відкритих досягнень",
+            empty_skills: "Навички з'являться після проходження курсів"
         },
         errors: {
+            INVALID_CREDENTIALS: "Невірний email або пароль.",
+            SERVER_ERROR: "Помилка сервера. Спробуйте пізніше.",
+            UNAUTHORIZED: "Ви не авторизовані. Повертаємо на сторінку входу...",
+            ACCESS_DENIED: "Ця сторінка лише для {role}.",
+            ROLE_ERROR: "Ваша роль не розпізнана системою.",
+            INVALID_TOKEN: "Сесія застаріла. Будь ласка, увійдіть знову.",
+            USER_NOT_FOUND: "Користувача не знайдено",
             SERVER_ERROR_DASHBOARD: "Не вдалося завантажити дані панелі.",
+            SERVER_ERROR_PROFILE: "Не вдалося завантажити дані профілю",
             ERROR_MARK_READ: "Не вдалося позначити оголошення як прочитане.",
             ERROR_UPDATE_SETTINGS: "Помилка при зміні мови.",
             UNKNOWN_ERROR: "Щось пішло не так. Спробуйте пізніше.",
-            AUTH_FAILED: "Невірний логін або пароль.",
             NETWORK_ERROR: "Не вдалося з’єднатися з сервером.",
-            LOGIN_ERROR: "Помилка входу. Спробуйте пізніше."
+            SIDEBAR_ERROR: "Помилка завантаження бічного меню"
         }
     },
     en: {
@@ -79,7 +141,20 @@ const translations = {
             logout_btn: "🚪 Log Out",
             theme_dark: "Dark Mode",
             theme_light: "Light Mode",
-            student_role: "Student"
+            roles_for_redirect: {
+                student: "Student",
+                teacher: "Teacher",
+                moderator: "Moderator"
+            },
+            roles: {
+                student: "Student",
+                teacher: "Teacher",
+                moderator: "Moderator"
+            },
+            go_back: "Go Back",
+            redirecting: " Redirecting to your panel...",
+            nav_grading: "📝 Grading",
+            nav_constructor: "🔧 Constructor"
         },
         login: {
             welcome_badge: "WELCOME BACK",
@@ -96,37 +171,86 @@ const translations = {
             remember_me: "Remember me",
             login_btn: "Log In →",
             no_account: "Don't have an account?",
-            register_link: "Sign Up"
+            register_link: "Contact the administrator"
         },
         dashboard: {
             welcome: "Welcome",
-            status_loading: "Loading your weekly progress...",
-            status_info: "You are studying in group",
+            status_loading: "Fetching current information...",
             user_loading: "Loading...",
+            title_courses: "My Courses",
+            link_all: "All Courses →",
+            link_calendar: "Calendar",
+            today: "Today",
+            empty_announcements: "No new announcements",
+            not_available: "N/A",
             stat_active: "Active Courses",
+
+            // STUDENT ONLY
+            student_status_info: "You are studying in group",
             stat_completed: "Tasks Completed",
             stat_grade: "GPA",
             stat_coins: "Coins",
-            title_courses: "My Courses",
             title_deadlines: "Deadlines",
             title_announcements: "Announcements",
-            link_all: "All Courses →",
-            link_calendar: "Calendar",
             link_announcements: "All Announcements",
-            empty_courses: "No courses enrolled yet.",
+            empty_courses_student: "No courses enrolled yet.",
             empty_deadlines: "No active deadlines",
             label_general: "General",
-            not_available: "N/A",
-            today: "Today"
+
+            // TEACHER ONLY
+            stat_students: "Students",
+            stat_grading: "Pending",
+            stat_rating: "Rating",
+            title_schedule: "Today's Schedule",
+            title_grading_list: "Grading Queue",
+            link_grading: "Check →",
+            teacher_status_info: "Teaches at",
+            no_classes_today: "No classes today",
+            all_graded: "All items are graded",
+            empty_courses_teacher: "You are not teaching any courses yet",
+            pending_submissions: "Submissions waiting for review",
+            items: "pcs."
+        },
+        profile: {
+            loading: "Loading...",
+            course_suffix: "year",
+            btn_edit: "✏️ Edit Profile",
+            btn_share: "🤝 Share",
+            stat_avg: "GPA",
+            stat_courses: "Active Courses",
+            stat_tasks: "Tasks Completed",
+            stat_attendance: "Attendance",
+            stat_coins: "Coins",
+            stat_achievements: "Achievements",
+            tab_overview: "Overview",
+            tab_grades: "Grades",
+            tab_achievements: "Achievements",
+            tab_activity: "Activity",
+            tab_settings: "Settings",
+            card_courses: "📚 Current Courses",
+            card_achievements: "🏆 Latest Achievements",
+            card_activity: "📊 Weekly Activity",
+            card_skills: "🧠 Skills",
+            card_deadlines: "⏰ Upcoming Deadlines",
+            link_all: "All →",
+            empty_achievements: "You have no achievements unlocked yet",
+            empty_skills: "Skills will appear after completing the courses"
         },
         errors: {
+            INVALID_CREDENTIALS: "Invalid email or password.",
+            SERVER_ERROR: "Server error. Try again later.",
+            UNAUTHORIZED: "Unauthorized. Redirecting to login...",
+            ACCESS_DENIED: "This page is for {role} only.",
+            ROLE_ERROR: "Your role is not recognized.",
+            INVALID_TOKEN: "Session expired. Please log in again.",
+            USER_NOT_FOUND: "User not found",
             SERVER_ERROR_DASHBOARD: "Failed to load dashboard data.",
+            SERVER_ERROR_PROFILE: "Failed to load profile data",
             ERROR_MARK_READ: "Failed to mark announcement as read.",
             ERROR_UPDATE_SETTINGS: "Error updating language settings.",
             UNKNOWN_ERROR: "Something went wrong. Please try again.",
-            AUTH_FAILED: "Invalid email or password.",
             NETWORK_ERROR: "Unable to connect to server.",
-            LOGIN_ERROR: "Login error. Try again later."
+            SIDEBAR_ERROR: "Error loading sidebar menu"
         }
     }
 };

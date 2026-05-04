@@ -1,17 +1,7 @@
-const API_BASE_URL = 'http://localhost:5000/api';
 let currentAnnouncements = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-
-    const logoutBtn = document.getElementById('logoutBtn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-            localStorage.clear();
-            sessionStorage.clear();
-            window.location.href = '../index.html';
-        });
-    }
 
     try {
         const response = await fetch(`${API_BASE_URL}/student/dashboard`, {
@@ -23,18 +13,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         if (!response.ok) {
-        const errorData = await response.json();
-        const currentLang = document.documentElement.lang || 'uk';
-        showToast(getTranslation(currentLang, `errors.${errorData.message}`), 'error');
-        console.error(`[Dev Mode] Dashboard load failed. Status: ${response.status}, Code: ${errorData.message}`); // сделать лог
+            const errorData = await response.json();
+            const currentLang = document.documentElement.lang || 'uk';
+            showToast(getTranslation(currentLang, `errors.${errorData.message}`), 'error');
+            console.error(`[Dev Mode] Dashboard load failed. Status: ${response.status}, Code: ${errorData.message}`); // сделать лог
 
-        if (response.status === 401 || response.status === 403) {
-            localStorage.clear();
-            sessionStorage.clear();
-            window.location.href = '../index.html';
+            if (response.status === 401 || response.status === 403) {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = '../index.html';
+            }
+            return;
         }
-        return;
-    }
         const data = await response.json();
         currentAnnouncements = data.announcements;
         renderDashboard(data);
@@ -46,19 +36,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-/**
- * Функція для заповнення сторінки дашборду даними
- * @param {Object} data - дані з беку (user, stats, courses, deadlines)
- */
 function renderDashboard(data) {
     if (!data) return;
 
     const lang = data.user.lang || 'uk';
-    applyStaticTranslations(lang);
-    const activeRadio = document.querySelector(`.lang-slider input[value="${lang}"]`);
-    if (activeRadio) {
-        activeRadio.checked = true;
-    }
 
     const firstName = data.user.full_name.split(' ')[0];
     document.getElementById('welcomeName').textContent = firstName;
@@ -66,18 +47,8 @@ function renderDashboard(data) {
     const naText = getTranslation(lang, 'dashboard.not_available');
     const groupName = data.user.group_name || naText;
     
-    const statusText = getTranslation(lang, 'dashboard.status_info'); 
+    const statusText = getTranslation(lang, 'dashboard.student_status_info'); 
     document.getElementById('headerStatus').textContent = `${statusText} ${groupName}.`;
-
-    document.getElementById('profileName').textContent = data.user.full_name;
-    
-    const role = getTranslation(lang, 'common.student_role');
-    document.getElementById('profileGroup').textContent = `${role} • ${groupName}`;
-    
-    const avatarElem = document.getElementById('avatarInitial');
-    if (avatarElem) {
-        avatarElem.textContent = data.user.full_name[0].toUpperCase();
-    }
 
     document.getElementById('activeCourses').textContent = data.stats.activeCourses;
     document.getElementById('completedTasks').textContent = data.stats.completedTasks;
@@ -87,7 +58,7 @@ function renderDashboard(data) {
     const coursesContainer = document.getElementById('coursesContainer');
     if (data.courses && data.courses.length > 0) {
         coursesContainer.innerHTML = data.courses.map(course => `
-        <a href="course.html?id=${course.id}" class="course-item" style="--accent-color: ${course.color_accent}">
+        <a href="course.html?id=${course.id}" class="course-item" style="--accent-color: ${course.color_accent || 'var(--text-gold)'}">
             <div class="course-info">
                 <p class="course-title"><strong>${course.title}</strong></p>
                 <div class="progress-wrapper">
@@ -101,13 +72,13 @@ function renderDashboard(data) {
         </a>
     `).join('');
     } else {
-        coursesContainer.innerHTML = `<p class="empty-msg">${getTranslation(lang, 'dashboard.empty_courses')}</p>`;
+        coursesContainer.innerHTML = `<p class="empty-msg">${getTranslation(lang, 'dashboard.empty_courses_student')}</p>`;
     }
 
     const deadlinesContainer = document.getElementById('deadlinesContainer');
     if (data.deadlines && data.deadlines.length > 0) {
         deadlinesContainer.innerHTML = data.deadlines.map(task => `
-            <div class="deadline-card" style="--dot-color: ${task.color_accent}">
+            <div class="deadline-card" style="--dot-color: ${task.color_accent || 'var(--text-gold)'}">
                 <div class="deadline-dot"></div>
                 <div class="deadline-info">
                     <p class="deadline-task">${task.title}</p>
@@ -120,22 +91,28 @@ function renderDashboard(data) {
         deadlinesContainer.innerHTML = `<p class="empty-msg">${getTranslation(lang, 'dashboard.empty_deadlines')}</p>`;
     }
 
-    announcementsContainer.innerHTML = data.announcements.map(info => {
-        const previewText = info.content.length > 100 
-            ? info.content.substring(0, 100) + '...' 
-            : info.content;
+    const announcementsContainer = document.getElementById('announcementsContainer');
 
-        return `
-            <div class="announcement-card" onclick="openAnnouncement(${info.id})">
-                <div class="announcement-header">
-                    <span class="announcement-label">${info.course_name || getTranslation(lang, 'dashboard.label_general')}</span>
-                    <span class="announcement-date">${new Date(info.created_at).toLocaleDateString(lang === 'en' ? 'en-US' : 'uk-UA')}</span>
+    if (data.announcements && data.announcements.length > 0) {
+        announcementsContainer.innerHTML = data.announcements.map(info => {
+            const previewText = info.content.length > 100 
+                ? info.content.substring(0, 100) + '...' 
+                : info.content;
+
+            return `
+                <div class="announcement-card" onclick="openAnnouncement(${info.id})">
+                    <div class="announcement-header">
+                        <span class="announcement-label">${info.course_name || getTranslation(lang, 'dashboard.label_general')}</span>
+                        <span class="announcement-date">${new Date(info.created_at).toLocaleDateString(lang === 'en' ? 'en-US' : 'uk-UA')}</span>
+                    </div>
+                    <h4 class="announcement-title">${info.title}</h4>
+                    <p class="announcement-text">${previewText}</p>
                 </div>
-                <h4 class="announcement-title">${info.title}</h4>
-                <p class="announcement-text">${previewText}</p>
-            </div>
-        `;
-    }).join('');
+            `;
+        }).join('');
+    } else {
+        announcementsContainer.innerHTML = `<p class="empty-msg">${getTranslation(lang, 'dashboard.empty_announcements')}</p>`;
+    }
 }
 
 function formatDeadlineDate(dateStr, lang) {
@@ -163,7 +140,7 @@ async function openAnnouncement(id) {
     modal.style.display = 'flex';
 
     try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         await fetch(`${API_BASE_URL}/student/announcements/${info.id}/read`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}` }

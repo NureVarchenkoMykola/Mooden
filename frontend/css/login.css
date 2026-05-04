@@ -10,6 +10,21 @@
     gap: 4rem;
 }
 
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
+.lang-slider {
+    width: 100px;
+}
+
+.header-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
 .auth-grid {
     display: flex;
     gap: 4rem;
@@ -142,14 +157,4 @@ form {
 .signup-text {
     text-align: center;
     font-size: 0.9rem;
-}
-
-/* вибір мови */
-.header-row {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 2rem;
-}
-.lang-slider {
-    width: 100px;
 }

@@ -8,17 +8,17 @@ exports.login = async (req, res) => {
     try {
         const userRes = await db.query('SELECT * FROM users WHERE email = $1', [email]);
         
-        const authErrorMsg = 'Невірний email або пароль';
+        const authErrorCode = 'INVALID_CREDENTIALS';
 
         if (userRes.rows.length === 0) {
-            return res.status(401).json({ message: authErrorMsg });
+            return res.status(401).json({ message: authErrorCode });
         }
 
         const user = userRes.rows[0];
         const isMatch = await bcrypt.compare(password, user.password_hash);
         
         if (!isMatch) {
-            return res.status(401).json({ message: authErrorMsg });
+            return res.status(401).json({ message: authErrorCode });
         }
 
         const expiresIn = rememberMe ? '7d' : '24h';
@@ -31,11 +31,11 @@ exports.login = async (req, res) => {
         res.status(200).json({
             token: token,
             role: user.role,
-            message: 'Вхід дозволено'
+            message: 'SUCCESS'
         });
 
     } catch (err) {
-        console.error('Помилка сервера:', err.message);
-        res.status(500).json({ message: 'Помилка на боці сервера' });
+        console.error('[Dev Mode] Server auth error:', err.message);
+        res.status(500).json({ message: 'SERVER_ERROR' });
     }
 };

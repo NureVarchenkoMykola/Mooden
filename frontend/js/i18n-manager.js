@@ -27,10 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
         input.addEventListener('change', async (e) => {
             const newLang = e.target.value;
             localStorage.setItem('mooden-lang', newLang);
-            applyStaticTranslations(newLang);
 
             const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-            
+
             if (token && typeof API_BASE_URL !== 'undefined') {
                 try {
                     await fetch(`${API_BASE_URL}/student/settings`, {
@@ -41,10 +40,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         },
                         body: JSON.stringify({ lang: newLang })
                     });
-                    setTimeout(() => location.reload(), 200);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 200);
+
                 } catch (err) {
                     console.error('[Dev Mode] Error syncing lang:', err);
+                    applyStaticTranslations(newLang);
                 }
+            } else {
+                applyStaticTranslations(newLang);
             }
         });
     });

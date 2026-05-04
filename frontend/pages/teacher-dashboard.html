@@ -2,30 +2,182 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mooden | Кабінет викладача</title>
     <meta name="page-role" content="teacher">
-    
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../assets/icons/favicon.png">
+
+    <script src="../js/config.js"></script>
+    <script src="../js/translations.js"></script>
+    <script src="../js/i18n-manager.js"></script>
+    <script src="../js/theme-manager.js"></script>
+    <script src="../js/toast.js"></script>
+    <script src="../js/auth-guard.js"></script>
+    <script src="../js/sidebar-manager.js"></script>
+
     <link rel="stylesheet" href="../css/variables.css">
     <link rel="stylesheet" href="../css/global.css">
-
-    <script src="../js/auth-guard.js"></script>
+    <link rel="stylesheet" href="../css/teacher-dashboard.css">
 </head>
-<body>
-    <div class="container">
-        <header style="display: flex; justify-content: space-between; padding: 20px 0; align-items: center;">
-            <div class="logo">Mooden <span class="text-gold">Teacher</span></div>
-            <button id="logoutBtn" class="btn-secondary">Вийти</button>
+<body class="dashboard-layout container">
+
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <div class="logo">Mooden</div>
+            <nav class="nav-menu">
+                <p class="nav-label" data-i18n="common.nav_label_main">НАВІГАЦІЯ</p>
+                <a href="#" class="nav-link active">
+                    <span data-i18n="common.nav_dashboard">📊 Дашборд</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <span data-i18n="common.nav_courses">📖 Мої курси</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <span data-i18n="common.nav_grading">📝 Перевірка</span> 
+                    <span class="badge-count" id="gradingBadge">0</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <span data-i18n="common.nav_schedule">📅 Розклад</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <span data-i18n="common.nav_constructor">🔧 Конструктор</span>
+                </a>
+            </nav>
+            <nav class="nav-menu">
+                <p class="nav-label" data-i18n="common.nav_label_community">СПІЛЬНОТА</p>
+                <a href="#" class="nav-link">
+                    <span data-i18n="common.nav_discussions">💬 Обговорення</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <span data-i18n="common.nav_notifications">🔔 Сповіщення</span> 
+                    <span class="badge-count" id="notifBadge">0</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="sidebar-user">
+            <div class="user-card">
+                <div class="user-avatar" id="avatarInitial">?</div>
+                <div class="user-meta">
+                    <p class="user-name" id="profileName">...</p>
+                    <p class="user-sub" id="profileRole" data-i18n="dashboard.user_loading">Завантаження...</p>
+                </div>
+            </div>
+
+            <div class="theme-switch-container">
+                <button id="themeToggle" class="theme-toggle-btn">
+                    <span class="theme-icon">🌙</span>
+                    <span class="theme-text" data-i18n="common.theme_dark">Темна тема</span>
+                </button>
+            </div>
+
+            <div class="lang-switch-container">
+                <div class="lang-slider">
+                    <input type="radio" name="lang" id="lang-uk" value="uk">
+                    <label for="lang-uk">UA</label>
+                    <input type="radio" name="lang" id="lang-en" value="en">
+                    <label for="lang-en">EN</label>
+                    <div class="slider-bg"></div>
+                </div>
+            </div>
+
+            <button id="logoutBtn" class="logout-btn" data-i18n="common.logout_btn">🚪 Вийти з акаунту</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="mobile-header">
+            <button id="menuToggle" class="menu-btn">☰</button>
+            <div class="logo-mobile">Mooden</div>
+        </div>
+        <header class="dashboard-header">
+            <h1><span data-i18n="dashboard.welcome">Вітаю</span>, <span class="text-gold" id="welcomeName">...</span> 👋</h1>
+            <p class="header-desc" id="headerStatus" data-i18n="dashboard.status_loading">Отримуємо актуальну інформацію...</p>
         </header>
 
-        <main class="dashboard-content">
-            <span class="badge" style="background: var(--gold-dark); color: white;">ВИКЛАДАЧ</span>
-            <h1>Панель <span class="text-gold">керування</span></h1>
-            
-            <div class="card" style="margin-top: 30px; padding: 20px; border: 1px solid var(--border-color); border-radius: 12px;">
-                <h3>Статус системи: <span id="userStatus" class="text-gold">...</span></h3>
-                <p>Тут ви зможете переглядати список своїх курсів та студентів.</p>
+        <section class="stats-row">
+            <div class="stat-card">
+                <span class="stat-icon">📚</span>
+                <div>
+                    <p class="stat-value" id="activeCourses">?</p>
+                    <p class="stat-label" data-i18n="dashboard.stat_active">Активних курсів</p>
+                </div>
             </div>
-        </main>
+            <div class="stat-card">
+                <span class="stat-icon">👥</span>
+                <div>
+                    <p class="stat-value" id="totalStudents">?</p>
+                    <p class="stat-label" data-i18n="dashboard.stat_students">Студентів</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">📝</span>
+                <div>
+                    <p class="stat-value" id="pendingGrading">?</p>
+                    <p class="stat-label" data-i18n="dashboard.stat_grading">На перевірці</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">⭐</span>
+                <div>
+                    <p class="stat-value" id="avgRating">?</p>
+                    <p class="stat-label" data-i18n="dashboard.stat_rating">Рейтинг</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="content-grid">
+            <section class="dashboard-card main-list">
+                <div class="card-header">
+                    <h2 data-i18n="dashboard.title_courses">Мої курси</h2>
+                    <a href="#" class="link-more" data-i18n="dashboard.link_all">Всі курси →</a>
+                </div>
+                <div id="coursesContainer" class="list-container"></div>
+            </section>
+            
+            <div class="side-column">
+                <section class="dashboard-card">
+                    <div class="card-header">
+                        <h3 data-i18n="dashboard.title_schedule">Розклад сьогодні</h3>
+                        <a href="#" class="link-more" data-i18n="dashboard.link_calendar">Календар</a>
+                    </div>
+                    <div id="scheduleContainer" class="list-container"></div>
+                </section>
+
+                <section class="dashboard-card">
+                    <div class="card-header">
+                        <h3 data-i18n="dashboard.title_grading_list">Черга перевірки</h3>
+                        <a href="#" class="link-more" data-i18n="dashboard.link_grading">Перевірити →</a>
+                    </div>
+                    <div id="gradingContainer" class="list-container"></div>
+                </section>
+
+                <section class="dashboard-card">
+                    <div class="card-header">
+                        <h3 data-i18n="dashboard.title_announcements">Оголошення</h3>
+                        <a href="#" class="link-more" data-i18n="dashboard.link_announcements">Всі оголошення</a>
+                    </div>
+                    <div id="announcementsContainer" class="list-container"></div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <div id="announcementModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeAnnouncementModal()">&times;</span>
+            <div class="modal-header">
+                <span id="modalLabel" class="announcement-label"></span>
+            </div>
+            <h2 id="modalTitle"></h2>
+            <div class="modal-body">
+                <p id="modalFullText"></p>
+            </div>
+        </div>
     </div>
 
     <script src="../js/teacher-dashboard.js"></script>

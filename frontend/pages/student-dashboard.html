@@ -9,12 +9,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../assets/icons/favicon.png">
 
-    <script src="../js/auth-guard.js"></script>
+    <script src="../js/config.js"></script>
     <script src="../js/translations.js"></script>
     <script src="../js/i18n-manager.js"></script>
     <script src="../js/theme-manager.js"></script>
     <script src="../js/toast.js"></script>
+    <script src="../js/auth-guard.js"></script>
+    <script src="../js/sidebar-manager.js"></script>
 
     <link rel="stylesheet" href="../css/variables.css">
     <link rel="stylesheet" href="../css/global.css">
@@ -31,7 +34,7 @@
                 <a href="#" class="nav-link"><span data-i18n="common.nav_courses">📖 Мої курси</span></a>
                 <a href="#" class="nav-link">
                     <span data-i18n="common.nav_tasks">📝 Завдання</span> 
-                    <span class="badge-count">3</span>
+                    <span class="badge-count" id="tasksBadge">0</span>
                 </a>
                 <a href="#" class="nav-link"><span data-i18n="common.nav_schedule">📅 Розклад</span></a>
                 <a href="#" class="nav-link"><span data-i18n="common.nav_grades">⭐ Оцінки</span></a>
@@ -42,7 +45,7 @@
                 <a href="#" class="nav-link"><span data-i18n="common.nav_discussions">💬 Обговорення</span></a>
                 <a href="#" class="nav-link">
                     <span data-i18n="common.nav_notifications">🔔 Сповіщення</span> 
-                    <span class="badge-count">5</span>
+                    <span class="badge-count" id="notifBadge">0</span>
                 </a>
             </nav>
         </div>
@@ -77,6 +80,10 @@
     </aside>
 
     <main class="main-content">
+        <div class="mobile-header">
+            <button id="menuToggle" class="menu-btn">☰</button>
+            <div class="logo-mobile">Mooden</div>
+        </div>
         <header class="dashboard-header">
             <h1><span data-i18n="dashboard.welcome">Вітаю</span>, <span class="text-gold" id="welcomeName">...</span> 👋</h1>
             <p class="header-desc" id="headerStatus" data-i18n="dashboard.status_loading">Завантажуємо ваші успіхи за тиждень...</p>
@@ -105,7 +112,7 @@
                 </div>
             </div>
             <div class="stat-card">
-                <span class="stat-icon">🪙</span>
+                <span class="stat-icon">💸</span>
                 <div>
                     <p class="stat-value" id="userCoins">?</p>
                     <p class="stat-label" data-i18n="dashboard.stat_coins">Монети</p>

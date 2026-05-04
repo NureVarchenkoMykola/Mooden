@@ -1,8 +1,10 @@
 (function() {
+    const lang = localStorage.getItem('mooden-lang') || 'uk';
+
     const ROLES = {
-        'student':  { label: 'студента',  path: 'student-dashboard.html' },
-        'teacher':  { label: 'викладача', path: 'teacher-dashboard.html' },
-        'moderator': { label: 'модератора', path: 'moderator-dashboard.html' }
+        'student':   { label: getTranslation(lang, 'common.roles_for_redirect.student'),   path: 'student-dashboard.html' },
+        'teacher':   { label: getTranslation(lang, 'common.roles_for_redirect.teacher'),   path: 'teacher-dashboard.html' },
+        'moderator': { label: getTranslation(lang, 'common.roles_for_redirect.moderator'), path: 'moderator-dashboard.html' }
     };
 
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -13,7 +15,7 @@
 
     const forceRedirect = () => {
         if (!token) {
-            renderError("Ви не авторизовані. Повертаємо на сторінку входу...", "../index.html");
+            renderError(getTranslation(lang, 'errors.UNAUTHORIZED'), "../index.html");
             return;
         }
 
@@ -22,13 +24,13 @@
         
         const requiredLabel = ROLES[requiredRole] ? ROLES[requiredRole].label : requiredRole;
         
-        let msg = `Ця сторінка лише для <b>${requiredLabel}</b>.`;
+        let msg = getTranslation(lang, 'errors.ACCESS_DENIED').replace('{role}', `<b>${requiredLabel}</b>`);
         
         if (!userConfig) {
-            msg = "Ваша роль не розпізнана системою. Повертаємо на головну...";
-            console.warn("Невідома роль користувача в auth-guard:", userRole);
+            msg = getTranslation(lang, 'errors.ROLE_ERROR');
+            console.warn("[Dev Mode] Unknown user role in auth-guard:", userRole);
         } else {
-            msg += " Повертаємо вас до вашого кабінету...";
+            msg += getTranslation(lang, 'common.redirecting');
         }
 
         renderError(msg, targetUrl);
@@ -41,15 +43,16 @@
                     <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
                     <p style="margin-bottom: 1.5rem; font-size: 1.2rem; line-height: 1.5;">${msg}</p>
                     <a href="${url}" style="color: #E8A44A; text-decoration: none; font-weight: 600; border: 1px solid #E8A44A; padding: 0.8rem 1.5rem; border-radius: 0.4rem; transition: 0.3s opacity;">
-                        Перейти
+                        ${getTranslation(lang, 'common.go_back')}
                     </a>
                 </div>
             </body>
         `;
-        setTimeout(() => window.location.replace(url), 1500);
+        setTimeout(() => window.location.replace(url), 1800);
     }
 
     if (!token || (requiredRole && userRole !== requiredRole)) {
+        window.stop();
         forceRedirect();
     }
 })();

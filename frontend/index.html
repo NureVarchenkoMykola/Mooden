@@ -7,11 +7,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    
-    <script src="js/redirect-if-logged.js"></script>
+    <link rel="icon" type="image/png" href="assets/icons/favicon.png">
+
+    <script src="js/config.js"></script>
     <script src="js/translations.js"></script>
     <script src="js/i18n-manager.js"></script>
     <script src="js/theme-manager.js"></script>
+    <script src="js/redirect-if-logged.js"></script>
     
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/global.css">
@@ -24,15 +26,20 @@
         <div class="header-row">
             <div class="logo">Mooden</div>
             
-            <div class="lang-switch-container">
-                <div class="lang-slider">
-                    <input type="radio" name="lang" id="lang-uk" value="uk">
-                    <label for="lang-uk">UA</label>
-                    
-                    <input type="radio" name="lang" id="lang-en" value="en">
-                    <label for="lang-en">EN</label>
-                    
-                    <div class="slider-bg"></div>
+            <div class="header-controls">
+                <button id="themeToggle" class="theme-toggle-btn">
+                    <span class="theme-icon">🌙</span>
+                    <span class="theme-text" data-i18n="common.theme_dark">Темна тема</span>
+                </button>
+
+                <div class="lang-switch-container">
+                    <div class="lang-slider" style="width: 100px;">
+                        <input type="radio" name="lang" id="lang-uk" value="uk">
+                        <label for="lang-uk">UA</label>
+                        <input type="radio" name="lang" id="lang-en" value="en">
+                        <label for="lang-en">EN</label>
+                        <div class="slider-bg"></div>
+                    </div>
                 </div>
             </div>
         </div>

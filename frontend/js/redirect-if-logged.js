@@ -14,7 +14,9 @@
         if (targetPage) {
             window.location.href = targetPage;
         } else {
-            console.warn("Невідома роль користувача:", role);
+            localStorage.clear();
+            sessionStorage.clear();
+            console.error('[Dev Mode] Redirect failed. Role found in storage but missing in DASHBOARD_MAP:', role);
         }
     }
 })();
