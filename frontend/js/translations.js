@@ -107,7 +107,27 @@ const translations = {
             card_deadlines: "⏰ Найближчі дедлайни",
             link_all: "Всі →",
             empty_achievements: "У вас поки немає відкритих досягнень",
-            empty_skills: "Навички з'являться після проходження курсів"
+            empty_skills: "Навички з'являться після проходження курсів",
+
+
+            card_grades_full: "🎓 Повна академічна успішність",
+            th_course: "Курс",
+            th_task: "Завдання",
+            th_date: "Дата",
+            th_grade: "Оцінка",
+            settings_security: "🛡️ Безпека та доступ",
+            label_old_password: "Поточний пароль",
+            label_new_password: "Новий пароль",
+            btn_update_password: "Оновити пароль",
+            settings_preferences: "⚙️ Переваги інтерфейсу",
+            settings_lang_hint: "Мову та тему можна змінити у бічній панелі швидкого доступу.",
+            password_updated_success: "Пароль успішно оновлено!",
+            tab_activity_full: "📜 Історія останніх подій",
+            event_grade: "Оцінка",
+            achievements_list_tab: "🏆Досягнення",
+            event_achievement: "Досягнення",
+            empty_history: "Подій ще не зафіксовано",
+            link_copied: "Посилання на профіль скопійовано"
         },
         errors: {
             INVALID_CREDENTIALS: "Невірний email або пароль.",
@@ -123,7 +143,10 @@ const translations = {
             ERROR_UPDATE_SETTINGS: "Помилка при зміні мови.",
             UNKNOWN_ERROR: "Щось пішло не так. Спробуйте пізніше.",
             NETWORK_ERROR: "Не вдалося з’єднатися з сервером.",
-            SIDEBAR_ERROR: "Помилка завантаження бічного меню"
+            SIDEBAR_ERROR: "Помилка завантаження бічного меню",
+            WRONG_OLD_PASSWORD: "Поточний пароль введено невірно.",
+            PASSWORD_UPDATE_ERROR: "Не вдалося оновити пароль.",
+            COPY_ERROR: "Не вдалося скопіювати посилання."
         }
     },
     en: {
@@ -234,7 +257,27 @@ const translations = {
             card_deadlines: "⏰ Upcoming Deadlines",
             link_all: "All →",
             empty_achievements: "You have no achievements unlocked yet",
-            empty_skills: "Skills will appear after completing the courses"
+            empty_skills: "Skills will appear after completing the courses",
+
+
+            card_grades_full: "🎓 Full Academic Record",
+            th_course: "Course",
+            th_task: "Task",
+            th_date: "Date",
+            th_grade: "Grade",
+            settings_security: "🛡️ Security & Access",
+            label_old_password: "Current Password",
+            label_new_password: "New Password",
+            btn_update_password: "Update Password",
+            settings_preferences: "⚙️ Interface Preferences",
+            settings_lang_hint: "Language and theme can be changed in the quick access sidebar.",
+            password_updated_success: "Password updated successfully!",
+            tab_activity_full: "📜 Recent Activity History",
+            event_grade: "Grade",
+            achievements_list_tab: "🏆Achievements",
+            event_achievement: "Achievement",
+            empty_history: "No events recorded yet",
+            link_copied: "Profile link copied"
         },
         errors: {
             INVALID_CREDENTIALS: "Invalid email or password.",
@@ -250,7 +293,10 @@ const translations = {
             ERROR_UPDATE_SETTINGS: "Error updating language settings.",
             UNKNOWN_ERROR: "Something went wrong. Please try again.",
             NETWORK_ERROR: "Unable to connect to server.",
-            SIDEBAR_ERROR: "Error loading sidebar menu"
+            SIDEBAR_ERROR: "Error loading sidebar menu",
+            WRONG_OLD_PASSWORD: "Current password is incorrect.",
+            PASSWORD_UPDATE_ERROR: "Failed to update password.",
+            COPY_ERROR: "Failed to copy the link."
         }
     }
 };

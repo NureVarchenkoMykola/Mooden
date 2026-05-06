@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (userCard) {
         userCard.style.cursor = 'pointer';
         userCard.addEventListener('click', () => {
-            const role = localStorage.getItem('userRole');
+            const role = localStorage.getItem('userRole') || sessionStorage.getItem('userRole');
             window.location.href = `${role}-profile.html`;
         });
     }

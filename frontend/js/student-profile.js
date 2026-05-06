@@ -161,6 +161,79 @@ function renderProfile(data) {
                     </div>`;
             }).join('')}
         </div>`;
+
+    const fullGradesTable = document.getElementById('fullGradesTable');
+    if (data.fullGrades && data.fullGrades.length > 0) {
+        fullGradesTable.innerHTML = data.fullGrades.map(g => `
+            <tr>
+                <td>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="background:${g.color_accent}; width:8px; height:8px; border-radius:50%"></span>
+                        ${g.course_title}
+                    </div>
+                </td>
+                <td>${g.task_title}</td>
+                <td>${new Date(g.created_at).toLocaleDateString(lang === 'en' ? 'en-US' : 'uk-UA')}</td>
+                <td class="grade-val-cell"><strong>${g.grade_value}</strong></td>
+            </tr>
+        `).join('');
+    }
+
+    const fullAchGrid = document.getElementById('fullAchievementsGrid');
+    if (data.allAchievements && data.allAchievements.length > 0) {
+        fullAchGrid.innerHTML = data.allAchievements.map(ach => `
+            <div class="ach-card-full">
+                <div style="font-size: 2.5rem; margin-bottom: 1rem;">${ach.icon || '🏆'}</div>
+                <h4 style="margin-bottom: 8px;">${ach.title}</h4>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">${ach.description}</p>
+                <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-gold);">
+                    +${ach.reward} 💸 • ${new Date(ach.earned_at).toLocaleDateString()}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    const timeline = document.getElementById('activityTimeline');
+    if (data.history && data.history.length > 0) {
+        timeline.innerHTML = data.history.map(item => {
+            const date = new Date(item.date).toLocaleString(lang === 'en' ? 'en-US' : 'uk-UA', {
+                day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+            });
+
+            let text = '';
+            if (item.type === 'grade') {
+                text = `<span class="t-type">${getTranslation(lang, 'profile.event_grade')}:</span> ${item.title} — <strong>${item.value}</strong>`;
+            } else {
+                text = `<span class="t-type">${getTranslation(lang, 'profile.event_achievement')}:</span> ${item.title}`;
+            }
+
+            return `
+                <div class="timeline-item">
+                    <span class="t-date">${date}</span>
+                    <p class="t-content">${text}</p>
+                </div>
+            `;
+        }).join('');
+    } else {
+        timeline.innerHTML = `<p class="p-empty-msg">${getTranslation(lang, 'profile.empty_history')}</p>`;
+    }
+
+    const shareBtn = document.getElementById('shareProfileBtn');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', () => {
+            const formattedId = formatUserId(data.user);
+            const profileUrl = `${window.location.origin}/public/profile/${formattedId}`;
+            
+            navigator.clipboard.writeText(profileUrl).then(() => {
+                const currentLang = document.documentElement.lang || 'uk';
+                showToast(getTranslation(currentLang, 'profile.link_copied'), 'success');
+            }).catch(err => {
+                showToast(getTranslation(currentLang, 'errors.COPY_ERROR'), 'error');
+            });
+        });
+    }
+
+    initGlobalPasswordChange('changePasswordForm');
 }
 
 function initTabs() {

@@ -414,3 +414,132 @@
     height: 1rem;
     display: block;
 }
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.p-grades-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.p-grades-table th {
+    padding: 0.8rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border-main);
+}
+
+.p-grades-table td {
+    padding: 1rem 0.8rem;
+    border-bottom: 1px solid var(--border-main);
+    font-size: 0.95rem;
+}
+
+.grade-val-cell {
+    font-weight: 700;
+    color: var(--text-gold);
+}
+
+.achievements-grid-full {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.ach-card-full {
+    background: var(--bg-input);
+    border: 1px solid var(--border-main);
+    border-radius: 0.8rem;
+    padding: 1.2rem;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.ach-card-full:hover {
+    transform: translateY(-3px);
+    border-color: var(--text-gold);
+}
+
+.settings-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+}
+
+.timeline-container {
+    position: relative;
+    padding-left: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.timeline-container::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border-color);
+}
+
+.timeline-item {
+    position: relative;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1.8rem;
+    top: 0.5rem;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    background: var(--bg-input);
+    border: 2px solid var(--text-gold);
+    z-index: 2;
+}
+
+.t-date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 0.34rem;
+}
+
+.t-content {
+    font-size: 0.95rem;
+    color: var(--text-main);
+}
+
+.t-type {
+    font-weight: 600;
+    color: var(--text-gold);
+}
+
+@media (max-width: 768px) {
+    .settings-container { grid-template-columns: 1fr; }
+}

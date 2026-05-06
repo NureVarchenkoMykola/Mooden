@@ -1,4 +1,5 @@
 const db = require('../db');
+const bcrypt = require('bcrypt');
 
 exports.getSidebarData = async (req, res) => {
     const userId = req.user.id;
@@ -63,5 +64,34 @@ exports.getSidebarData = async (req, res) => {
     } catch (err) {
         console.error("[Dev Mode] Sidebar Controller Error:", err.message);
         res.status(500).json({ message: 'SIDEBAR_ERROR' });
+    }
+};
+
+
+exports.changePassword = async (req, res) => {
+    const userId = req.user.id;
+    const { oldPassword, newPassword } = req.body;
+
+    try {
+        const user = await db.query('SELECT password_hash FROM public.users WHERE id = $1', [userId]);
+        
+        if (user.rows.length === 0) {
+            return res.status(404).json({ message: 'USER_NOT_FOUND' });
+        }
+
+        const isMatch = await bcrypt.compare(oldPassword, user.rows[0].password_hash);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'WRONG_OLD_PASSWORD' });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const newHash = await bcrypt.hash(newPassword, salt);
+
+        await db.query('UPDATE public.users SET password_hash = $1 WHERE id = $2', [newHash, userId]);
+
+        res.json({ success: true });
+    } catch (err) {
+        console.error("[Dev Mode] Change Password Error:", err.message);
+        res.status(500).json({ message: 'PASSWORD_UPDATE_ERROR' });
     }
 };

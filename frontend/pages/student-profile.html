@@ -111,7 +111,7 @@
             </div>
             <div class="hero-actions">
                 <button class="btn-outline" data-i18n="profile.btn_edit">✏️ Редагувати</button>
-                <button class="btn-gold" data-i18n="profile.btn_share">🤝 Поділитись</button>
+                <button id="shareProfileBtn" class="btn-gold" data-i18n="profile.btn_share">🤝 Поділитись</button>
             </div>
         </header>
 
@@ -196,13 +196,103 @@
             </div>
         </div>
 
-        <div id="tab-grades" class="tab-content"></div>
-        <div id="tab-achievements" class="tab-content"></div>
-        <div id="tab-activity" class="tab-content"></div>
-        <div id="tab-settings" class="tab-content"></div>
+    <div id="tab-grades" class="tab-content">
+        <section class="p-card">
+            <div class="card-head">
+                <h3 data-i18n="profile.card_grades_full">🎓 Повна академічна успішність</h3>
+            </div>
+            <div class="table-responsive">
+                <table class="p-grades-table">
+                    <thead>
+                        <tr>
+                            <th data-i18n="profile.th_course">Курс</th>
+                            <th data-i18n="profile.th_task">Завдання</th>
+                            <th data-i18n="profile.th_date">Дата</th>
+                            <th data-i18n="profile.th_grade">Оцінка</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fullGradesTable">
+                        </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <div id="tab-achievements" class="tab-content">
+        <section class="p-card">
+            <div class="card-head">
+                <h3 data-i18n="profile.achievements_list_tab">Всі отримані нагороди</h3>
+            </div>
+            <div id="fullAchievementsGrid" class="achievements-grid-full">
+                </div>
+        </section>
+    </div>
+
+    <div id="tab-activity" class="tab-content">
+        <section class="p-card">
+            <div class="card-head">
+                <h3 data-i18n="profile.tab_activity_full">📜 Історія останніх подій</h3>
+            </div>
+            <div id="activityTimeline" class="timeline-container">
+                </div>
+        </section>
+    </div>
+
+    <div id="tab-settings" class="tab-content">
+        <div class="settings-container">
+            <section class="p-card settings-section">
+                <div class="card-head">
+                    <h3 data-i18n="profile.settings_security">🛡️ Безпека та доступ</h3>
+                </div>
+                <form id="changePasswordForm" class="settings-form">
+                    <div class="input-group">
+                        <label data-i18n="profile.label_old_password">Поточний пароль</label>
+                        <div class="input-wrapper">
+                            <input type="password" data-type="old-password" id="oldPassword" placeholder="••••••••" required>
+                            <button type="button" class="password-toggle">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-closed">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-open">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label data-i18n="profile.label_new_password">Новий пароль</label>
+                        <div class="input-wrapper">
+                            <input type="password" data-type="new-password" id="newPassword" placeholder="••••••••" required>
+                            <button type="button" class="password-toggle">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-closed">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-open">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-gold" data-i18n="profile.btn_update_password">Оновити пароль</button>
+                </form>
+            </section>
+
+            <section class="p-card settings-section">
+                <div class="card-head">
+                    <h3 data-i18n="profile.settings_preferences">⚙️ Переваги інтерфейсу</h3>
+                </div>
+                <p class="settings-hint" data-i18n="profile.settings_lang_hint">Мову та тему можна змінити у бічній панелі швидкого доступу.</p>
+            </section>
+        </div>
+    </div>
 
     </main>
-
+    <script src="../js/toggle-password.js"></script>
+    <script src="../js/password-manager.js"></script>
     <script src="../js/student-profile.js"></script>
 </body>
 </html>

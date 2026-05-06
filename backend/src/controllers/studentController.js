@@ -232,6 +232,53 @@ exports.getProfileData = async (req, res) => {
             .flat()
             .filter((val, idx, self) => val && self.indexOf(val) === idx);
 
+        const allGrades = await db.query(`
+            SELECT 
+                g.grade_value, 
+                g.feedback, 
+                g.created_at,
+                t.title_${lang} as task_title,
+                c.title_${lang} as course_title,
+                c.color_accent
+            FROM public.grades g
+            JOIN public.tasks t ON g.task_id = t.id
+            JOIN public.courses c ON t.course_id = c.id
+            WHERE g.student_id = $1
+            ORDER BY g.created_at DESC
+        `, [userId]);
+
+        const allAchievements = await db.query(`
+            SELECT a.id, a.icon, a.reward, a.title_${lang} AS title, a.description_${lang} AS description, sa.earned_at
+            FROM public.achievements a
+            JOIN public.student_achievements sa ON a.id = sa.achievement_id
+            WHERE sa.student_id = $1
+            ORDER BY sa.earned_at DESC
+        `, [userId]);
+
+        const activityHistory = await db.query(`
+            (SELECT 
+                'grade' as type, 
+                g.grade_value as value, 
+                t.title_${lang} as title, 
+                g.created_at as date
+            FROM public.grades g
+            JOIN public.tasks t ON g.task_id = t.id
+            WHERE g.student_id = $1)
+            
+            UNION ALL
+            
+            (SELECT 
+                'achievement' as type, 
+                NULL as value, 
+                a.title_${lang} as title, 
+                sa.earned_at as date
+            FROM public.student_achievements sa
+            JOIN public.achievements a ON sa.achievement_id = a.id
+            WHERE sa.student_id = $1)
+            
+            ORDER BY date DESC LIMIT 15
+        `, [userId]);
+
         res.json({
             user: {
                 id: user.id,
@@ -258,7 +305,10 @@ exports.getProfileData = async (req, res) => {
             courses: courses.rows,
             deadlines: deadlines.rows,
             weeklyActivity: activity.rows,
-            skills: finalSkills
+            skills: finalSkills,
+            fullGrades: allGrades.rows,
+            allAchievements: allAchievements.rows,
+            history: activityHistory.rows
         });
 
     } catch (err) {
