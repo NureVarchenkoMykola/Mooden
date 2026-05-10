@@ -1,0 +1,432 @@
+.grades-header {
+    margin-bottom: 1.5rem;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.grades-header h1 {
+    margin: 0 0 0.6rem;
+    font-size: 2.8rem;
+    line-height: 1.05;
+    font-family: var(--font-heading);
+    color: var(--text-main);
+}
+
+.grades-header .header-desc {
+    margin: 0;
+    max-width: 860px;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+}
+
+.grades-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.grade-stat-card {
+    background: var(--bg-right);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid var(--border-main);
+}
+
+.grade-stat-icon {
+    font-size: 1.5rem;
+    background: var(--bg-input);
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.6rem;
+}
+
+.grade-stat-value {
+    font-size: 1.8rem;
+    font-family: var(--font-heading);
+    color: var(--text-main);
+    line-height: 1;
+}
+
+.grade-stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.grades-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.search-box {
+    flex: 1;
+    min-width: 240px;
+}
+
+.search-box input,
+.grade-filter {
+    width: 100%;
+    height: 48px;
+    padding: 0 1rem;
+    border-radius: 0.8rem;
+    border: 1px solid var(--border-main);
+    background: var(--bg-input);
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 0.9rem;
+    outline: none;
+    transition: 0.2s ease;
+}
+
+.search-box input::placeholder {
+    color: var(--text-muted);
+}
+
+.search-box input:focus,
+.grade-filter:focus {
+    border-color: var(--accent-gold);
+}
+
+.grade-filter {
+    max-width: 280px;
+    cursor: pointer;
+}
+
+.grades-layout {
+    display: grid;
+    grid-template-columns: 1fr 330px;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.grades-table-card,
+.grades-side-panel {
+    background: var(--bg-right);
+    border: 1px solid var(--border-main);
+    border-radius: 1rem;
+    padding: 1.5rem;
+}
+
+.grades-table-header {
+    margin-bottom: 1.5rem;
+}
+
+.grades-table-header h2,
+.grades-side-panel h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-family: var(--font-heading);
+    color: var(--text-main);
+}
+
+.grades-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.grades-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 720px;
+}
+
+.grades-table th {
+    text-align: left;
+    padding: 0.9rem 0.8rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-main);
+    font-weight: 700;
+}
+
+.grades-table td {
+    padding: 1rem 0.8rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-main);
+    vertical-align: middle;
+}
+
+.grades-table tr:last-child td {
+    border-bottom: none;
+}
+
+.grade-course {
+    color: var(--text-gold);
+    font-weight: 700;
+}
+
+.grade-task {
+    color: var(--text-main);
+    font-weight: 600;
+}
+
+.grade-value {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 46px;
+    height: 32px;
+    border-radius: 0.7rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border-main);
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+.grade-value.high {
+    color: #2ecc71;
+    background: rgba(46, 204, 113, 0.12);
+}
+
+.grade-value.medium {
+    color: var(--text-gold);
+    background: rgba(232, 164, 74, 0.12);
+}
+
+.grade-value.low {
+    color: #e74c3c;
+    background: rgba(231, 76, 60, 0.12);
+}
+
+.grade-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3rem 0.7rem;
+    border-radius: 2rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.grade-status.passed {
+    color: #2ecc71;
+    background: rgba(46, 204, 113, 0.14);
+}
+
+.grade-status.pending {
+    color: var(--text-gold);
+    background: rgba(232, 164, 74, 0.14);
+}
+
+.grade-status.failed {
+    color: #e74c3c;
+    background: rgba(231, 76, 60, 0.14);
+}
+
+.course-progress-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.course-progress-item {
+    background: var(--bg-input);
+    border: 1px solid var(--border-main);
+    border-radius: 0.8rem;
+    padding: 1rem;
+}
+
+.course-progress-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.7rem;
+}
+
+.course-progress-title {
+    font-size: 0.95rem;
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+.course-progress-grade {
+    font-size: 0.9rem;
+    color: var(--text-gold);
+    font-weight: 700;
+}
+
+.course-progress-bar {
+    width: 100%;
+    height: 6px;
+    border-radius: 0.7rem;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.course-progress-fill {
+    height: 100%;
+    border-radius: 0.7rem;
+    background: var(--accent-gold);
+}
+
+.empty-grades {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    background: var(--bg-right);
+    border: 1px solid var(--border-main);
+    border-radius: 1rem;
+    color: var(--text-muted);
+}
+
+.empty-grades h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.4rem;
+    color: var(--text-main);
+    font-family: var(--font-heading);
+}
+
+.empty-grades p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 1200px) {
+    .grades-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .grades-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .grades-header h1 {
+        font-size: 2.1rem;
+    }
+
+    .grades-stats {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .grades-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .grade-filter {
+        max-width: 100%;
+    }
+
+    .grades-table-card,
+    .grades-side-panel {
+        padding: 1.2rem;
+    }
+}
+.grade-value.perfect-grade {
+    position: relative;
+    cursor: pointer;
+    box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.18), 0 0 18px rgba(255, 196, 0, 0.22);
+    animation: perfectGradeGlow 1.8s ease-in-out infinite;
+}
+
+@keyframes perfectGradeGlow {
+    0%, 100% {
+        transform: translateY(0);
+        box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.16), 0 0 14px rgba(255, 196, 0, 0.18);
+    }
+    50% {
+        transform: translateY(-1px);
+        box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.28), 0 0 24px rgba(255, 196, 0, 0.3);
+    }
+}
+
+.celebration-particle {
+    position: fixed;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(-50%, -50%);
+    will-change: transform, opacity;
+}
+
+.confetti-piece {
+    width: 10px;
+    height: 14px;
+    border-radius: 2px;
+    animation: confettiBurst var(--dur, 1200ms) ease-out forwards;
+}
+
+.bee-particle {
+    font-size: 1.2rem;
+    line-height: 1;
+    animation: beeBurst var(--dur, 1500ms) ease-out forwards;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.22));
+}
+
+@keyframes confettiBurst {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+    }
+    100% {
+        opacity: 0;
+        transform:
+            translate(
+                calc(-50% + var(--dx, 0px)),
+                calc(-50% + var(--dy, -120px))
+            )
+            scale(1.1)
+            rotate(var(--rot, 180deg));
+    }
+}
+
+@keyframes beeBurst {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+    }
+    20% {
+        opacity: 1;
+        transform:
+            translate(
+                calc(-50% + (var(--dx, 80px) * 0.2)),
+                calc(-50% + (var(--dy, -120px) * 0.2))
+            )
+            scale(1)
+            rotate(-8deg);
+    }
+    40% {
+        transform:
+            translate(
+                calc(-50% + (var(--dx, 80px) * 0.45)),
+                calc(-50% + (var(--dy, -120px) * 0.45))
+            )
+            scale(1.05)
+            rotate(10deg);
+    }
+    65% {
+        transform:
+            translate(
+                calc(-50% + (var(--dx, 80px) * 0.72)),
+                calc(-50% + (var(--dy, -120px) * 0.72))
+            )
+            scale(1)
+            rotate(-10deg);
+    }
+    100% {
+        opacity: 0;
+        transform:
+            translate(
+                calc(-50% + var(--dx, 80px)),
+                calc(-50% + var(--dy, -120px))
+            )
+            scale(0.9)
+            rotate(12deg);
+    }
+}

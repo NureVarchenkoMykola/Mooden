@@ -31,13 +31,19 @@
             <nav class="nav-menu">
                 <p class="nav-label" data-i18n="common.nav_label_main">НАВІГАЦІЯ</p>
                 <a href="#" class="nav-link active"><span data-i18n="common.nav_dashboard">📊 Дашборд</span></a>
-                <a href="#" class="nav-link"><span data-i18n="common.nav_courses">📖 Мої курси</span></a>
-                <a href="#" class="nav-link">
-                    <span data-i18n="common.nav_tasks">📝 Завдання</span> 
+                <a href="./student-courses.html" class="nav-link">
+                    <span data-i18n="common.nav_courses">📖 Мої курси</span>
+                </a>
+                <a href="./student-tasks.html" class="nav-link">
+                    <span data-i18n="common.nav_tasks">📝 Завдання</span>
                     <span class="badge-count" id="tasksBadge">0</span>
                 </a>
-                <a href="#" class="nav-link"><span data-i18n="common.nav_schedule">📅 Розклад</span></a>
-                <a href="#" class="nav-link"><span data-i18n="common.nav_grades">⭐ Оцінки</span></a>
+                <a href="./student-schedule.html" class="nav-link">
+                    <span data-i18n="common.nav_schedule">📅 Розклад</span>
+                </a>
+                 <a href="./student-grades.html" class="nav-link">
+                    <span data-i18n="common.nav_grades">⭐ Оцінки</span>
+                </a>
                 <a href="#" class="nav-link"><span data-i18n="common.nav_shop">💎 Крамниця</span></a>
             </nav>
             <nav class="nav-menu">
@@ -124,7 +130,7 @@
             <section class="dashboard-card main-list">
                 <div class="card-header">
                     <h2 data-i18n="dashboard.title_courses">Мої курси</h2>
-                    <a href="#" class="link-more" data-i18n="dashboard.link_all">Всі курси →</a>
+                    <a href="./student-courses.html" class="link-more" data-i18n="dashboard.link_all">Всі курси →</a>
                 </div>
                 <div id="coursesContainer" class="list-container"></div>
             </section>

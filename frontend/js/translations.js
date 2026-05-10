@@ -84,6 +84,129 @@ const translations = {
             pending_submissions: "Роботи чекають на перевірку",
             items: "шт."
         },
+            courses: {
+            page_title: "Мої курси",
+            page_desc: "Тут зібрані всі курси, на які ви записані. Можна переглядати прогрес, дедлайни та переходити до навчання.",
+            search_placeholder: "Пошук за назвою курсу...",
+            filter_all: "Усі курси",
+            filter_active: "Активні",
+            filter_completed: "Завершені",
+            filter_new: "Нові",
+
+            progress: "Прогрес",
+            deadline: "Дедлайн",
+            open_btn: "Відкрити",
+
+            status_active: "Активний",
+            status_completed: "Завершений",
+            status_new: "Новий",
+
+            course_finished: "Курс завершено",
+            in_progress: "Курс у процесі проходження",
+            short_backend_desc: "Деталі курсу доступні у навчальному кабінеті.",
+
+            empty_title: "Курсів не знайдено",
+            empty_text: "Спробуйте змінити пошук або фільтр.",
+
+            unknown_course: "Курс без назви"
+        },
+            tasks: {
+            page_title: "Завдання",
+            page_desc: "Тут відображаються ваші навчальні завдання, дедлайни, статус виконання та оцінки.",
+
+            search_placeholder: "Пошук завдання...",
+            filter_all: "Усі завдання",
+            filter_pending: "Очікують",
+            filter_submitted: "Здані",
+            filter_graded: "Оцінені",
+            filter_overdue: "Прострочені",
+
+            stat_total: "Усього завдань",
+            stat_pending: "Очікують виконання",
+            stat_completed: "Виконано",
+            stat_avg: "Середня оцінка",
+
+            status_pending: "Очікує",
+            status_submitted: "Здано",
+            status_graded: "Оцінено",
+            status_overdue: "Прострочено",
+
+            deadline: "Дедлайн",
+            grade: "Оцінка",
+            no_grade: "Немає",
+            open_btn: "Відкрити",
+
+            empty_title: "Завдань не знайдено",
+            empty_text: "Спробуйте змінити пошук або фільтр.",
+
+            unknown_task: "Завдання без назви",
+            course_not_specified: "Курс не вказано",
+            no_deadline: "Дедлайн не вказано",
+            exam: "Іспит"
+        },
+            schedule: {
+            page_title: "Розклад",
+            page_desc: "Тут відображаються ваші заняття на тиждень, час проведення, аудиторія та формат навчання.",
+
+            prev_week: "← Попередній тиждень",
+            next_week: "Наступний тиждень →",
+            current_week: "Поточний тиждень",
+            today_title: "Сьогодні",
+
+            monday: "Понеділок",
+            tuesday: "Вівторок",
+            wednesday: "Середа",
+            thursday: "Четвер",
+            friday: "П’ятниця",
+
+            teacher: "Викладач",
+            teacher_not_specified: "Викладача не вказано",
+            room: "Аудиторія",
+
+            empty_day: "Занять немає",
+            empty_today: "На сьогодні занять немає.",
+
+            unavailable_title: "Розклад поки недоступний",
+            unavailable_text: "Backend endpoint для розкладу ще не реалізовано або тимчасово недоступний.",
+
+            unknown_lesson: "Заняття без назви",
+
+            format_online: "Онлайн",
+            format_offline: "Аудиторно",
+            format_mixed: "Змішано"
+        },
+            grades: {
+            page_title: "Оцінки",
+            page_desc: "Тут зібрана ваша академічна успішність, оцінки за завдання, середній бал та прогрес по курсах.",
+
+            stat_avg: "Середній бал",
+            stat_graded: "Оцінено робіт",
+            stat_courses: "Курсів",
+            stat_best: "Найкраща оцінка",
+
+            search_placeholder: "Пошук за курсом, завданням або коментарем...",
+            filter_all: "Усі курси",
+
+            table_title: "Журнал оцінок",
+            side_title: "Успішність по курсах",
+
+            th_course: "Курс",
+            th_task: "Завдання",
+            th_date: "Дата",
+            th_grade: "Оцінка",
+            th_status: "Статус",
+
+            status_passed: "Зараховано",
+            status_pending: "Очікується",
+            status_failed: "Не зараховано",
+
+            no_grade: "Немає",
+            course_not_specified: "Курс не вказано",
+            task_not_specified: "Завдання не вказано",
+
+            empty_title: "Оцінок не знайдено",
+            empty_text: "Спробуйте змінити пошук або фільтр."
+        },
         profile: {
             loading: "Завантаження...",
             course_suffix: "курс",
@@ -233,6 +356,129 @@ const translations = {
             empty_courses_teacher: "You are not teaching any courses yet",
             pending_submissions: "Submissions waiting for review",
             items: "pcs."
+        },
+            courses: {
+            page_title: "My Courses",
+            page_desc: "Here you can find all the courses you are enrolled in. You can view progress, deadlines and continue learning.",
+            search_placeholder: "Search by course name...",
+            filter_all: "All courses",
+            filter_active: "Active",
+            filter_completed: "Completed",
+            filter_new: "New",
+
+            progress: "Progress",
+            deadline: "Deadline",
+            open_btn: "Open",
+
+            status_active: "Active",
+            status_completed: "Completed",
+            status_new: "New",
+
+            course_finished: "Course completed",
+            in_progress: "Course in progress",
+            short_backend_desc: "Course details are available in the learning cabinet.",
+
+            empty_title: "No courses found",
+            empty_text: "Try changing the search query or filter.",
+
+            unknown_course: "Untitled course"
+        },
+            tasks: {
+            page_title: "Tasks",
+            page_desc: "Here you can view your learning tasks, deadlines, completion statuses and grades.",
+
+            search_placeholder: "Search task...",
+            filter_all: "All tasks",
+            filter_pending: "Pending",
+            filter_submitted: "Submitted",
+            filter_graded: "Graded",
+            filter_overdue: "Overdue",
+
+            stat_total: "Total Tasks",
+            stat_pending: "Pending Tasks",
+            stat_completed: "Completed",
+            stat_avg: "Average Grade",
+
+            status_pending: "Pending",
+            status_submitted: "Submitted",
+            status_graded: "Graded",
+            status_overdue: "Overdue",
+
+            deadline: "Deadline",
+            grade: "Grade",
+            no_grade: "None",
+            open_btn: "Open",
+
+            empty_title: "No tasks found",
+            empty_text: "Try changing the search query or filter.",
+
+            unknown_task: "Untitled task",
+            course_not_specified: "Course not specified",
+            no_deadline: "No deadline specified",
+            exam: "Exam"
+        },
+            schedule: {
+            page_title: "Schedule",
+            page_desc: "Here you can view your weekly classes, time, classroom and learning format.",
+
+            prev_week: "← Previous Week",
+            next_week: "Next Week →",
+            current_week: "Current Week",
+            today_title: "Today",
+
+            monday: "Monday",
+            tuesday: "Tuesday",
+            wednesday: "Wednesday",
+            thursday: "Thursday",
+            friday: "Friday",
+
+            teacher: "Teacher",
+            teacher_not_specified: "Teacher not specified",
+            room: "Room",
+
+            empty_day: "No classes",
+            empty_today: "No classes today.",
+
+            unavailable_title: "Schedule is not available yet",
+            unavailable_text: "The backend endpoint for the schedule has not been implemented yet or is temporarily unavailable.",
+
+            unknown_lesson: "Untitled lesson",
+
+            format_online: "Online",
+            format_offline: "Offline",
+            format_mixed: "Mixed"
+        },
+            grades: {
+            page_title: "Grades",
+            page_desc: "Here you can view your academic performance, task grades, average score and course progress.",
+
+            stat_avg: "Average Grade",
+            stat_graded: "Graded Tasks",
+            stat_courses: "Courses",
+            stat_best: "Best Grade",
+
+            search_placeholder: "Search by course, task or feedback...",
+            filter_all: "All courses",
+
+            table_title: "Gradebook",
+            side_title: "Course Performance",
+
+            th_course: "Course",
+            th_task: "Task",
+            th_date: "Date",
+            th_grade: "Grade",
+            th_status: "Status",
+
+            status_passed: "Passed",
+            status_pending: "Pending",
+            status_failed: "Failed",
+
+            no_grade: "None",
+            course_not_specified: "Course not specified",
+            task_not_specified: "Task not specified",
+
+            empty_title: "No grades found",
+            empty_text: "Try changing the search query or filter."
         },
         profile: {
             loading: "Loading...",
