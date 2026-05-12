@@ -41,8 +41,16 @@ exports.getDashboardData = async (req, res) => {
         `, [userId]);
 
         const schedule = await db.query(`
-            SELECT s.id as lesson_id, c.title_${lang} AS title, s.time_start, s.time_end,
-                s.type_${lang} AS type, g.name_${lang} AS group_name, c.color_accent
+            SELECT 
+                s.id as lesson_id, 
+                c.title_${lang} AS title, 
+                s.time_start, 
+                s.time_end,
+                s.lesson_type,
+                s.lesson_format,
+                s.room,
+                g.name_${lang} AS group_name, 
+                c.color_accent
             FROM public.schedule s
             JOIN public.courses c ON s.course_id = c.id
             JOIN public.groups g ON s.group_id = g.id

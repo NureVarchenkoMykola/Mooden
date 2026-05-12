@@ -84,33 +84,24 @@ const translations = {
             pending_submissions: "Роботи чекають на перевірку",
             items: "шт."
         },
-            courses: {
+        courses: {
             page_title: "Мої курси",
-            page_desc: "Тут зібрані всі курси, на які ви записані. Можна переглядати прогрес, дедлайни та переходити до навчання.",
+            page_desc: "Тут зібрані всі курси, на які ви записані. Можна переглядати прогрес та переходити до навчання.",
             search_placeholder: "Пошук за назвою курсу...",
             filter_all: "Усі курси",
             filter_active: "Активні",
             filter_completed: "Завершені",
             filter_new: "Нові",
-
             progress: "Прогрес",
-            deadline: "Дедлайн",
             open_btn: "Відкрити",
-
             status_active: "Активний",
             status_completed: "Завершений",
             status_new: "Новий",
-
-            course_finished: "Курс завершено",
-            in_progress: "Курс у процесі проходження",
-            short_backend_desc: "Деталі курсу доступні у навчальному кабінеті.",
-
-            empty_title: "Курсів не знайдено",
-            empty_text: "Спробуйте змінити пошук або фільтр.",
-
-            unknown_course: "Курс без назви"
+            no_enrolled_title: "Навчання ще не почалося",
+            empty_title: "Нічого не знайдено",
+            empty_text: "За вашим запитом або фільтром немає відповідних курсів. Спробуйте змінити параметри пошуку."
         },
-            tasks: {
+        tasks: {
             page_title: "Завдання",
             page_desc: "Тут відображаються ваші навчальні завдання, дедлайни, статус виконання та оцінки.",
 
@@ -144,36 +135,32 @@ const translations = {
             no_deadline: "Дедлайн не вказано",
             exam: "Іспит"
         },
-            schedule: {
-            page_title: "Розклад",
+        schedule: {
+            page_title: "Розклад занять",
             page_desc: "Тут відображаються ваші заняття на тиждень, час проведення, аудиторія та формат навчання.",
-
-            prev_week: "← Попередній тиждень",
-            next_week: "Наступний тиждень →",
+            prev_week: "← Попередній",
+            next_week: "Наступний →",
             current_week: "Поточний тиждень",
             today_title: "Сьогодні",
-
             monday: "Понеділок",
             tuesday: "Вівторок",
             wednesday: "Середа",
             thursday: "Четвер",
             friday: "П’ятниця",
-
+            saturday: "Субота",
+            sunday: "Неділя",
             teacher: "Викладач",
-            teacher_not_specified: "Викладача не вказано",
-            room: "Аудиторія",
-
+            room: "Ауд.",
             empty_day: "Занять немає",
-            empty_today: "На сьогодні занять немає.",
-
-            unavailable_title: "Розклад поки недоступний",
-            unavailable_text: "Backend endpoint для розкладу ще не реалізовано або тимчасово недоступний.",
-
+            empty_today: "На сьогодні занять більше немає.",
             unknown_lesson: "Заняття без назви",
-
             format_online: "Онлайн",
-            format_offline: "Аудиторно",
-            format_mixed: "Змішано"
+            format_offline: "Оффлайн",
+            type_lecture: "Лекція",
+            type_practical: "Практика",
+            type_seminar: "Семінар",
+            type_exam: "Іспит",
+            type_consultation: "Консультація"
         },
             grades: {
             page_title: "Оцінки",
@@ -269,7 +256,18 @@ const translations = {
             SIDEBAR_ERROR: "Помилка завантаження бічного меню",
             WRONG_OLD_PASSWORD: "Поточний пароль введено невірно.",
             PASSWORD_UPDATE_ERROR: "Не вдалося оновити пароль.",
-            COPY_ERROR: "Не вдалося скопіювати посилання."
+            COPY_ERROR: "Не вдалося скопіювати посилання.",
+            SERVER_ERROR_COURSES: "Не вдалося завантажити список курсів.",
+            SERVER_ERROR_TASKS: "Не вдалося завантажити список завдань.",
+            SERVER_ERROR_SCHEDULE: "Не вдалося завантажити розклад занять.",
+
+            TASK_NOT_FOUND: "Завдання не знайдено або доступ заборонено.",
+            SERVER_ERROR_TASK_DETAIL: "Не вдалося завантажити інформацію про завдання.",
+            ATTENDANCE_CLOSED: "Час для відмітки на цій парі вичерпано або викладач закрив доступ.",
+            ATTENDANCE_ERROR: "Сталася помилка при спробі відмітитися.",
+            COURSE_NOT_FOUND: "Курс не знайдено або ви на нього не записані.",
+            SERVER_ERROR_COURSE_DETAIL: "Не вдалося завантажити дані курсу.",
+            SERVER_ERROR_ATTENDANCE: "Не вдалося завантажити історію відвідувань."
         }
     },
     en: {
@@ -357,33 +355,24 @@ const translations = {
             pending_submissions: "Submissions waiting for review",
             items: "pcs."
         },
-            courses: {
+        courses: {
             page_title: "My Courses",
-            page_desc: "Here you can find all the courses you are enrolled in. You can view progress, deadlines and continue learning.",
+            page_desc: "Here you can find all the courses you are enrolled in. You can view progress and continue learning.",
             search_placeholder: "Search by course name...",
             filter_all: "All courses",
             filter_active: "Active",
             filter_completed: "Completed",
             filter_new: "New",
-
             progress: "Progress",
-            deadline: "Deadline",
             open_btn: "Open",
-
             status_active: "Active",
             status_completed: "Completed",
             status_new: "New",
-
-            course_finished: "Course completed",
-            in_progress: "Course in progress",
-            short_backend_desc: "Course details are available in the learning cabinet.",
-
-            empty_title: "No courses found",
-            empty_text: "Try changing the search query or filter.",
-
-            unknown_course: "Untitled course"
+            no_enrolled_title: "No courses yet",
+            empty_title: "No results found",
+            empty_text: "There are no courses matching your search or filter. Try adjusting your criteria."
         },
-            tasks: {
+        tasks: {
             page_title: "Tasks",
             page_desc: "Here you can view your learning tasks, deadlines, completion statuses and grades.",
 
@@ -417,36 +406,32 @@ const translations = {
             no_deadline: "No deadline specified",
             exam: "Exam"
         },
-            schedule: {
-            page_title: "Schedule",
+        schedule: {
+            page_title: "Class Schedule",
             page_desc: "Here you can view your weekly classes, time, classroom and learning format.",
-
-            prev_week: "← Previous Week",
-            next_week: "Next Week →",
+            prev_week: "← Previous",
+            next_week: "Next →",
             current_week: "Current Week",
             today_title: "Today",
-
             monday: "Monday",
             tuesday: "Tuesday",
             wednesday: "Wednesday",
             thursday: "Thursday",
             friday: "Friday",
-
+            saturday: "Saturday",
+            sunday: "Sunday",
             teacher: "Teacher",
-            teacher_not_specified: "Teacher not specified",
             room: "Room",
-
             empty_day: "No classes",
-            empty_today: "No classes today.",
-
-            unavailable_title: "Schedule is not available yet",
-            unavailable_text: "The backend endpoint for the schedule has not been implemented yet or is temporarily unavailable.",
-
+            empty_today: "No more classes today.",
             unknown_lesson: "Untitled lesson",
-
             format_online: "Online",
             format_offline: "Offline",
-            format_mixed: "Mixed"
+            type_lecture: "Lecture",
+            type_practical: "Practical",
+            type_seminar: "Seminar",
+            type_exam: "Exam",
+            type_consultation: "Consultation"
         },
             grades: {
             page_title: "Grades",
@@ -542,7 +527,18 @@ const translations = {
             SIDEBAR_ERROR: "Error loading sidebar menu",
             WRONG_OLD_PASSWORD: "Current password is incorrect.",
             PASSWORD_UPDATE_ERROR: "Failed to update password.",
-            COPY_ERROR: "Failed to copy the link."
+            COPY_ERROR: "Failed to copy the link.",
+            SERVER_ERROR_COURSES: "Failed to load the courses list.",
+            SERVER_ERROR_TASKS: "Failed to load the tasks list.",
+            SERVER_ERROR_SCHEDULE: "Failed to load class schedule.",
+
+            TASK_NOT_FOUND: "Task not found or access denied.",
+            SERVER_ERROR_TASK_DETAIL: "Failed to load task details.",
+            ATTENDANCE_CLOSED: "Attendance window is closed or registration time expired.",
+            ATTENDANCE_ERROR: "An error occurred while marking attendance.",
+            COURSE_NOT_FOUND: "Course not found or you are not enrolled.",
+            SERVER_ERROR_COURSE_DETAIL: "Failed to load course data.",
+            SERVER_ERROR_ATTENDANCE: "Failed to load attendance history."
         }
     }
 };

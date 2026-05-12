@@ -73,12 +73,23 @@ function renderDashboard(data) {
     const scheduleContainer = document.getElementById('scheduleContainer');
     if (data.schedule && data.schedule.length > 0) {
         scheduleContainer.innerHTML = data.schedule.map(item => `
-            <div class="deadline-card" style="--dot-color: ${item.color_accent}">
-                <div class="deadline-dot"></div>
-                <div class="deadline-info">
-                    <p class="deadline-task">${item.title}</p>
-                    <p class="deadline-course">${item.type} • ${item.group_name}</p>
-                    <div class="deadline-time">${item.time_start.substring(0, 5)} - ${item.time_end.substring(0, 5)}</div>
+            <div class="schedule-item-card" style="--accent-color: ${item.color_accent}">
+                 <div class="item-details">
+                    <p class="item-title">${item.title}</p>
+                    <p class="item-meta">
+                        ${item.group_name} • ${item.room}
+                    </p>
+                    
+                    <div class="lesson-badges">
+                        <span class="lesson-badge type-${item.lesson_type}">
+                            ${getTranslation(lang, 'schedule.type_' + item.lesson_type)}
+                        </span>
+                        <span class="lesson-badge format-${item.lesson_format}">
+                            ${getTranslation(lang, 'schedule.format_' + item.lesson_format)}
+                        </span>
+                    </div>
+
+                    <div class="item-time-range">${item.time_start.substring(0, 5)} - ${item.time_end.substring(0, 5)}</div>
                 </div>
             </div>
         `).join('');
@@ -89,11 +100,10 @@ function renderDashboard(data) {
     const gradingContainer = document.getElementById('gradingContainer');
     if (data.stats.pendingGrading > 0) {
         gradingContainer.innerHTML = `
-            <div class="deadline-card" style="--dot-color: var(--color-error)">
-                <div class="deadline-dot"></div>
-                <div class="deadline-info">
-                    <p class="deadline-task">${getTranslation(lang, 'dashboard.pending_submissions')}</p>
-                    <p class="deadline-course">${data.stats.pendingGrading} ${getTranslation(lang, 'dashboard.items')}</p>
+            <div class="schedule-item-card">
+                <div class="item-details">
+                    <p class="item-title">${getTranslation(lang, 'dashboard.pending_submissions')}</p>
+                    <p class="item-meta">${data.stats.pendingGrading} ${getTranslation(lang, 'dashboard.items')}</p>
                 </div>
             </div>
         `;

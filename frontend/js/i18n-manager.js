@@ -12,6 +12,12 @@ function applyStaticTranslations(lang) {
         const path = el.getAttribute('data-i18n');
         el.textContent = getTranslation(lang, path);
     });
+
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const path = el.getAttribute('data-i18n-placeholder');
+        el.setAttribute('placeholder', getTranslation(lang, path));
+    });
+    
     document.documentElement.lang = lang;
 }
 

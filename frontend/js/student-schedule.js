@@ -1,446 +1,187 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const scheduleDays = document.getElementById("scheduleDays");
-    const todayLessons = document.getElementById("todayLessons");
-    const todayCount = document.getElementById("todayCount");
-    const weekLabel = document.getElementById("weekLabel");
-    const prevWeekBtn = document.getElementById("prevWeekBtn");
-    const nextWeekBtn = document.getElementById("nextWeekBtn");
+let weekOffset = 0;
+let allLessons = [];
+let todayLessonsData = [];
 
-    if (!scheduleDays) {
-        console.error("Не знайдено елемент #scheduleDays");
+document.addEventListener("DOMContentLoaded", async () => {
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    if (!token) return;
+
+    await loadTodayLessons();
+    await loadSchedule();
+    initControls();
+});
+
+async function loadSchedule() {
+    const container = document.getElementById("scheduleDays");
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    const lang = document.documentElement.lang || "uk";
+
+    const monday = getMonday(weekOffset);
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+
+    updateWeekLabel(monday, sunday, lang);
+
+    try {
+        const fromDate = monday.toISOString().split('T')[0];
+        const toDate = sunday.toISOString().split('T')[0];
+
+        const response = await fetch(`${API_BASE_URL}/student/schedule?from=${fromDate}&to=${toDate}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            showToast(getTranslation(lang, `errors.${errorData.message}`), 'error');
+            console.error(`[Dev Mode] Schedule load failed. Status: ${response.status}, Code: ${errorData.message}`);
+
+            if (response.status === 401 || response.status === 403) {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = '../index.html';
+            }
+            container.innerHTML = `<div class="schedule-empty-state"><h3>${getTranslation(lang, 'errors.SERVER_ERROR_SCHEDULE')}</h3></div>`;
+            return;
+        }
+        const data = await response.json();
+        allLessons = data.schedule;
+
+        renderScheduleGrid(monday, lang);
+
+    } catch (err) {
+        showToast(getTranslation(lang, 'errors.UNKNOWN_ERROR'), 'error');
+        console.error('[Dev Mode] Critical failure during schedule initialization:', err);
+        container.innerHTML = `<div class="schedule-empty-state"><h3>${getTranslation(lang, 'errors.SERVER_ERROR_SCHEDULE')}</h3></div>`;
+    }
+}
+
+function renderScheduleGrid(monday, lang) {
+    const container = document.getElementById("scheduleDays");
+    container.innerHTML = "";
+
+    const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+    for (let i = 0; i < 7; i++) {
+        const currentDate = new Date(monday);
+        currentDate.setDate(monday.getDate() + i);
+        const dateStr = currentDate.toISOString().split('T')[0];
+        
+        const dayLessons = allLessons.filter(l => l.lesson_date.startsWith(dateStr));
+
+        const dayHtml = `
+            <article class="day-card">
+                <div class="day-header">
+                    <h2 class="day-name">${getTranslation(lang, 'schedule.' + dayKeys[i])}</h2>
+                    <div class="day-date">${currentDate.toLocaleDateString(lang === 'en' ? 'en-US' : 'uk-UA', { day: 'numeric', month: 'short' })}</div>
+                </div>
+                <div class="lessons-list">
+                    ${dayLessons.length ? dayLessons.map(l => `
+                        <div class="lesson-card" style="--lesson-accent: ${l.color_accent || 'var(--accent-gold)'}">
+                            <div class="lesson-time">${l.time_start.slice(0, 5)} – ${l.time_end.slice(0, 5)}</div>
+                            <h3 class="lesson-title">${l.course_name}</h3>
+                            <div class="lesson-meta">
+                                <span>👤 ${l.teacher_name}</span>
+                                <span>📍 ${getTranslation(lang, 'schedule.room')} ${l.room || '—'}</span>
+                            </div>
+                            <div class="lesson-badges">
+                                <span class="lesson-badge type-${l.lesson_type}">
+                                    ${getTranslation(lang, 'schedule.type_' + l.lesson_type)}
+                                </span>
+                                <span class="lesson-badge format-${l.lesson_format}">
+                                    ${getTranslation(lang, 'schedule.format_' + l.lesson_format)}
+                                </span>
+                            </div>
+                        </div>
+                    `).join('') : `<div class="empty-day">${getTranslation(lang, 'schedule.empty_day')}</div>`}
+                </div>
+            </article>
+        `;
+        container.insertAdjacentHTML('beforeend', dayHtml);
+    }
+}
+
+async function loadTodayLessons() {
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    const lang = document.documentElement.lang || "uk";
+    const todayStr = new Date().toLocaleDateString('en-CA');
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/student/schedule?from=${todayStr}&to=${todayStr}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+                showToast(getTranslation(lang, `errors.${errorData.message}`), 'error');
+            console.error(`[Dev Mode] Today lessons fetch failed. Status: ${response.status}, Code: ${errorData.message}`);
+
+            if (response.status === 401 || response.status === 403) {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = '../index.html';
+            }
+            return;
+        }
+        const data = await response.json();
+        todayLessonsData = data.schedule;
+        renderTodayPanel(lang);
+
+    } catch (err) {
+        showToast(getTranslation(lang, 'errors.UNKNOWN_ERROR'), 'error');
+        console.error('[Dev Mode] Critical failure during today lessons load:', err);
+    }
+}
+
+function renderTodayPanel(lang) {
+    const today = new Date();
+    const todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+    
+    const todayItems = todayLessonsData.filter(l => {
+        const lessonDate = new Date(l.lesson_date);
+        const lessonDateStr = lessonDate.getFullYear() + '-' + String(lessonDate.getMonth() + 1).padStart(2, '0') + '-' + String(lessonDate.getDate()).padStart(2, '0');
+        
+        return lessonDateStr === todayStr;
+    });
+    
+    document.getElementById('todayCount').textContent = todayItems.length;
+    const list = document.getElementById('todayLessons');
+    
+    if (!todayItems.length) {
+        list.innerHTML = `<p class="today-empty">${getTranslation(lang, 'schedule.empty_today')}</p>`;
         return;
     }
 
-    let lessons = [];
-    let weekOffset = 0;
-
-    function getToken() {
-        return localStorage.getItem("token") || sessionStorage.getItem("token");
-    }
-
-    function getCurrentLang() {
-        return localStorage.getItem("mooden-lang") || document.documentElement.lang || "uk";
-    }
-
-    function translate(key, fallback = "") {
-        const lang = getCurrentLang();
-        const parts = key.split(".");
-
-        let value = translations?.[lang];
-
-        for (const part of parts) {
-            if (!value || value[part] === undefined) {
-                value = null;
-                break;
-            }
-
-            value = value[part];
-        }
-
-        if (value) {
-            return value;
-        }
-
-        let fallbackValue = translations?.uk;
-
-        for (const part of parts) {
-            if (!fallbackValue || fallbackValue[part] === undefined) {
-                fallbackValue = null;
-                break;
-            }
-
-            fallbackValue = fallbackValue[part];
-        }
-
-        return fallbackValue || fallback || key;
-    }
-
-    function applyPageTranslations() {
-        document.querySelectorAll("[data-i18n]").forEach(element => {
-            const key = element.getAttribute("data-i18n");
-            const translatedText = translate(key);
-
-            if (translatedText) {
-                element.textContent = translatedText;
-            }
-        });
-    }
-
-    function getLocalizedField(item, fieldName) {
-        const lang = getCurrentLang();
-
-        return (
-            item[`${fieldName}_${lang}`] ||
-            item[`${fieldName}_uk`] ||
-            item[`${fieldName}_en`] ||
-            item[fieldName] ||
-            ""
-        );
-    }
-
-    function getWeekStart(offset = 0) {
-        const today = new Date();
-        const currentDay = today.getDay();
-
-        const diffToMonday = currentDay === 0 ? -6 : 1 - currentDay;
-
-        const monday = new Date(today);
-        monday.setDate(today.getDate() + diffToMonday + offset * 7);
-        monday.setHours(0, 0, 0, 0);
-
-        return monday;
-    }
-
-    function getWeekEnd(offset = 0) {
-        const monday = getWeekStart(offset);
-        const friday = new Date(monday);
-
-        friday.setDate(monday.getDate() + 4);
-        friday.setHours(23, 59, 59, 999);
-
-        return friday;
-    }
-
-    function formatDate(dateValue) {
-        const date = new Date(dateValue);
-        const lang = getCurrentLang();
-
-        if (Number.isNaN(date.getTime())) {
-            return dateValue;
-        }
-
-        return date.toLocaleDateString(lang === "en" ? "en-US" : "uk-UA", {
-            day: "2-digit",
-            month: "short"
-        });
-    }
-
-    function formatDateForApi(date) {
-        return date.toISOString().split("T")[0];
-    }
-
-    function formatTime(timeValue) {
-        if (!timeValue) {
-            return "—";
-        }
-
-        return String(timeValue).slice(0, 5);
-    }
-
-    function getDayIndex(dateValue) {
-        const date = new Date(dateValue);
-
-        if (Number.isNaN(date.getTime())) {
-            return null;
-        }
-
-        const day = date.getDay();
-
-        if (day === 0 || day === 6) {
-            return null;
-        }
-
-        return day;
-    }
-
-    function getDayNames() {
-        return [
-            translate("schedule.monday", "Понеділок"),
-            translate("schedule.tuesday", "Вівторок"),
-            translate("schedule.wednesday", "Середа"),
-            translate("schedule.thursday", "Четвер"),
-            translate("schedule.friday", "П’ятниця")
-        ];
-    }
-
-    function getFormatClass(typeText) {
-        const type = String(typeText || "").toLowerCase();
-
-        if (
-            type.includes("online") ||
-            type.includes("онлайн")
-        ) {
-            return "online";
-        }
-
-        if (
-            type.includes("mixed") ||
-            type.includes("зміш")
-        ) {
-            return "mixed";
-        }
-
-        return "offline";
-    }
-
-    function normalizeLesson(item, index) {
-        const title =
-            item.course_title ||
-            item.title ||
-            item.course_name ||
-            getLocalizedField(item, "title") ||
-            translate("schedule.unknown_lesson", "Заняття без назви");
-
-        const type =
-            item.type ||
-            getLocalizedField(item, "type") ||
-            translate("schedule.format_offline", "Аудиторно");
-
-        const teacher =
-            item.teacher_name ||
-            item.teacher ||
-            item.full_name ||
-            translate("schedule.teacher_not_specified", "Викладача не вказано");
-
-        const lessonDate =
-            item.lesson_date ||
-            item.date ||
-            item.lessonDate ||
-            null;
-
-        return {
-            id: item.id || index + 1,
-            courseId: item.course_id || null,
-            title,
-            teacher,
-            room: item.room || item.auditorium || item.classroom || "—",
-            type,
-            formatClass: getFormatClass(type),
-            lessonDate,
-            timeStart: item.time_start || item.start_time || item.timeStart,
-            timeEnd: item.time_end || item.end_time || item.timeEnd,
-            colorAccent: item.color_accent || item.color || null
-        };
-    }
-
-    function renderWeekLabel() {
-        const monday = getWeekStart(weekOffset);
-        const friday = getWeekEnd(weekOffset);
-
-        if (weekOffset === 0) {
-            weekLabel.textContent = translate("schedule.current_week", "Поточний тиждень");
-            return;
-        }
-
-        weekLabel.textContent = `${formatDate(monday)} — ${formatDate(friday)}`;
-    }
-
-    function getLessonsForCurrentWeek() {
-        const monday = getWeekStart(weekOffset);
-        const friday = getWeekEnd(weekOffset);
-
-        return lessons.filter(lesson => {
-            if (!lesson.lessonDate) {
-                return false;
-            }
-
-            const lessonDate = new Date(lesson.lessonDate);
-
-            if (Number.isNaN(lessonDate.getTime())) {
-                return false;
-            }
-
-            return lessonDate >= monday && lessonDate <= friday;
-        });
-    }
-
-    function createLessonCard(lesson) {
-        const accentStyle = lesson.colorAccent
-            ? `style="--lesson-accent: ${lesson.colorAccent};"`
-            : "";
-
-        return `
-            <article class="lesson-card" ${accentStyle}>
-                <div class="lesson-time">
-                    ${formatTime(lesson.timeStart)}–${formatTime(lesson.timeEnd)}
-                </div>
-
-                <h3 class="lesson-title">${lesson.title}</h3>
-
-                <div class="lesson-meta">
-                    <span>${translate("schedule.teacher", "Викладач")}: ${lesson.teacher}</span>
-                    <span>${translate("schedule.room", "Аудиторія")}: ${lesson.room}</span>
-                </div>
-
-                <span class="lesson-format ${lesson.formatClass}">
-                    ${lesson.type}
-                </span>
-            </article>
-        `;
-    }
-
-    function renderSchedule() {
-        const monday = getWeekStart(weekOffset);
-        const dayNames = getDayNames();
-        const weekLessons = getLessonsForCurrentWeek();
-
-        scheduleDays.innerHTML = "";
-
-        for (let i = 0; i < 5; i++) {
-            const currentDate = new Date(monday);
-            currentDate.setDate(monday.getDate() + i);
-
-            const dayIndex = i + 1;
-
-            const dayLessons = weekLessons
-                .filter(lesson => getDayIndex(lesson.lessonDate) === dayIndex)
-                .sort((a, b) => String(a.timeStart).localeCompare(String(b.timeStart)));
-
-            const dayCard = document.createElement("article");
-            dayCard.className = "day-card";
-
-            dayCard.innerHTML = `
-                <div class="day-header">
-                    <h2 class="day-name">${dayNames[i]}</h2>
-                    <div class="day-date">${formatDate(currentDate)}</div>
-                </div>
-
-                <div class="lessons-list">
-                    ${
-                        dayLessons.length
-                            ? dayLessons.map(createLessonCard).join("")
-                            : `<div class="empty-day">${translate("schedule.empty_day", "Занять немає")}</div>`
-                    }
-                </div>
-            `;
-
-            scheduleDays.appendChild(dayCard);
-        }
-    }
-
-    function renderTodayPanel() {
-        const today = new Date();
-        const todayDate = today.toISOString().split("T")[0];
-
-        const todayItems = lessons
-            .filter(lesson => {
-                if (!lesson.lessonDate) {
-                    return false;
-                }
-
-                return String(lesson.lessonDate).startsWith(todayDate);
-            })
-            .sort((a, b) => String(a.timeStart).localeCompare(String(b.timeStart)));
-
-        todayCount.textContent = todayItems.length;
-        todayLessons.innerHTML = "";
-
-        if (todayItems.length === 0) {
-            todayLessons.innerHTML = `
-                <p class="today-empty">
-                    ${translate("schedule.empty_today", "На сьогодні занять немає.")}
+    list.innerHTML = todayItems.map(l => `
+        <div class="lesson-today-card" style="--accent: ${l.color_accent || 'var(--accent-gold)'}">
+            <div class="l-time"><b>${l.time_start.slice(0, 5)}</b></div>
+            <div class="l-info">
+                <p class="l-name">${l.course_name}</p>
+                <p class="l-meta">
+                    <span class="type-tag">${getTranslation(lang, 'schedule.type_' + l.lesson_type)}</span> •
+                    <span class="text-gold">${getTranslation(lang, 'schedule.format_' + l.lesson_format)}</span>
                 </p>
-            `;
-            return;
-        }
-
-        todayLessons.innerHTML = todayItems.map(createLessonCard).join("");
-    }
-
-    function renderUnavailable(message) {
-        scheduleDays.innerHTML = `
-            <div class="schedule-empty-state">
-                <h3>${translate("schedule.unavailable_title", "Розклад поки недоступний")}</h3>
-                <p>${message}</p>
             </div>
-        `;
+        </div>
+    `).join('');
+}
 
-        todayCount.textContent = "0";
-        todayLessons.innerHTML = `
-            <p class="today-empty">
-                ${translate("schedule.empty_today", "На сьогодні занять немає.")}
-            </p>
-        `;
-    }
+function getMonday(offset) {
+    const today = new Date();
+    const day = today.getDay();
+    const diff = today.getDate() - (day === 0 ? 6 : day - 1) + (offset * 7);
+    const monday = new Date(today.setDate(diff));
+    monday.setHours(0, 0, 0, 0);
+    return monday;
+}
 
-    async function loadSchedule() {
-        const token = getToken();
+function updateWeekLabel(mon, sun, lang) {
+    const label = weekOffset === 0 
+        ? getTranslation(lang, 'schedule.current_week') 
+        : `${mon.toLocaleDateString(lang, {day:'numeric', month:'short'})} — ${sun.toLocaleDateString(lang, {day:'numeric', month:'short'})}`;
+    document.getElementById('weekLabel').textContent = label;
+}
 
-        if (!token) {
-            renderUnavailable(translate("errors.UNAUTHORIZED", "Ви не авторизовані."));
-            return;
-        }
-
-        try {
-            scheduleDays.innerHTML = `
-                <div class="schedule-empty-state">
-                    <h3>${translate("profile.loading", "Завантаження...")}</h3>
-                    <p>${translate("dashboard.status_loading", "Отримуємо актуальну інформацію...")}</p>
-                </div>
-            `;
-
-            const monday = getWeekStart(weekOffset);
-            const friday = getWeekEnd(weekOffset);
-
-            const url = `${API_BASE_URL}/student/schedule?from=${formatDateForApi(monday)}&to=${formatDateForApi(friday)}`;
-
-            const response = await fetch(url, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`Schedule API error: ${response.status}`);
-            }
-
-            const data = await response.json();
-
-            console.log("SCHEDULE DATA:", data);
-
-            const backendSchedule = Array.isArray(data)
-                ? data
-                : Array.isArray(data.schedule)
-                    ? data.schedule
-                    : Array.isArray(data.lessons)
-                        ? data.lessons
-                        : [];
-
-            lessons = backendSchedule.map(normalizeLesson);
-
-            renderWeekLabel();
-            renderSchedule();
-            renderTodayPanel();
-        } catch (error) {
-            console.error("[Schedule Page] Не вдалося завантажити розклад:", error);
-
-            renderWeekLabel();
-
-            renderUnavailable(
-                translate(
-                    "schedule.unavailable_text",
-                    "Backend endpoint для розкладу ще не реалізовано або тимчасово недоступний."
-                )
-            );
-        }
-    }
-
-    function updatePageAfterLanguageChange() {
-        applyPageTranslations();
-        loadSchedule();
-    }
-
-    if (prevWeekBtn) {
-        prevWeekBtn.addEventListener("click", () => {
-            weekOffset--;
-            loadSchedule();
-        });
-    }
-
-    if (nextWeekBtn) {
-        nextWeekBtn.addEventListener("click", () => {
-            weekOffset++;
-            loadSchedule();
-        });
-    }
-
-    document.querySelectorAll('input[name="lang"]').forEach(radio => {
-        radio.addEventListener("change", () => {
-            setTimeout(updatePageAfterLanguageChange, 200);
-        });
-    });
-
-    applyPageTranslations();
-    renderWeekLabel();
-    loadSchedule();
-});
+function initControls() {
+    document.getElementById('prevWeekBtn').onclick = () => { weekOffset--; loadSchedule(); };
+    document.getElementById('nextWeekBtn').onclick = () => { weekOffset++; loadSchedule(); };
+}

@@ -59,6 +59,31 @@ a:hover {
     color: var(--accent-gold-hover);
 }
 
+.type-lecture {
+    background: color-mix(in srgb, var(--color-lecture) 15%, transparent);
+    color: var(--color-lecture);
+}
+
+.type-practical {
+    background: color-mix(in srgb, var(--color-practical) 15%, transparent);
+    color: var(--color-practical);
+}
+
+.type-exam {
+    background: color-mix(in srgb, var(--color-exam) 15%, transparent);
+    color: var(--color-exam);
+}
+
+.format-online {
+    background: color-mix(in srgb, var(--color-online) 15%, transparent);
+    color: var(--color-online);
+}
+
+.format-offline {
+    background: color-mix(in srgb, var(--color-offline) 15%, transparent);
+    color: var(--color-offline);
+}
+
 /* інструмент для золотого тексту */
 .text-gold {
     color: var(--text-gold);

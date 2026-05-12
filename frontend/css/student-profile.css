@@ -194,7 +194,7 @@
 .p-progress-bar {
     width: 100%;
     height: 6px;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--progress-track);
     border-radius: 0.7rem;
     overflow: hidden;
 }
@@ -446,7 +446,7 @@
 
 .achievements-grid-full {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
     gap: 1.5rem;
 }
 
@@ -541,5 +541,32 @@
 }
 
 @media (max-width: 768px) {
-    .settings-container { grid-template-columns: 1fr; }
+    .profile-stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.8rem;
+    }
+
+    .p-stat-card {
+        padding: 1rem;
+    }
+
+    .profile-content-layout {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .profile-hero-card {
+        padding: 2rem;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .hero-left {
+        gap: 1.5rem;
+    }
+
+    .settings-container {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
 }

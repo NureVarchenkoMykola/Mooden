@@ -253,7 +253,6 @@ function initTabs() {
                     content.classList.add('active');
                 }
             });
-            console.log(`[Dev Mode] Switched to tab: ${targetTab}`);
         });
     });
 }

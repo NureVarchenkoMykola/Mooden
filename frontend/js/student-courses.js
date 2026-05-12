@@ -1,295 +1,128 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const coursesGrid = document.getElementById("coursesGrid");
-    const courseSearch = document.getElementById("courseSearch");
-    const courseFilter = document.getElementById("courseFilter");
+let allCourses = [];
 
-    if (!coursesGrid) {
-        console.error("Не знайдено елемент #coursesGrid");
+document.addEventListener("DOMContentLoaded", async () => {
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    if (!token) return;
+
+    await loadCourses();
+});
+
+async function loadCourses() {
+    const coursesGrid = document.getElementById("coursesGrid");
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    const currentLang = document.documentElement.lang || 'uk';
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/student/courses`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            showToast(getTranslation(currentLang, `errors.${errorData.message}`), 'error');
+            console.error(`[Dev Mode] Courses load failed. Status: ${response.status}, Code: ${errorData.message}`);
+
+            if (response.status === 401 || response.status === 403) {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = '../index.html';
+            }
+            coursesGrid.innerHTML = `<p class="empty-msg">${getTranslation(currentLang, 'errors.SERVER_ERROR_COURSES')}</p>`;
+            return;
+        }
+
+        const data = await response.json();
+        allCourses = data.courses;
+        renderCourses(data.courses, data.user.lang);
+
+    } catch (error) {
+        showToast(getTranslation(currentLang, 'errors.UNKNOWN_ERROR'), 'error');
+        console.error('[Dev Mode] Critical failure during courses fetch:', error);
+        coursesGrid.innerHTML = `<p class="empty-msg">${getTranslation(currentLang, 'errors.SERVER_ERROR_COURSES')}</p>`;
+    }
+}
+
+function renderCourses(coursesToRender, lang) {
+    const coursesGrid = document.getElementById("coursesGrid");
+    coursesGrid.innerHTML = "";
+
+    if (allCourses.length === 0) {
+        coursesGrid.innerHTML = `
+            <div class="empty-courses">
+                <h3>${getTranslation(lang, 'courses.no_enrolled_title')}</h3>
+                <p>${getTranslation(lang, 'dashboard.empty_courses_student')}</p>
+            </div>`;
         return;
     }
 
-    let courses = [];
-
-    function getToken() {
-        return localStorage.getItem("token") || sessionStorage.getItem("token");
+    if (coursesToRender.length === 0) {
+        coursesGrid.innerHTML = `
+            <div class="empty-courses">
+                <h3>${getTranslation(lang, 'courses.empty_title')}</h3>
+                <p>${getTranslation(lang, 'courses.empty_text')}</p>
+            </div>`;
+        return;
     }
 
-    function getCurrentLang() {
-        return localStorage.getItem("mooden-lang") || document.documentElement.lang || "uk";
-    }
+    coursesGrid.innerHTML = coursesToRender.map(course => {
+        const progress = Number(course.progress_percent);
+        let statusClass = 'active';
+        let statusKey = 'courses.status_active';
 
-    function translate(key, fallback = "") {
-        const lang = getCurrentLang();
-        const parts = key.split(".");
-
-        let value = translations?.[lang];
-
-        for (const part of parts) {
-            if (!value || value[part] === undefined) {
-                value = null;
-                break;
-            }
-
-            value = value[part];
+        if (progress === 0) {
+            statusClass = 'new';
+            statusKey = 'courses.status_new';
+        } else if (progress >= 100) {
+            statusClass = 'completed';
+            statusKey = 'courses.status_completed';
         }
 
-        if (value) {
-            return value;
-        }
-
-        let fallbackValue = translations?.uk;
-
-        for (const part of parts) {
-            if (!fallbackValue || fallbackValue[part] === undefined) {
-                fallbackValue = null;
-                break;
-            }
-
-            fallbackValue = fallbackValue[part];
-        }
-
-        return fallbackValue || fallback;
-    }
-
-    function applyPageTranslations() {
-        document.querySelectorAll("[data-i18n]").forEach(element => {
-            const key = element.getAttribute("data-i18n");
-            const translatedText = translate(key);
-
-            if (translatedText) {
-                element.textContent = translatedText;
-            }
-        });
-
-        document.querySelectorAll("[data-i18n-placeholder]").forEach(element => {
-            const key = element.getAttribute("data-i18n-placeholder");
-            const translatedText = translate(key);
-
-            if (translatedText) {
-                element.setAttribute("placeholder", translatedText);
-            }
-        });
-    }
-
-    function getCourseIcon(index) {
-        const icons = ["📚", "🗄️", "💻", "🏗️", "🧠", "🌍"];
-        return icons[index % icons.length];
-    }
-
-    function getCourseProgress(course) {
-        return Number(
-            course.progress_percent ??
-            course.progress ??
-            course.progressPercent ??
-            0
-        );
-    }
-
-    function getCourseStatus(progress) {
-        if (progress >= 100) {
-            return "completed";
-        }
-
-        return "active";
-    }
-
-    function getStatusText(status) {
-        if (status === "completed") {
-            return translate("courses.status_completed", "Завершений");
-        }
-
-        if (status === "new") {
-            return translate("courses.status_new", "Новий");
-        }
-
-        return translate("courses.status_active", "Активний");
-    }
-
-    function normalizeCourse(course, index) {
-        const lang = getCurrentLang();
-        const progress = getCourseProgress(course);
-
-        const title =
-            course.title ||
-            course[`title_${lang}`] ||
-            course.title_uk ||
-            course.title_en ||
-            translate("courses.unknown_course", "Курс без назви");
-
-        const description =
-            course.description ||
-            course[`description_${lang}`] ||
-            course.description_uk ||
-            course.description_en ||
-            "";
-
-        return {
-            id: course.id || course.course_id || index + 1,
-            title,
-            description,
-            progress,
-            status: getCourseStatus(progress),
-            icon: course.icon || getCourseIcon(index),
-            colorAccent: course.color_accent || course.color || null
-        };
-    }
-
-    async function loadCourses() {
-        const token = getToken();
-
-        if (!token) {
-            coursesGrid.innerHTML = `
-                <div class="empty-courses">
-                    <h3>${translate("errors.UNAUTHORIZED", "Ви не авторизовані")}</h3>
-                </div>
-            `;
-            return;
-        }
-
-        try {
-            coursesGrid.innerHTML = `
-                <div class="empty-courses">
-                    <h3>${translate("profile.loading", "Завантаження...")}</h3>
-                    <p>${translate("dashboard.status_loading", "Отримуємо актуальну інформацію...")}</p>
-                </div>
-            `;
-
-            const response = await fetch(`${API_BASE_URL}/student/dashboard`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`Dashboard API error: ${response.status}`);
-            }
-
-            const data = await response.json();
-
-            courses = Array.isArray(data.courses)
-                ? data.courses.map(normalizeCourse)
-                : [];
-
-            renderCourses();
-        } catch (error) {
-            console.error("[Courses Page] Не вдалося завантажити курси:", error);
-
-            coursesGrid.innerHTML = `
-                <div class="empty-courses">
-                    <h3>${translate("courses.empty_title", "Курсів не знайдено")}</h3>
-                    <p>${translate("errors.SERVER_ERROR_DASHBOARD", "Не вдалося завантажити дані панелі.")}</p>
-                </div>
-            `;
-        }
-    }
-
-    function renderCourses() {
-        const searchValue = courseSearch ? courseSearch.value.toLowerCase().trim() : "";
-        const selectedFilter = courseFilter ? courseFilter.value : "all";
-
-        const filteredCourses = courses.filter(course => {
-            const title = course.title.toLowerCase();
-            const description = course.description.toLowerCase();
-
-            const matchesSearch =
-                title.includes(searchValue) ||
-                description.includes(searchValue);
-
-            const matchesFilter =
-                selectedFilter === "all" || course.status === selectedFilter;
-
-            return matchesSearch && matchesFilter;
-        });
-
-        coursesGrid.innerHTML = "";
-
-        if (filteredCourses.length === 0) {
-            coursesGrid.innerHTML = `
-                <div class="empty-courses">
-                    <h3>${translate("courses.empty_title", "Курсів не знайдено")}</h3>
-                    <p>${translate("courses.empty_text", "Спробуйте змінити пошук або фільтр.")}</p>
-                </div>
-            `;
-            return;
-        }
-
-        filteredCourses.forEach(course => {
-            const card = document.createElement("article");
-            card.className = `course-card ${course.status}`;
-
-            if (course.colorAccent) {
-                card.style.setProperty("--course-accent", course.colorAccent);
-            }
-
-            const descriptionHtml = course.description
-                ? `<p class="course-description">${course.description}</p>`
-                : `<p class="course-description muted-description">${translate("courses.short_backend_desc", "Деталі курсу доступні у навчальному кабінеті.")}</p>`;
-
-            card.innerHTML = `
+        return `
+            <article class="course-card ${statusClass}" 
+                     style="--course-accent: ${course.color_accent || 'var(--text-gold)'}">
                 <div class="course-top">
-                    <div class="course-icon">${course.icon}</div>
-
-                    <span class="course-status ${course.status}">
-                        ${getStatusText(course.status)}
+                    <div class="course-icon">📚</div>
+                    <span class="course-status ${statusClass}">
+                        ${getTranslation(lang, statusKey)}
                     </span>
                 </div>
-
                 <h2 class="course-title">${course.title}</h2>
-
-                ${descriptionHtml}
-
+                <p class="course-description">${course.description || ''}</p>
                 <div class="progress-info">
-                    <span>${translate("courses.progress", "Прогрес")}</span>
-                    <strong>${course.progress}%</strong>
+                    <span>${getTranslation(lang, 'courses.progress')}</span>
+                    <strong>${progress}%</strong>
                 </div>
-
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${course.progress}%"></div>
+                    <div class="progress-fill" style="width: ${progress}%"></div>
                 </div>
-
                 <div class="course-footer">
-                    <span class="course-deadline">
-                        ${course.progress >= 100
-                            ? translate("courses.course_finished", "Курс завершено")
-                            : translate("courses.in_progress", "Курс у процесі проходження")
-                        }
-                    </span>
-
-                    <button class="open-course-btn" type="button">
-                        ${translate("courses.open_btn", "Відкрити")}
+                    <button class="open-course-btn" onclick="location.href='./student-course-detail.html?id=${course.id}'">
+                        ${getTranslation(lang, 'courses.open_btn')}
                     </button>
                 </div>
-            `;
+            </article>
+        `;
+    }).join('');
+}
 
-            const openButton = card.querySelector(".open-course-btn");
+document.getElementById('courseSearch')?.addEventListener('input', (e) => {
+    const val = e.target.value.toLowerCase();
+    const lang = document.documentElement.lang || 'uk';
+    const filtered = allCourses.filter(c => c.title.toLowerCase().includes(val));
+    renderCourses(filtered, lang);
+});
 
-            openButton.addEventListener("click", () => {
-                window.location.href = `./student-course-detail.html?id=${course.id}`;
-            });
+document.getElementById('courseFilter')?.addEventListener('change', (e) => {
+    const val = e.target.value;
+    const lang = document.documentElement.lang || 'uk';
+    let filtered = allCourses;
 
-            coursesGrid.appendChild(card);
-        });
+    if (val === 'new') {
+        filtered = allCourses.filter(c => Number(c.progress_percent) === 0);
+    } else if (val === 'active') {
+        filtered = allCourses.filter(c => Number(c.progress_percent) > 0 && Number(c.progress_percent) < 100);
+    } else if (val === 'completed') {
+        filtered = allCourses.filter(c => Number(c.progress_percent) >= 100);
     }
-
-    function updatePageAfterLanguageChange() {
-        applyPageTranslations();
-        loadCourses();
-    }
-
-    if (courseSearch) {
-        courseSearch.addEventListener("input", renderCourses);
-    }
-
-    if (courseFilter) {
-        courseFilter.addEventListener("change", renderCourses);
-    }
-
-    document.querySelectorAll('input[name="lang"]').forEach(radio => {
-        radio.addEventListener("change", () => {
-            setTimeout(updatePageAfterLanguageChange, 200);
-        });
-    });
-
-    applyPageTranslations();
-    loadCourses();
+    renderCourses(filtered, lang);
 });

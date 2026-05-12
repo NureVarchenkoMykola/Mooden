@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../assets/icons/favicon.png">
 
     <script src="../js/config.js"></script>
     <script src="../js/translations.js"></script>
@@ -20,7 +21,6 @@
 
     <link rel="stylesheet" href="../css/variables.css">
     <link rel="stylesheet" href="../css/global.css">
-    <link rel="stylesheet" href="../css/student-dashboard.css">
     <link rel="stylesheet" href="../css/student-tasks.css">
 </head>
 
@@ -112,54 +112,58 @@
             <button id="menuToggle" class="menu-btn">☰</button>
             <div class="logo-mobile">Mooden</div>
         </div>
-
-        <header class="dashboard-header tasks-header">
+        <header class="tasks-header">
             <div>
-                <h1 data-i18n="tasks.page_title">Завдання</h1>
-                <p class="header-desc" data-i18n="tasks.page_desc">
-                    Тут зібрані ваші навчальні завдання, дедлайни, статус виконання та оцінки.
-                </p>
+                <h1 data-i18n="tasks.page_title">📝 Завдання</h1>
+                <p class="header-desc" data-i18n="tasks.page_desc">...</p>
             </div>
         </header>
 
         <section class="tasks-stats">
             <div class="task-stat-card">
-                <span class="task-stat-icon">📝</span>
+                <span class="task-stat-icon">📊</span>
                 <div>
                     <p class="task-stat-value" id="totalTasks">0</p>
-                    <p class="task-stat-label" data-i18n="tasks.stat_total">Усього завдань</p>
+                    <p class="task-stat-label" data-i18n="tasks.stat_total">Усього</p>
                 </div>
             </div>
-
             <div class="task-stat-card">
                 <span class="task-stat-icon">⏳</span>
                 <div>
                     <p class="task-stat-value" id="pendingTasks">0</p>
-                    <p class="task-stat-label" data-i18n="tasks.stat_pending">Очікують виконання</p>
+                    <p class="task-stat-label" data-i18n="tasks.stat_pending">Очікують</p>
                 </div>
             </div>
-
-           
+            <div class="task-stat-card danger"> <span class="task-stat-icon">⚠️</span>
+                <div>
+                    <p class="task-stat-value" id="overdueTasks">0</p>
+                    <p class="task-stat-label" data-i18n="tasks.filter_overdue">Прострочено</p>
+                </div>
+            </div>
+            <div class="task-stat-card gold">
+                <span class="task-stat-icon">⭐</span>
+                <div>
+                    <p class="task-stat-value" id="avgGrade">0.0</p>
+                    <p class="task-stat-label" data-i18n="tasks.stat_avg">Середній бал</p>
+                </div>
+            </div>
         </section>
 
         <section class="tasks-toolbar">
             <div class="search-box">
-                <input
-                    type="text"
-                    id="taskSearch"
-                    placeholder="Пошук завдання..."
-                    data-i18n-placeholder="tasks.search_placeholder"
-                >
+                <div class="input-wrapper">
+                    <input type="text" id="taskSearch" data-i18n-placeholder="tasks.search_placeholder">
+                </div>
             </div>
-
-            <select id="taskFilter" class="task-filter">
+            <select id="taskFilter" class="task-filter custom-select">
                 <option value="all" data-i18n="tasks.filter_all">Усі завдання</option>
-                <option value="pending" data-i18n="tasks.filter_pending">Очікують</option>
+                <option value="pending" data-i18n="tasks.filter_pending" selected>Очікують</option>
+                <option value="graded" data-i18n="tasks.filter_graded">Оцінені</option>
                 <option value="overdue" data-i18n="tasks.filter_overdue">Прострочені</option>
             </select>
         </section>
 
-        <section id="tasksList" class="tasks-list"></section>
+        <div id="tasksList" class="tasks-grid"></div>
     </main>
 
     <script src="../js/student-tasks.js"></script>

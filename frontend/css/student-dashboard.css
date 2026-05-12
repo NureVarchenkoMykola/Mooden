@@ -109,7 +109,7 @@
 .progress-bar {
     width: 100%;
     height: 6px;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--progress-track);
     border-radius: 0.7rem;
     overflow: hidden;
 }
@@ -293,4 +293,32 @@
 .modal-body::-webkit-scrollbar-thumb {
     background: var(--border-main);
     border-radius: 1rem;
+}
+
+@media (max-width: 768px) {
+    .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .content-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .dashboard-header h1 {
+        font-size: 2.2rem;
+    }
+
+    .stat-card {
+        padding: 1.1rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .modal-content {
+        padding: 1.5rem;
+    }
 }

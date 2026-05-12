@@ -1,417 +1,123 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const tasksList = document.getElementById("tasksList");
-    const taskSearch = document.getElementById("taskSearch");
-    const taskFilter = document.getElementById("taskFilter");
+let allTasks = [];
 
-    const totalTasks = document.getElementById("totalTasks");
-    const pendingTasks = document.getElementById("pendingTasks");
-    const completedTasksPage = document.getElementById("completedTasksPage");
-    const avgTaskGrade = document.getElementById("avgTaskGrade");
+document.addEventListener("DOMContentLoaded", async () => {
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    if (!token) return;
 
-    if (!tasksList) {
-        console.error("Не знайдено елемент #tasksList");
+    await loadTasks();
+    setupFilters();
+});
+
+async function loadTasks() {
+    const container = document.getElementById("tasksList");
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    const currentLang = document.documentElement.lang || "uk";
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/student/tasks`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            showToast(getTranslation(currentLang, `errors.${errorData.message}`), 'error');
+            console.error(`[Dev Mode] Tasks load failed. Status: ${response.status}, Code: ${errorData.message}`);
+
+            if (response.status === 401 || response.status === 403) {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = '../index.html';
+            }
+            container.innerHTML = `<p class="empty-msg">${getTranslation(currentLang, 'errors.SERVER_ERROR_TASKS')}</p>`;
+            return;
+        }
+
+        const data = await response.json();
+        allTasks = data.tasks;
+        const initialFiltered = allTasks.filter(t => t.status === 'pending');
+
+        document.getElementById('totalTasks').textContent = data.stats.total;
+        document.getElementById('pendingTasks').textContent = data.stats.pending;
+        document.getElementById('overdueTasks').textContent = data.stats.overdue;
+        document.getElementById('avgGrade').textContent = data.stats.avgGrade;
+
+        renderTasks(initialFiltered, data.user.lang);
+
+    } catch (error) {
+        showToast(getTranslation(currentLang, 'errors.UNKNOWN_ERROR'), 'error');
+        console.error('[Dev Mode] Critical failure during tasks initialization:', error);
+        container.innerHTML = `<p class="empty-msg">${getTranslation(currentLang, 'errors.SERVER_ERROR_TASKS')}</p>`;
+    }
+}
+
+function renderTasks(tasksToRender, lang) {
+    const container = document.getElementById("tasksList");
+    container.innerHTML = "";
+
+    if (allTasks.length === 0) {
+        container.innerHTML = `
+            <div class="empty-tasks">
+                <h3>${getTranslation(lang, 'tasks.empty_title')}</h3>
+                <p>${getTranslation(lang, 'tasks.page_desc')}</p>
+            </div>`;
         return;
     }
 
-    let tasks = [];
-
-    function getToken() {
-        return localStorage.getItem("token") || sessionStorage.getItem("token");
+    if (tasksToRender.length === 0) {
+        container.innerHTML = `
+            <div class="empty-tasks">
+                <h3>${getTranslation(lang, 'tasks.empty_title')}</h3>
+                <p>${getTranslation(lang, 'tasks.empty_text')}</p>
+            </div>`;
+        return;
     }
 
-    function getCurrentLang() {
-        return localStorage.getItem("mooden-lang") || document.documentElement.lang || "uk";
-    }
-
-    function translate(key, fallback = "") {
-        const lang = getCurrentLang();
-        const parts = key.split(".");
-
-        let value = translations?.[lang];
-
-        for (const part of parts) {
-            if (!value || value[part] === undefined) {
-                value = null;
-                break;
-            }
-
-            value = value[part];
-        }
-
-        if (value) {
-            return value;
-        }
-
-        let fallbackValue = translations?.uk;
-
-        for (const part of parts) {
-            if (!fallbackValue || fallbackValue[part] === undefined) {
-                fallbackValue = null;
-                break;
-            }
-
-            fallbackValue = fallbackValue[part];
-        }
-
-        return fallbackValue || fallback || key;
-    }
-
-    function applyPageTranslations() {
-        document.querySelectorAll("[data-i18n]").forEach(element => {
-            const key = element.getAttribute("data-i18n");
-            const translatedText = translate(key);
-
-            if (translatedText) {
-                element.textContent = translatedText;
-            }
+    container.innerHTML = tasksToRender.map(task => {
+        const date = new Date(task.deadline).toLocaleDateString(lang === 'en' ? 'en-US' : 'uk-UA', {
+            day: 'numeric', month: 'short'
         });
+        const statusText = getTranslation(lang, `tasks.status_${task.status}`);
 
-        document.querySelectorAll("[data-i18n-placeholder]").forEach(element => {
-            const key = element.getAttribute("data-i18n-placeholder");
-            const translatedText = translate(key);
-
-            if (translatedText) {
-                element.setAttribute("placeholder", translatedText);
-            }
-        });
-    }
-
-    function formatDate(dateValue) {
-        if (!dateValue) {
-            return translate("tasks.no_deadline", "Дедлайн не вказано");
-        }
-
-        const date = new Date(dateValue);
-
-        if (Number.isNaN(date.getTime())) {
-            return dateValue;
-        }
-
-        const lang = getCurrentLang();
-
-        return date.toLocaleDateString(lang === "en" ? "en-US" : "uk-UA", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-        });
-    }
-
-    function isOverdue(dateValue) {
-        if (!dateValue) {
-            return false;
-        }
-
-        const deadline = new Date(dateValue);
-
-        if (Number.isNaN(deadline.getTime())) {
-            return false;
-        }
-
-        return deadline < new Date();
-    }
-
-    function getTaskStatus(task) {
-        if (task.status) {
-            return task.status;
-        }
-
-        if (task.grade !== null && task.grade !== undefined) {
-            return "graded";
-        }
-
-        if (isOverdue(task.deadline)) {
-            return "overdue";
-        }
-
-        return "pending";
-    }
-
-    function getStatusText(status) {
-        if (status === "submitted") {
-            return translate("tasks.status_submitted", "Здано");
-        }
-
-        if (status === "graded") {
-            return translate("tasks.status_graded", "Оцінено");
-        }
-
-        if (status === "overdue") {
-            return translate("tasks.status_overdue", "Прострочено");
-        }
-
-        return translate("tasks.status_pending", "Очікує");
-    }
-
-    function getLocalizedField(item, fieldName) {
-        const lang = getCurrentLang();
-
-        return (
-            item[`${fieldName}_${lang}`] ||
-            item[`${fieldName}_uk`] ||
-            item[`${fieldName}_en`] ||
-            item[fieldName] ||
-            ""
-        );
-    }
-
-    function normalizeTask(task, index) {
-        const title =
-            task.title ||
-            task.task_title ||
-            getLocalizedField(task, "title") ||
-            translate("tasks.unknown_task", "Завдання без назви");
-
-        const description =
-            task.description ||
-            task.task_description ||
-            getLocalizedField(task, "description") ||
-            "";
-
-        const courseName =
-            task.course_name ||
-            task.course_title ||
-            task.course ||
-            getLocalizedField(task, "course") ||
-            translate("tasks.course_not_specified", "Курс не вказано");
-
-        const deadline =
-            task.deadline ||
-            task.due_date ||
-            task.deadline_at ||
-            null;
-
-        const grade =
-            task.grade ??
-            task.grade_value ??
-            null;
-
-        const normalizedTask = {
-            id: task.id || task.task_id || index + 1,
-            title,
-            description,
-            courseName,
-            deadline,
-            grade,
-            isExam: Boolean(task.is_exam),
-            colorAccent: task.color_accent || task.color || null,
-            status: task.status || null
-        };
-
-        normalizedTask.status = getTaskStatus(normalizedTask);
-
-        return normalizedTask;
-    }
-
-    async function loadTasks() {
-        const token = getToken();
-
-        if (!token) {
-            tasksList.innerHTML = `
-                <div class="empty-tasks">
-                    <h3>${translate("errors.UNAUTHORIZED", "Ви не авторизовані")}</h3>
-                </div>
-            `;
-            return;
-        }
-
-        try {
-            tasksList.innerHTML = `
-                <div class="empty-tasks">
-                    <h3>${translate("profile.loading", "Завантаження...")}</h3>
-                    <p>${translate("dashboard.status_loading", "Отримуємо актуальну інформацію...")}</p>
-                </div>
-            `;
-
-            const response = await fetch(`${API_BASE_URL}/student/dashboard`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`Dashboard API error: ${response.status}`);
-            }
-
-            const data = await response.json();
-
-            console.log("DASHBOARD DATA:", data);
-            console.log("TASKS FROM API:", data.tasks);
-            console.log("DEADLINES FROM API:", data.deadlines);
-
-            const backendTasks = Array.isArray(data.tasks)
-                ? data.tasks
-                : Array.isArray(data.deadlines)
-                    ? data.deadlines
-                    : [];
-
-            tasks = backendTasks.map(normalizeTask);
-
-            updateStats();
-            renderTasks();
-        } catch (error) {
-            console.error("[Tasks Page] Не вдалося завантажити завдання:", error);
-
-            tasksList.innerHTML = `
-                <div class="empty-tasks">
-                    <h3>${translate("tasks.empty_title", "Завдань не знайдено")}</h3>
-                    <p>${translate("errors.SERVER_ERROR_DASHBOARD", "Не вдалося завантажити дані панелі.")}</p>
-                </div>
-            `;
-        }
-    }
-
-    function updateStats() {
-        const pendingCount = tasks.filter(task => {
-            return task.status === "pending" || task.status === "overdue";
-        }).length;
-
-        const completedCount = tasks.filter(task => {
-            return task.status === "submitted" || task.status === "graded";
-        }).length;
-
-        const gradedTasks = tasks.filter(task => {
-            return typeof task.grade === "number";
-        });
-
-        const avgGrade = gradedTasks.length
-            ? Math.round(
-                gradedTasks.reduce((sum, task) => sum + Number(task.grade), 0) / gradedTasks.length
-            )
-            : 0;
-
-        if (totalTasks) {
-            totalTasks.textContent = tasks.length;
-        }
-
-        if (pendingTasks) {
-            pendingTasks.textContent = pendingCount;
-        }
-
-        if (completedTasksPage) {
-            completedTasksPage.textContent = completedCount;
-        }
-
-        if (avgTaskGrade) {
-            avgTaskGrade.textContent = avgGrade || "—";
-        }
-    }
-
-    function renderTasks() {
-        const searchValue = taskSearch ? taskSearch.value.toLowerCase().trim() : "";
-        const selectedFilter = taskFilter ? taskFilter.value : "all";
-
-        const filteredTasks = tasks.filter(task => {
-            const title = task.title.toLowerCase();
-            const course = task.courseName.toLowerCase();
-            const description = task.description.toLowerCase();
-
-            const matchesSearch =
-                title.includes(searchValue) ||
-                course.includes(searchValue) ||
-                description.includes(searchValue);
-
-            const matchesFilter =
-                selectedFilter === "all" || task.status === selectedFilter;
-
-            return matchesSearch && matchesFilter;
-        });
-
-        tasksList.innerHTML = "";
-
-        if (filteredTasks.length === 0) {
-            tasksList.innerHTML = `
-                <div class="empty-tasks">
-                    <h3>${translate("tasks.empty_title", "Завдань не знайдено")}</h3>
-                    <p>${translate("tasks.empty_text", "Спробуйте змінити пошук або фільтр.")}</p>
-                </div>
-            `;
-            return;
-        }
-
-        filteredTasks.forEach(task => {
-            const card = document.createElement("article");
-            card.className = `task-card ${task.status}`;
-
-            if (task.colorAccent) {
-                card.style.setProperty("--task-accent", task.colorAccent);
-            }
-
-            const gradeText =
-                task.grade === null || task.grade === undefined
-                    ? translate("tasks.no_grade", "Немає")
-                    : task.grade;
-
-            const descriptionHtml = task.description
-                ? `<p class="task-description">${task.description}</p>`
-                : "";
-
-            const examBadge = task.isExam
-                ? `<span class="task-exam-badge">${translate("tasks.exam", "Іспит")}</span>`
-                : "";
-
-            card.innerHTML = `
+        return `
+            <article class="task-card" style="--task-accent: ${task.color_accent || 'var(--accent-gold)'}">
                 <div class="task-main">
-                    <div class="task-top">
-                        <span class="task-course">${task.courseName}</span>
-                        ${examBadge}
-                        <span class="task-status ${task.status}">
-                            ${getStatusText(task.status)}
-                        </span>
+                    <div class="task-header">
+                        <span class="task-course-tag">${task.course_name}</span>
+                        <span class="task-status-badge ${task.status}">${statusText}</span>
                     </div>
-
                     <h2 class="task-title">${task.title}</h2>
-
-                    ${descriptionHtml}
-
-                    <div class="task-meta">
-                        <span>
-                            ${translate("tasks.deadline", "Дедлайн")}:
-                            <strong>${formatDate(task.deadline)}</strong>
-                        </span>
-
-                        <span>
-                            ${translate("tasks.grade", "Оцінка")}:
-                            <strong>${gradeText}</strong>
-                        </span>
+                    <p class="task-desc">${task.description || ''}</p>
+                    <div class="task-footer">
+                        <span>📅 ${date}</span>
+                        <span>⭐ ${task.grade_value || getTranslation(lang, 'tasks.no_grade')}</span>
                     </div>
                 </div>
+                <button class="open-task-btn" onclick="location.href='student-task-detail.html?id=${task.id}'">
+                    ${getTranslation(lang, 'tasks.open_btn')}
+                </button>
+            </article>
+        `;
+    }).join('');
+}
 
-                <div class="task-actions">
-                    <button class="task-btn" type="button">
-                        ${translate("tasks.open_btn", "Відкрити")}
-                    </button>
-                </div>
-            `;
+function setupFilters() {
+    const searchInput = document.getElementById("taskSearch");
+    const filterSelect = document.getElementById("taskFilter");
 
-            const button = card.querySelector(".task-btn");
+    const applyFilters = () => {
+        const query = searchInput.value.toLowerCase();
+        const status = filterSelect.value;
+        const lang = document.documentElement.lang || 'uk';
 
-            button.addEventListener("click", () => {
-                alert(`${translate("tasks.open_btn", "Відкрити")}: ${task.title}`);
-            });
-
-            tasksList.appendChild(card);
+        const filtered = allTasks.filter(t => {
+            const matchesSearch = t.title.toLowerCase().includes(query) || t.course_name.toLowerCase().includes(query);
+            const matchesStatus = (status === 'all') || (t.status === status);
+            return matchesSearch && matchesStatus;
         });
-    }
 
-    function updatePageAfterLanguageChange() {
-        applyPageTranslations();
-        loadTasks();
-    }
+        renderTasks(filtered, lang);
+    };
 
-    if (taskSearch) {
-        taskSearch.addEventListener("input", renderTasks);
-    }
-
-    if (taskFilter) {
-        taskFilter.addEventListener("change", renderTasks);
-    }
-
-    document.querySelectorAll('input[name="lang"]').forEach(radio => {
-        radio.addEventListener("change", () => {
-            setTimeout(updatePageAfterLanguageChange, 200);
-        });
-    });
-
-    applyPageTranslations();
-    loadTasks();
-});
+    searchInput?.addEventListener("input", applyFilters);
+    filterSelect?.addEventListener("change", applyFilters);
+}

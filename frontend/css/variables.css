@@ -9,12 +9,21 @@
     --text-muted: #7A90AA;     /* Другорядний текст (Bali Hai) */
     --text-gold: #E8A44A;      /* Золотий текст/акценти (Tulip Tree) */
     --text-placeholder: #3D5470; /* Текст всередині інпутів (Fiord) */
+    --text-button: #1A1A1A;
  
     /* ACCENTS */
     --accent-gold: var(--text-gold);    /* Основна кнопка "Увійти" */
     --accent-gold-hover: #EDA94F; /* Колір кнопки при наведенні (Sandy Brown был(F0B060)) */
     --border-main: rgba(255, 255, 255, 0.07);    /* Рамка інпутів (білий з 0.07 опасіті) */
     --border-focus: var(--text-gold); /* Рамка при кліку на інпут */
+    --progress-track: rgba(255, 255, 255, 0.05);
+
+    /* LESSON TYPES & FORMATS */
+    --color-online: #3498db;
+    --color-offline: #2ecc71;
+    --color-lecture: #9b59b6;
+    --color-practical: #e67e22;
+    --color-exam: #e74c3c;
 
     /* STATUS */
     --color-error: #802a2a;    /* Помилки (Sunglo старый E87070) */
@@ -36,12 +45,14 @@
     --text-muted: #586c86;
     --text-gold: #C88A2F;
     --text-placeholder: #9AA8B8;
+    --text-button: #000;
 
     /* ACCENTS */
     --accent-gold: var(--text-gold);
     --accent-gold-hover: #D8953F;
     --border-main: rgba(11, 18, 32, 0.1);
     --border-focus: var(--text-gold);
+    --progress-track: #e0e0e0;
 
     /* STATUS */
     --color-error: #D64545;

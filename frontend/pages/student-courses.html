@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../assets/icons/favicon.png">
 
     <script src="../js/config.js"></script>
     <script src="../js/translations.js"></script>
@@ -20,7 +21,6 @@
 
     <link rel="stylesheet" href="../css/variables.css">
     <link rel="stylesheet" href="../css/global.css">
-    <link rel="stylesheet" href="../css/student-dashboard.css">
     <link rel="stylesheet" href="../css/student-courses.css">
 </head>
 
@@ -29,43 +29,29 @@
     <aside class="sidebar">
         <div class="sidebar-top">
             <div class="logo">Mooden</div>
-
             <nav class="nav-menu">
                 <p class="nav-label" data-i18n="common.nav_label_main">НАВІГАЦІЯ</p>
-
                 <a href="./student-dashboard.html" class="nav-link">
                     <span data-i18n="common.nav_dashboard">📊 Дашборд</span>
                 </a>
-
                 <a href="./student-courses.html" class="nav-link active">
                     <span data-i18n="common.nav_courses">📖 Мої курси</span>
                 </a>
-
                 <a href="./student-tasks.html" class="nav-link">
                     <span data-i18n="common.nav_tasks">📝 Завдання</span>
                     <span class="badge-count" id="tasksBadge">0</span>
                 </a>
-
                 <a href="./student-schedule.html" class="nav-link">
                     <span data-i18n="common.nav_schedule">📅 Розклад</span>
                 </a>
-
                 <a href="./student-grades.html" class="nav-link">
                     <span data-i18n="common.nav_grades">⭐ Оцінки</span>
                 </a>
-
-                <a href="#" class="nav-link">
-                    <span data-i18n="common.nav_shop">💎 Крамниця</span>
-                </a>
+                <a href="#" class="nav-link"><span data-i18n="common.nav_shop">💎 Крамниця</span></a>
             </nav>
-
             <nav class="nav-menu">
                 <p class="nav-label" data-i18n="common.nav_label_community">СПІЛЬНОТА</p>
-
-                <a href="#" class="nav-link">
-                    <span data-i18n="common.nav_discussions">💬 Обговорення</span>
-                </a>
-
+                <a href="#" class="nav-link"><span data-i18n="common.nav_discussions">💬 Обговорення</span></a>
                 <a href="#" class="nav-link">
                     <span data-i18n="common.nav_notifications">🔔 Сповіщення</span>
                     <span class="badge-count" id="notifBadge">0</span>
@@ -78,32 +64,25 @@
                 <div class="user-avatar" id="avatarInitial">?</div>
                 <div class="user-meta">
                     <p class="user-name" id="profileName">...</p>
-                    <p class="user-sub" id="profileGroup">Завантаження...</p>
+                    <p class="user-sub" id="profileGroup" data-i18n="dashboard.user_loading">Завантаження...</p>
                 </div>
             </div>
-
             <div class="theme-switch-container">
                 <button id="themeToggle" class="theme-toggle-btn">
                     <span class="theme-icon">🌙</span>
                     <span class="theme-text" data-i18n="common.theme_dark">Темна тема</span>
                 </button>
             </div>
-
             <div class="lang-switch-container">
                 <div class="lang-slider">
                     <input type="radio" name="lang" id="lang-uk" value="uk">
                     <label for="lang-uk">UA</label>
-
                     <input type="radio" name="lang" id="lang-en" value="en">
                     <label for="lang-en">EN</label>
-
                     <div class="slider-bg"></div>
                 </div>
             </div>
-
-            <button id="logoutBtn" class="logout-btn" data-i18n="common.logout_btn">
-                🚪 Вийти з акаунту
-            </button>
+            <button id="logoutBtn" class="logout-btn" data-i18n="common.logout_btn">🚪 Вийти з акаунту</button>
         </div>
     </aside>
 
@@ -113,23 +92,25 @@
             <div class="logo-mobile">Mooden</div>
         </div>
 
-        <header class="dashboard-header courses-header">
+        <header class="courses-header">
             <div>
-                <h1 data-i18n="courses.page_title">Мої курси</h1>
+                <h1 data-i18n="courses.page_title">📖 Мої курси</h1>
                 <p class="header-desc" data-i18n="courses.page_desc">
-                    Тут зібрані всі курси, на які ви записані. Можна переглядати прогрес, дедлайни та переходити до навчання.
+                    Тут зібрані всі курси, на які ви записані. Переглядайте свій прогрес та переходьте до навчання.
                 </p>
             </div>
         </header>
 
         <section class="courses-toolbar">
             <div class="search-box">
-                <input 
-                    type="text" 
-                    id="courseSearch" 
-                    placeholder="Пошук за назвою курсу..."
-                    data-i18n-placeholder="courses.search_placeholder"
-                >
+                <div class="input-wrapper">
+                    <input 
+                        type="text" 
+                        id="courseSearch" 
+                        placeholder="Пошук за назвою курсу..."
+                        data-i18n-placeholder="courses.search_placeholder"
+                    >
+                </div>
             </div>
 
             <select id="courseFilter" class="course-filter">
