@@ -101,6 +101,87 @@ const translations = {
             empty_title: "Нічого не знайдено",
             empty_text: "За вашим запитом або фільтром немає відповідних курсів. Спробуйте змінити параметри пошуку."
         },
+        course_detail: {
+            progress: "Прогрес курсу",
+            tasks_count: "Завдань",
+            average_grade: "Середній бал",
+
+            tasks_title: "Завдання курсу",
+            materials_title: "Матеріали",
+            attendance_title: "Відвідуваність",
+
+            no_description: "Опис курсу поки не додано.",
+            no_tasks: "Завдання для цього курсу поки не додані.",
+            no_materials: "Матеріали курсу поки не додані.",
+            no_attendance: "Позначок відвідування поки немає.",
+            no_deadline: "Дедлайн не вказано",
+            view_all_attendance: "Уся історія",
+
+            attendance_present: "Присутній",
+            attendance_absent: "Немає позначки",
+            mark_attendance: "Позначити",
+            marking: "Позначаємо...",
+            attendance_marked: "Відвідування позначено.",
+
+            material_lecture: "Лекція / конспект",
+            material_manual: "Методичні вказівки",
+            material_video: "Відео",
+            material_link: "Посилання",
+            material_book: "Книга",
+            material_other: "Інше",
+            materials_count: "матеріал(и)",
+
+            lesson_lecture: "Лекція",
+            lesson_practical: "Практичне заняття",
+            lesson_seminar: "Семінар",
+            lesson_exam: "Іспит",
+            lesson_consultation: "Консультація",
+
+            not_found_title: "Курс не знайдено",
+            not_found_text: "Поверніться на сторінку курсів і виберіть курс ще раз.",
+
+            unavailable_title: "Деталі курсу поки недоступні",
+            unavailable_text: "Не вдалося завантажити деталі курсу з backend."
+        },
+        attendance_page: {
+            page_title: "Відвідуваність",
+            page_desc: "Тут відображається повна історія ваших занять, присутності та доступних відміток по обраному курсу.",
+
+            stat_total: "Усього занять",
+            stat_present: "Присутній",
+            stat_absent: "Без позначки",
+            stat_percent: "Відсоток присутності",
+
+            list_title: "Історія занять",
+            empty_text: "Історія відвідуваності для цього курсу поки порожня.",
+            no_room: "Аудиторію не вказано",
+
+            not_found_title: "Курс не знайдено",
+            not_found_text: "Поверніться на сторінку курсу та відкрийте історію відвідуваності ще раз.",
+
+            unavailable_title: "Відвідуваність поки недоступна",
+            unavailable_text: "Не вдалося завантажити історію відвідуваності з backend."
+        },
+        task_detail: {
+            no_deadline: "Дедлайн не вказано",
+
+            not_found_title: "Завдання не знайдено",
+            not_found_text: "Поверніться до курсу або сторінки завдань і виберіть завдання ще раз.",
+
+            unavailable_title: "Деталі завдання поки недоступні",
+            unavailable_text: "Не вдалося завантажити деталі завдання з backend.",
+
+            no_description: "Опис завдання поки не додано.",
+            not_submitted: "Ще не здано",
+
+            submission_status: "Стан здачі",
+            description_title: "Опис завдання",
+            result_title: "Результат",
+            feedback: "Коментар",
+            no_feedback: "Коментаря поки немає",
+            submitted_at: "Дата здачі"
+            
+        },
         tasks: {
             page_title: "Завдання",
             page_desc: "Тут відображаються ваші навчальні завдання, дедлайни, статус виконання та оцінки.",
@@ -372,6 +453,87 @@ const translations = {
             empty_title: "No results found",
             empty_text: "There are no courses matching your search or filter. Try adjusting your criteria."
         },
+        task_detail: {
+            no_deadline: "No deadline specified",
+
+            not_found_title: "Task not found",
+            not_found_text: "Please return to the course or tasks page and select a task again.",
+
+            unavailable_title: "Task details are not available yet",
+            unavailable_text: "Failed to load task details from backend.",
+
+            no_description: "The task description has not been added yet.",
+            not_submitted: "Not submitted yet",
+
+            submission_status: "Submission status",
+            description_title: "Task description",
+            result_title: "Result",
+            feedback: "Feedback",
+            no_feedback: "No feedback yet",
+            submitted_at: "Submission date"
+        },
+        course_detail: {
+            progress: "Course progress",
+            tasks_count: "Tasks",
+            average_grade: "Average grade",
+
+            tasks_title: "Course tasks",
+            materials_title: "Materials",
+            attendance_title: "Attendance",
+
+            no_description: "The course description has not been added yet.",
+            no_tasks: "Tasks for this course have not been added yet.",
+            no_materials: "Course materials have not been added yet.",
+            no_attendance: "There are no attendance marks yet.",
+            no_deadline: "No deadline specified",
+
+            attendance_present: "Present",
+            attendance_absent: "No mark",
+            mark_attendance: "Mark",
+            marking: "Marking...",
+            attendance_marked: "Attendance has been marked.",
+            view_all_attendance: "View all",
+
+            material_lecture: "Lecture / notes",
+            material_manual: "Manual",
+            material_video: "Video",
+            material_link: "Link",
+            material_book: "Book",
+            material_other: "Other",
+            materials_count: "material(s)",
+
+            lesson_lecture: "Lecture",
+            lesson_practical: "Practical class",
+            lesson_seminar: "Seminar",
+            lesson_exam: "Exam",
+            lesson_consultation: "Consultation",
+
+            not_found_title: "Course not found",
+            not_found_text: "Please return to the courses page and select a course again.",
+
+            unavailable_title: "Course details are not available yet",
+            unavailable_text: "Failed to load course details from backend."
+        },
+        attendance_page: {
+            page_title: "Attendance",
+            page_desc: "Here you can view the full history of your lessons, attendance marks and available check-ins for the selected course.",
+
+            stat_total: "Total lessons",
+            stat_present: "Present",
+            stat_absent: "No mark",
+            stat_percent: "Attendance rate",
+
+            list_title: "Lesson history",
+            empty_text: "Attendance history for this course is empty yet.",
+            no_room: "Room is not specified",
+
+            not_found_title: "Course not found",
+            not_found_text: "Please return to the course page and open the attendance history again.",
+
+            unavailable_title: "Attendance is not available yet",
+            unavailable_text: "Failed to load attendance history from backend."
+        },
+        
         tasks: {
             page_title: "Tasks",
             page_desc: "Here you can view your learning tasks, deadlines, completion statuses and grades.",

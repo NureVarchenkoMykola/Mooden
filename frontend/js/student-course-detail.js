@@ -16,65 +16,11 @@ document.addEventListener("DOMContentLoaded", () => {
         return localStorage.getItem("mooden-lang") || document.documentElement.lang || "uk";
     }
 
-    function translate(key, fallback = "") {
-        const lang = getCurrentLang();
-        const parts = key.split(".");
-
-        let value = translations?.[lang];
-
-        for (const part of parts) {
-            if (!value || value[part] === undefined) {
-                value = null;
-                break;
-            }
-
-            value = value[part];
-        }
-
-        if (value) {
-            return value;
-        }
-
-        let fallbackValue = translations?.uk;
-
-        for (const part of parts) {
-            if (!fallbackValue || fallbackValue[part] === undefined) {
-                fallbackValue = null;
-                break;
-            }
-
-            fallbackValue = fallbackValue[part];
-        }
-
-        return fallbackValue || fallback || key;
-    }
-
-    function applyPageTranslations() {
-        document.querySelectorAll("[data-i18n]").forEach(element => {
-            const key = element.getAttribute("data-i18n");
-            const translatedText = translate(key);
-
-            if (translatedText) {
-                element.textContent = translatedText;
-            }
-        });
-    }
-
-    function getLocalizedField(item, fieldName) {
-        const lang = getCurrentLang();
-
-        return (
-            item[`${fieldName}_${lang}`] ||
-            item[`${fieldName}_uk`] ||
-            item[`${fieldName}_en`] ||
-            item[fieldName] ||
-            ""
-        );
-    }
-
     function formatDate(dateValue) {
+        const lang = getCurrentLang();
+
         if (!dateValue) {
-            return translate("course_detail.no_deadline", "Дедлайн не вказано");
+            return getTranslation(lang, "course_detail.no_deadline");
         }
 
         const date = new Date(dateValue);
@@ -83,8 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return dateValue;
         }
 
-        const lang = getCurrentLang();
-
         return date.toLocaleDateString(lang === "en" ? "en-US" : "uk-UA", {
             day: "2-digit",
             month: "short",
@@ -92,100 +36,112 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function normalizeSkills(skills) {
-        if (!skills) {
-            return [];
+    function formatTime(timeValue) {
+        if (!timeValue) {
+            return "—";
         }
 
-        if (Array.isArray(skills)) {
-            return skills;
-        }
-
-        if (typeof skills === "string") {
-            return skills
-                .split(",")
-                .map(item => item.trim())
-                .filter(Boolean);
-        }
-
-        return [];
+        return String(timeValue).slice(0, 5);
     }
 
     function getCourseStatus(progress) {
+        const lang = getCurrentLang();
         const value = Number(progress || 0);
 
         if (value >= 100) {
-            return translate("courses.status_completed", "Завершений");
+            return getTranslation(lang, "courses.status_completed");
         }
 
         if (value <= 0) {
-            return translate("courses.status_new", "Новий");
+            return getTranslation(lang, "courses.status_new");
         }
 
-        return translate("courses.status_active", "Активний");
+        return getTranslation(lang, "courses.status_active");
     }
 
-    function normalizeCourse(data) {
+    function getCourseIcon(title = "") {
+        const value = String(title).toLowerCase();
+
+        if (value.includes("sql") || value.includes("баз")) {
+            return "🗄️";
+        }
+
+        if (value.includes("web") || value.includes("веб") || value.includes("html")) {
+            return "💻";
+        }
+
+        if (value.includes("алгоритм") || value.includes("algorithm")) {
+            return "🧠";
+        }
+
+        return "📚";
+    }
+
+    function getTaskStatusText(status) {
         const lang = getCurrentLang();
 
-        const progress = Number(
-            data.progress_percent ??
-            data.progress ??
-            data.progressPercent ??
-            0
-        );
+        if (status === "graded") {
+            return getTranslation(lang, "tasks.status_graded");
+        }
 
-        const skills =
-            data.skills ||
-            data[`skills_${lang}`] ||
-            data.skills_uk ||
-            data.skills_en ||
-            [];
+        if (status === "overdue") {
+            return getTranslation(lang, "tasks.status_overdue");
+        }
 
-        const tasks =
-            Array.isArray(data.tasks)
-                ? data.tasks
-                : Array.isArray(data.assignments)
-                    ? data.assignments
-                    : [];
+        if (status === "submitted") {
+            return getTranslation(lang, "tasks.status_submitted");
+        }
 
-        return {
-            id: data.id || data.course_id || courseId,
-            title:
-                data.title ||
-                getLocalizedField(data, "title") ||
-                translate("courses.unknown_course", "Курс без назви"),
-            description:
-                data.description ||
-                getLocalizedField(data, "description") ||
-                translate("course_detail.no_description", "Опис курсу поки не додано."),
-            colorAccent: data.color_accent || data.color || null,
-            progress,
-            skills: normalizeSkills(skills),
-            tasks,
-            tasksCount: data.tasks_count ?? data.task_count ?? tasks.length,
-            averageGrade: data.average_grade ?? data.avg_grade ?? null
-        };
+        return getTranslation(lang, "tasks.status_pending");
     }
 
-    function normalizeTask(task, index) {
-        return {
-            id: task.id || task.task_id || index + 1,
-            title:
-                task.title ||
-                task.task_title ||
-                getLocalizedField(task, "title") ||
-                translate("tasks.unknown_task", "Завдання без назви"),
-            deadline:
-                task.deadline ||
-                task.due_date ||
-                task.deadline_at ||
-                null,
-            isExam: Boolean(task.is_exam)
-        };
+    function getMaterialTypeText(type) {
+        const lang = getCurrentLang();
+
+        if (!type) {
+            return getTranslation(lang, "course_detail.material_other");
+        }
+
+        const key = `course_detail.material_${type}`;
+        const result = getTranslation(lang, key);
+
+        if (result === key) {
+            return getTranslation(lang, "course_detail.material_other");
+        }
+
+        return result;
     }
 
-    function showEmpty(title, text) {
+    function getLessonTypeText(type) {
+        const lang = getCurrentLang();
+
+        if (!type) {
+            return "—";
+        }
+
+        const key = `course_detail.lesson_${type}`;
+        const result = getTranslation(lang, key);
+
+        if (result === key) {
+            return type;
+        }
+
+        return result;
+    }
+
+    function getGradeAverage(tasks) {
+        const grades = tasks
+            .map(task => Number(task.grade_value))
+            .filter(value => !Number.isNaN(value));
+
+        if (!grades.length) {
+            return null;
+        }
+
+        return Math.round(grades.reduce((sum, value) => sum + value, 0) / grades.length);
+    }
+
+    function showEmpty(title, text = "") {
         courseContent.innerHTML = `
             <div class="course-empty-card">
                 <h2>${title}</h2>
@@ -194,20 +150,40 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     }
 
+    async function fetchJson(url, token, options = {}) {
+        const response = await fetch(url, {
+            ...options,
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+                ...(options.headers || {})
+            }
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            throw new Error(data.message || `${url} returned ${response.status}`);
+        }
+
+        return data;
+    }
+
     async function loadCourse() {
+        const lang = getCurrentLang();
         const token = getToken();
 
         if (!courseId) {
             showEmpty(
-                translate("course_detail.not_found_title", "Курс не знайдено"),
-                translate("course_detail.not_found_text", "Поверніться на сторінку курсів і виберіть курс ще раз.")
+                getTranslation(lang, "course_detail.not_found_title"),
+                getTranslation(lang, "course_detail.not_found_text")
             );
             return;
         }
 
         if (!token) {
             showEmpty(
-                translate("errors.UNAUTHORIZED", "Ви не авторизовані."),
+                getTranslation(lang, "errors.UNAUTHORIZED"),
                 ""
             );
             return;
@@ -216,108 +192,398 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             courseContent.innerHTML = `
                 <div class="course-loading-card">
-                    <h2>${translate("profile.loading", "Завантаження...")}</h2>
-                    <p>${translate("dashboard.status_loading", "Отримуємо актуальну інформацію...")}</p>
+                    <h2>${getTranslation(lang, "profile.loading")}</h2>
+                    <p>${getTranslation(lang, "dashboard.status_loading")}</p>
                 </div>
             `;
 
-            const response = await fetch(`${API_BASE_URL}/student/courses/${courseId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+            const detailUrl = `${API_BASE_URL}/student/courses/${courseId}/detail`;
+            const attendanceUrl = `${API_BASE_URL}/student/courses/${courseId}/attendance`;
 
-            if (!response.ok) {
-                throw new Error(`Course detail API error: ${response.status}`);
+            const detailData = await fetchJson(detailUrl, token);
+
+            let attendanceData = { attendance: [] };
+
+            try {
+                attendanceData = await fetchJson(attendanceUrl, token);
+            } catch (attendanceError) {
+                console.warn("[Course Detail] Відвідуваність не завантажена:", attendanceError);
             }
 
-            const data = await response.json();
-
-            console.log("COURSE DETAIL DATA:", data);
-
-            const courseData = data.course || data;
-            const course = normalizeCourse(courseData);
-
-            renderCourse(course);
+            renderCourse({
+                course: detailData.course,
+                materials: detailData.materials || [],
+                tasks: detailData.tasks || [],
+                attendance: attendanceData.attendance || []
+            });
         } catch (error) {
             console.error("[Course Detail] Не вдалося завантажити курс:", error);
 
             showEmpty(
-                translate("course_detail.unavailable_title", "Деталі курсу поки недоступні"),
-                translate("course_detail.unavailable_text", "Backend endpoint для детального перегляду курсу ще не реалізовано або тимчасово недоступний.")
+                getTranslation(lang, "course_detail.unavailable_title"),
+                getTranslation(lang, "course_detail.unavailable_text")
             );
         }
     }
 
-    function renderSkills(course) {
-        if (!course.skills.length) {
-            return `<p class="course-section-empty">${translate("course_detail.no_skills", "Навички поки не вказані.")}</p>`;
+    function getMaterialIcon(type) {
+    if (type === "lecture") {
+        return "📘";
+    }
+
+    if (type === "manual") {
+        return "📄";
+    }
+
+    if (type === "video") {
+        return "🎥";
+    }
+
+    if (type === "link") {
+        return "🔗";
+    }
+
+    if (type === "book") {
+        return "📚";
+    }
+
+    return "📎";
+}
+
+function getMaterialTypeOrder() {
+    return ["lecture", "manual", "video", "link", "book", "other"];
+}
+
+function groupMaterialsByType(materials) {
+    const grouped = {};
+
+    materials.forEach(material => {
+        const type = material.material_type || "other";
+
+        if (!grouped[type]) {
+            grouped[type] = [];
         }
 
+        grouped[type].push(material);
+    });
+
+    return grouped;
+}
+
+function renderMaterials(materials) {
+    const lang = getCurrentLang();
+
+    if (!materials.length) {
         return `
-            <div class="course-skills-list">
-                ${course.skills.map(skill => `<span class="course-skill">${skill}</span>`).join("")}
-            </div>
+            <p class="course-section-empty">
+                ${getTranslation(lang, "course_detail.no_materials")}
+            </p>
         `;
     }
 
-    function renderTasks(course) {
-        if (!course.tasks.length) {
-            return `<p class="course-section-empty">${translate("course_detail.no_tasks", "Завдання для цього курсу поки не додані.")}</p>`;
+    const groupedMaterials = groupMaterialsByType(materials);
+    const orderedTypes = getMaterialTypeOrder();
+
+    return `
+        <div class="course-material-groups">
+            ${orderedTypes
+                .filter(type => groupedMaterials[type] && groupedMaterials[type].length > 0)
+                .map(type => `
+                    <section class="course-material-group">
+                        <div class="course-material-group-header">
+                            <span class="course-material-group-icon">${getMaterialIcon(type)}</span>
+
+                            <div>
+                                <h3>${getMaterialTypeText(type)}</h3>
+                                <p>
+                                    ${groupedMaterials[type].length}
+                                    ${getTranslation(lang, "course_detail.materials_count")}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="course-materials-list">
+                            ${groupedMaterials[type].map(material => `
+                                <a class="course-material-card" href="${material.file_url}" target="_blank" rel="noopener noreferrer">
+                                    <div class="course-material-info">
+                                        <span class="course-material-small-icon">${getMaterialIcon(material.material_type)}</span>
+
+                                        <div>
+                                            <h4>${material.title}</h4>
+                                            <p>${getMaterialTypeText(material.material_type)}</p>
+                                        </div>
+                                    </div>
+
+                                    <span class="course-material-open">↗</span>
+                                </a>
+                            `).join("")}
+                        </div>
+                    </section>
+                `).join("")}
+        </div>
+    `;
+}
+
+    function renderTasks(tasks) {
+        const lang = getCurrentLang();
+
+        if (!tasks.length) {
+            return `
+                <p class="course-section-empty">
+                    ${getTranslation(lang, "course_detail.no_tasks")}
+                </p>
+            `;
         }
 
         return `
             <div class="course-tasks-list">
-                ${course.tasks.map((task, index) => {
-                    const normalizedTask = normalizeTask(task, index);
+                ${tasks.map(task => `
+                    <article class="course-task-card">
+                        <div class="course-task-top">
+                            <h3 class="course-task-title">${task.title}</h3>
 
-                    return `
-                        <article class="course-task-card">
-                            <div class="course-task-top">
-                                <h3 class="course-task-title">${normalizedTask.title}</h3>
+                            <div class="course-task-badges">
                                 ${
-                                    normalizedTask.isExam
-                                        ? `<span class="course-task-badge">${translate("tasks.exam", "Іспит")}</span>`
+                                    task.is_exam
+                                        ? `<span class="course-task-badge">${getTranslation(lang, "tasks.exam")}</span>`
+                                        : ""
+                                }
+
+                                <span class="course-task-status ${task.status}">
+                                    ${getTaskStatusText(task.status)}
+                                </span>
+                            </div>
+                        </div>
+
+                        <p class="course-task-meta">
+                            ${getTranslation(lang, "tasks.deadline")}:
+                            <strong>${formatDate(task.deadline)}</strong>
+                        </p>
+
+                        <p class="course-task-meta">
+                            ${getTranslation(lang, "tasks.grade")}:
+                            <strong>${task.grade_value ?? getTranslation(lang, "tasks.no_grade")}</strong>
+                        </p>
+
+                        <button class="course-task-open-btn" type="button" data-task-id="${task.id}">
+                            ${getTranslation(lang, "tasks.open_btn")}
+                        </button>
+                    </article>
+                `).join("")}
+            </div>
+        `;
+    }
+        function getLocalDatePart(dateValue) {
+    if (!dateValue) {
+        return null;
+    }
+
+    const date = new Date(dateValue);
+
+    if (Number.isNaN(date.getTime())) {
+        return String(dateValue).split("T")[0];
+    }
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+function getLocalDatePart(dateValue) {
+    if (!dateValue) {
+        return null;
+    }
+
+    const date = new Date(dateValue);
+
+    if (Number.isNaN(date.getTime())) {
+        return String(dateValue).split("T")[0];
+    }
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+function addMinutesToTime(timeValue, minutesToAdd) {
+    const [hours, minutes, seconds] = String(timeValue || "00:00:00")
+        .split(":")
+        .map(Number);
+
+    const date = new Date();
+    date.setHours(hours || 0, minutes || 0, seconds || 0, 0);
+    date.setMinutes(date.getMinutes() + minutesToAdd);
+
+    const newHours = String(date.getHours()).padStart(2, "0");
+    const newMinutes = String(date.getMinutes()).padStart(2, "0");
+    const newSeconds = String(date.getSeconds()).padStart(2, "0");
+
+    return `${newHours}:${newMinutes}:${newSeconds}`;
+}
+
+function isLessonOpenNow(item) {
+    if (!item.lesson_date) {
+        return false;
+    }
+
+    const lessonDate = getLocalDatePart(item.lesson_date);
+
+    if (!lessonDate) {
+        return false;
+    }
+
+    const startTime = item.time_start || item.start_time;
+
+    if (!startTime) {
+        return false;
+    }
+
+    const endTime =
+        item.time_end ||
+        item.end_time ||
+        addMinutesToTime(startTime, 80);
+
+    const lessonStart = new Date(`${lessonDate}T${startTime}`);
+    const lessonEnd = new Date(`${lessonDate}T${endTime}`);
+    const now = new Date();
+
+    if (Number.isNaN(lessonStart.getTime()) || Number.isNaN(lessonEnd.getTime())) {
+        return false;
+    }
+
+    return now >= lessonStart && now <= lessonEnd;
+}
+function getLocalDatePart(dateValue) {
+    if (!dateValue) {
+        return null;
+    }
+
+    const date = new Date(dateValue);
+
+    if (Number.isNaN(date.getTime())) {
+        return String(dateValue).split("T")[0];
+    }
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+function getTodayLocalDatePart() {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+function isLessonToday(item) {
+    const lessonDate = getLocalDatePart(item.lesson_date);
+    const today = getTodayLocalDatePart();
+
+    return lessonDate === today;
+}
+    function renderAttendance(attendance) {
+        const lang = getCurrentLang();
+
+        if (!attendance.length) {
+            return `
+                <p class="course-section-empty">
+                    ${getTranslation(lang, "course_detail.no_attendance")}
+                </p>
+            `;
+        }
+
+        return `
+            <div class="course-attendance-list">
+                ${attendance.map(item => {
+                    const canMark =
+    item.can_mark === true &&
+    !item.is_present &&
+    isLessonToday(item);
+                    return `
+                        <div class="course-attendance-item">
+                            <div>
+                                <strong>${formatDate(item.lesson_date)}</strong>
+                                <span>
+                                    ${formatTime(item.time_start)}
+                                    ·
+                                    ${getLessonTypeText(item.type || item.lesson_type)}
+                                </span>
+                            </div>
+
+                            <div class="attendance-actions">
+                                <span class="attendance-status ${item.is_present ? "present" : "absent"}">
+                                    ${
+                                        item.is_present
+                                            ? getTranslation(lang, "course_detail.attendance_present")
+                                            : getTranslation(lang, "course_detail.attendance_absent")
+                                    }
+                                </span>
+
+                                ${
+                                    canMark
+                                        ? `
+                                            <button class="attendance-mark-btn" type="button" data-schedule-id="${scheduleId}">
+                                                ${getTranslation(lang, "course_detail.mark_attendance")}
+                                            </button>
+                                        `
                                         : ""
                                 }
                             </div>
-
-                            <p class="course-task-meta">
-                                ${translate("tasks.deadline", "Дедлайн")}:
-                                <strong>${formatDate(normalizedTask.deadline)}</strong>
-                            </p>
-                        </article>
+                        </div>
                     `;
                 }).join("")}
             </div>
         `;
     }
 
-    function renderCourse(course) {
-        if (course.colorAccent) {
-            courseContent.style.setProperty("--course-accent", course.colorAccent);
+    function renderCourse(data) {
+        const lang = getCurrentLang();
+
+        const course = data.course;
+        const materials = data.materials;
+        const tasks = data.tasks;
+        const attendance = data.attendance;
+
+        if (!course) {
+            showEmpty(
+                getTranslation(lang, "course_detail.not_found_title"),
+                getTranslation(lang, "course_detail.not_found_text")
+            );
+            return;
         }
 
-        const gradeValue =
-            course.averageGrade === null || course.averageGrade === undefined
-                ? "—"
-                : course.averageGrade;
+        if (course.color_accent) {
+            courseContent.style.setProperty("--course-accent", course.color_accent);
+        }
+
+        const progress = Number(course.progress_percent || 0);
+        const averageGrade = getGradeAverage(tasks);
 
         courseContent.innerHTML = `
             <header class="course-detail-header">
-                <div class="course-detail-icon">📚</div>
+                <div class="course-detail-icon">${getCourseIcon(course.title)}</div>
 
                 <div class="course-detail-meta">
                     <span class="course-detail-status">
-                        ${getCourseStatus(course.progress)}
+                        ${getCourseStatus(progress)}
                     </span>
 
                     <h1>${course.title}</h1>
 
-                    <p>${course.description}</p>
+                    <p>${course.description || getTranslation(lang, "course_detail.no_description")}</p>
 
                     <div class="course-progress-bar">
-                        <div class="course-progress-fill" style="width: ${course.progress}%"></div>
+                        <div class="course-progress-fill" style="width: ${progress}%"></div>
                     </div>
                 </div>
             </header>
@@ -326,51 +592,116 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="course-stat-card">
                     <span class="course-stat-icon">📈</span>
                     <div>
-                        <p class="course-stat-value">${course.progress}%</p>
-                        <p class="course-stat-label">${translate("course_detail.progress", "Прогрес курсу")}</p>
+                        <p class="course-stat-value">${progress}%</p>
+                        <p class="course-stat-label">${getTranslation(lang, "course_detail.progress")}</p>
                     </div>
                 </div>
 
                 <div class="course-stat-card">
                     <span class="course-stat-icon">📝</span>
                     <div>
-                        <p class="course-stat-value">${course.tasksCount}</p>
-                        <p class="course-stat-label">${translate("course_detail.tasks_count", "Завдань")}</p>
+                        <p class="course-stat-value">${tasks.length}</p>
+                        <p class="course-stat-label">${getTranslation(lang, "course_detail.tasks_count")}</p>
                     </div>
                 </div>
 
                 <div class="course-stat-card">
                     <span class="course-stat-icon">⭐</span>
                     <div>
-                        <p class="course-stat-value">${gradeValue}</p>
-                        <p class="course-stat-label">${translate("course_detail.average_grade", "Середній бал")}</p>
+                        <p class="course-stat-value">${averageGrade ?? "—"}</p>
+                        <p class="course-stat-label">${getTranslation(lang, "course_detail.average_grade")}</p>
                     </div>
                 </div>
             </section>
 
             <section class="course-detail-layout">
                 <div class="course-main-card">
-                    <h2>${translate("course_detail.tasks_title", "Завдання курсу")}</h2>
-                    ${renderTasks(course)}
+                    <h2>${getTranslation(lang, "course_detail.tasks_title")}</h2>
+                    ${renderTasks(tasks)}
                 </div>
 
                 <aside class="course-side-card">
-                    <h2>${translate("course_detail.skills_title", "Навички")}</h2>
-                    ${renderSkills(course)}
+                    <h2>${getTranslation(lang, "course_detail.materials_title")}</h2>
+                    ${renderMaterials(materials)}
+
+                    <div class="course-side-heading-row">
+                    <h2 class="course-side-subtitle">${getTranslation(lang, "course_detail.attendance_title")}</h2>
+
+    <a class="course-attendance-link" href="./student-course-attendance.html?id=${course.id}">
+        ${getTranslation(lang, "course_detail.view_all_attendance")}
+    </a>
+</div>
+
+${renderAttendance(attendance)}
                 </aside>
             </section>
         `;
+
+        bindTaskButtons();
+        bindAttendanceButtons();
     }
 
-    document.querySelectorAll('input[name="lang"]').forEach(radio => {
-        radio.addEventListener("change", () => {
-            setTimeout(() => {
-                applyPageTranslations();
-                loadCourse();
-            }, 200);
+    function bindTaskButtons() {
+        document.querySelectorAll(".course-task-open-btn").forEach(button => {
+            button.addEventListener("click", () => {
+                const taskId = button.dataset.taskId;
+                window.location.href = `./student-task-detail.html?id=${taskId}`;
+            });
         });
-    });
+    }
 
-    applyPageTranslations();
+    function bindAttendanceButtons() {
+        document.querySelectorAll(".attendance-mark-btn").forEach(button => {
+            button.addEventListener("click", async () => {
+                const lang = getCurrentLang();
+                const scheduleId = button.dataset.scheduleId;
+                const token = getToken();
+
+                if (!scheduleId || !token) {
+                    return;
+                }
+
+                button.disabled = true;
+                button.textContent = getTranslation(lang, "course_detail.marking");
+
+                try {
+                    await fetchJson(`${API_BASE_URL}/student/attendance/mark`, token, {
+                        method: "POST",
+                        body: JSON.stringify({
+                            scheduleId: Number(scheduleId)
+                        })
+                    });
+
+                    if (typeof showToast === "function") {
+                        showToast(getTranslation(lang, "course_detail.attendance_marked"), "success");
+                    }
+
+                    loadCourse();
+                } catch (error) {
+                    console.error("[Course Detail] Не вдалося позначити відвідування:", error);
+
+                    button.disabled = false;
+                    button.textContent = getTranslation(lang, "course_detail.mark_attendance");
+
+                    if (typeof showToast === "function") {
+                        const errorKey = `errors.${error.message}`;
+                        const translatedError = getTranslation(lang, errorKey);
+
+                        showToast(
+                            translatedError !== errorKey
+                                ? translatedError
+                                : getTranslation(lang, "errors.ATTENDANCE_ERROR"),
+                            "error"
+                        );
+                    }
+                }
+            });
+        });
+    }
+
+    if (typeof applyStaticTranslations === "function") {
+        applyStaticTranslations(getCurrentLang());
+    }
+
     loadCourse();
 });

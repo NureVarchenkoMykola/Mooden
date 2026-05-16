@@ -2,13 +2,8 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mooden | Курс</title>
+    <title>Mooden | Завдання</title>
     <meta name="page-role" content="student">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 
     <script src="../js/config.js"></script>
     <script src="../js/translations.js"></script>
@@ -21,7 +16,7 @@
     <link rel="stylesheet" href="../css/variables.css">
     <link rel="stylesheet" href="../css/global.css">
     <link rel="stylesheet" href="../css/student-dashboard.css">
-    <link rel="stylesheet" href="../css/student-course-detail.css">
+    <link rel="stylesheet" href="../css/student-task-detail.css">
 </head>
 
 <body class="dashboard-layout container">
@@ -37,11 +32,11 @@
                     <span data-i18n="common.nav_dashboard">📊 Дашборд</span>
                 </a>
 
-                <a href="./student-courses.html" class="nav-link active">
+                <a href="./student-courses.html" class="nav-link">
                     <span data-i18n="common.nav_courses">📖 Мої курси</span>
                 </a>
 
-                <a href="./student-tasks.html" class="nav-link">
+                <a href="./student-tasks.html" class="nav-link active">
                     <span data-i18n="common.nav_tasks">📝 Завдання</span>
                     <span class="badge-count" id="tasksBadge">0</span>
                 </a>
@@ -113,16 +108,14 @@
             <div class="logo-mobile">Mooden</div>
         </div>
 
-      
-
-        <section id="courseContent">
-            <div class="course-loading-card">
+        <section id="taskContent">
+            <div class="task-detail-loading">
                 <h2 data-i18n="profile.loading">Завантаження...</h2>
                 <p data-i18n="dashboard.status_loading">Отримуємо актуальну інформацію...</p>
             </div>
         </section>
     </main>
 
-    <script src="../js/student-course-detail.js"></script>
+    <script src="../js/student-task-detail.js"></script>
 </body>
 </html>
