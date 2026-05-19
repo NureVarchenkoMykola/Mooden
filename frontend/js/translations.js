@@ -24,7 +24,7 @@ const translations = {
                 teacher: "Викладач",
                 moderator: "Модератор"
             },
-            go_back: "Перейти",
+            go_back: "Повернутися",
             redirecting: " Повертаємо вас до вашого кабінету...",
             nav_grading: "📝 Перевірка",
             nav_constructor: "🔧 Конструктор"
@@ -139,7 +139,6 @@ const translations = {
 
             not_found_title: "Курс не знайдено",
             not_found_text: "Поверніться на сторінку курсів і виберіть курс ще раз.",
-
             unavailable_title: "Деталі курсу поки недоступні",
             unavailable_text: "Не вдалося завантажити деталі курсу з backend."
         },
@@ -174,13 +173,12 @@ const translations = {
             no_description: "Опис завдання поки не додано.",
             not_submitted: "Ще не здано",
 
-            submission_status: "Стан здачі",
+            submission_status: "Дата здачі",
             description_title: "Опис завдання",
             result_title: "Результат",
             feedback: "Коментар",
             no_feedback: "Коментаря поки немає",
             submitted_at: "Дата здачі"
-            
         },
         tasks: {
             page_title: "Завдання",
@@ -243,7 +241,7 @@ const translations = {
             type_exam: "Іспит",
             type_consultation: "Консультація"
         },
-            grades: {
+        grades: {
             page_title: "Оцінки",
             page_desc: "Тут зібрана ваша академічна успішність, оцінки за завдання, середній бал та прогрес по курсах.",
 
@@ -465,7 +463,7 @@ const translations = {
             no_description: "The task description has not been added yet.",
             not_submitted: "Not submitted yet",
 
-            submission_status: "Submission status",
+            submission_status: "Submission date",
             description_title: "Task description",
             result_title: "Result",
             feedback: "Feedback",
@@ -486,13 +484,13 @@ const translations = {
             no_materials: "Course materials have not been added yet.",
             no_attendance: "There are no attendance marks yet.",
             no_deadline: "No deadline specified",
+            view_all_attendance: "View all",
 
             attendance_present: "Present",
             attendance_absent: "No mark",
             mark_attendance: "Mark",
             marking: "Marking...",
             attendance_marked: "Attendance has been marked.",
-            view_all_attendance: "View all",
 
             material_lecture: "Lecture / notes",
             material_manual: "Manual",
@@ -510,7 +508,6 @@ const translations = {
 
             not_found_title: "Course not found",
             not_found_text: "Please return to the courses page and select a course again.",
-
             unavailable_title: "Course details are not available yet",
             unavailable_text: "Failed to load course details from backend."
         },
@@ -533,7 +530,6 @@ const translations = {
             unavailable_title: "Attendance is not available yet",
             unavailable_text: "Failed to load attendance history from backend."
         },
-        
         tasks: {
             page_title: "Tasks",
             page_desc: "Here you can view your learning tasks, deadlines, completion statuses and grades.",
@@ -595,7 +591,7 @@ const translations = {
             type_exam: "Exam",
             type_consultation: "Consultation"
         },
-            grades: {
+        grades: {
             page_title: "Grades",
             page_desc: "Here you can view your academic performance, task grades, average score and course progress.",
 

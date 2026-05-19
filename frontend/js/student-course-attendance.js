@@ -12,76 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return localStorage.getItem("token") || sessionStorage.getItem("token");
     }
 
-    function getCurrentLang() {
-        return localStorage.getItem("mooden-lang") || document.documentElement.lang || "uk";
-    }
-
-    function formatDate(dateValue) {
-        const lang = getCurrentLang();
-
-        if (!dateValue) {
-            return "—";
-        }
-
-        const date = new Date(dateValue);
-
-        if (Number.isNaN(date.getTime())) {
-            return dateValue;
-        }
-
-        return date.toLocaleDateString(lang === "en" ? "en-US" : "uk-UA", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-        });
-    }
-
-    function formatTime(timeValue) {
-        if (!timeValue) {
-            return "—";
-        }
-
-        return String(timeValue).slice(0, 5);
-    }
-
-    function getLessonTypeText(type) {
-        const lang = getCurrentLang();
-
-        if (!type) {
-            return "—";
-        }
-
-        const key = `course_detail.lesson_${type}`;
-        const result = getTranslation(lang, key);
-
-        if (result === key) {
-            return type;
-        }
-
-        return result;
-    }
-
-    function isLessonOpenNow(item) {
-    if (!item.lesson_date) {
-        return false;
-    }
-
-    const lessonDate = String(item.lesson_date).split("T")[0];
-
-    const startTime = item.time_start || item.start_time || "00:00:00";
-    const endTime = item.time_end || item.end_time || "23:59:59";
-
-    const lessonStart = new Date(`${lessonDate}T${startTime}`);
-    const lessonEnd = new Date(`${lessonDate}T${endTime}`);
-    const now = new Date();
-
-    if (Number.isNaN(lessonStart.getTime()) || Number.isNaN(lessonEnd.getTime())) {
-        return false;
-    }
-
-    return now >= lessonStart && now <= lessonEnd;
-}
-
     async function fetchJson(url, token, options = {}) {
         const response = await fetch(url, {
             ...options,
@@ -181,6 +111,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     <h1>${getTranslation(lang, "attendance_page.page_title")}</h1>
                     <p>${getTranslation(lang, "attendance_page.page_desc")}</p>
                 </div>
+                <a href="./student-course-detail.html?id=${courseId}" class="attendance-back-link">
+                    ← ${getTranslation(lang, "common.go_back")}
+                </a>
             </header>
 
             <section class="attendance-stats">
@@ -256,10 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const lang = getCurrentLang();
 
         const scheduleId = item.schedule_id || item.id;
-        const canMark =
-            (item.can_mark === true || item.is_open_for_attendance === true) &&
-            !item.is_present &&
-            isLessonOpenNow(item)
+        const canMark = item.can_mark === true && !item.is_present && isLessonNow(item);
 
         return `
             <article class="attendance-item">

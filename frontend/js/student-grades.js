@@ -14,82 +14,14 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    let grades = [];
-
-    function getToken() {
-        return localStorage.getItem("token") || sessionStorage.getItem("token");
-    }
-
-    function getCurrentLang() {
-        return localStorage.getItem("mooden-lang") || document.documentElement.lang || "uk";
-    }
-
-    function translate(key, fallback = "") {
-        const lang = getCurrentLang();
-        const parts = key.split(".");
-
-        let value = translations?.[lang];
-
-        for (const part of parts) {
-            if (!value || value[part] === undefined) {
-                value = null;
-                break;
-            }
-
-            value = value[part];
-        }
-
-        if (value) {
-            return value;
-        }
-
-        let fallbackValue = translations?.uk;
-
-        for (const part of parts) {
-            if (!fallbackValue || fallbackValue[part] === undefined) {
-                fallbackValue = null;
-                break;
-            }
-
-            fallbackValue = fallbackValue[part];
-        }
-
-        return fallbackValue || fallback || key;
-    }
-
-    function applyPageTranslations() {
-        document.querySelectorAll("[data-i18n]").forEach(element => {
-            const key = element.getAttribute("data-i18n");
-            const translatedText = translate(key);
-
-            if (translatedText) {
-                element.textContent = translatedText;
-            }
-        });
-
-        document.querySelectorAll("[data-i18n-placeholder]").forEach(element => {
-            const key = element.getAttribute("data-i18n-placeholder");
-            const translatedText = translate(key);
-
-            if (translatedText) {
-                element.setAttribute("placeholder", translatedText);
-            }
-        });
-    }
+    let allGrades = [];
 
     function formatDate(dateValue) {
-        if (!dateValue) {
-            return "—";
-        }
-
+        if (!dateValue) return "—";
         const date = new Date(dateValue);
+        if (Number.isNaN(date.getTime())) return dateValue;
 
-        if (Number.isNaN(date.getTime())) {
-            return dateValue;
-        }
-
-        const lang = getCurrentLang();
-
+        const lang = document.documentElement.lang || "uk";
         return date.toLocaleDateString(lang === "en" ? "en-US" : "uk-UA", {
             day: "2-digit",
             month: "short",
@@ -99,20 +31,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function getGradeClass(grade) {
         const value = Number(grade);
-
-        if (Number.isNaN(value)) {
-            return "";
-        }
-
-        if (value >= 90) {
-            return "high";
-        }
-
-        if (value >= 75) {
-            return "medium";
-        }
-
-        return "low";
+        if (Number.isNaN(value) || grade === null) return "";
+        if (value >= 90) return "high";
+        if (value >= 75) return "medium";
+        if (value >= 60) return "low";
+        return "fail";
     }
 
     function randomBetween(min, max) {
@@ -141,38 +64,19 @@ document.addEventListener("DOMContentLoaded", () => {
             particle.textContent = "🐝";
         } else {
             particle.classList.add("confetti-piece");
-
-            const colors = [
-                "#FFD54A",
-                "#4EC9A4",
-                "#6C63FF",
-                "#FF8A3D",
-                "#4DA3FF",
-                "#FF5EA8"
-            ];
-
+            const colors = ["#FFD54A", "#4EC9A4", "#6C63FF", "#FF8A3D", "#4DA3FF", "#FF5EA8"];
             particle.style.background = colors[Math.floor(Math.random() * colors.length)];
         }
 
         document.body.appendChild(particle);
-
-        setTimeout(() => {
-            particle.remove();
-        }, 1800);
+        setTimeout(() => particle.remove(), 1800);
     }
 
     function launchPerfectGradeEffect(element) {
-        if (!element) return;
-
-        if (element.dataset.effectLocked === "1") {
-            return;
-        }
+        if (!element || element.dataset.effectLocked === "1") return;
 
         element.dataset.effectLocked = "1";
-
-        setTimeout(() => {
-            element.dataset.effectLocked = "0";
-        }, 900);
+        setTimeout(() => { element.dataset.effectLocked = "0"; }, 900);
 
         const rect = element.getBoundingClientRect();
         const startX = rect.left + rect.width / 2;
@@ -181,68 +85,25 @@ document.addEventListener("DOMContentLoaded", () => {
         for (let i = 0; i < 18; i++) {
             createCelebrationParticle("confetti", startX, startY);
         }
-
         for (let i = 0; i < 5; i++) {
-            setTimeout(() => {
-                createCelebrationParticle("bee", startX, startY);
-            }, i * 80);
+            setTimeout(() => { createCelebrationParticle("bee", startX, startY); }, i * 80);
         }
     }
 
     function bindPerfectGradeHoverEffects() {
         document.querySelectorAll(".perfect-grade").forEach(element => {
-            if (element.dataset.effectBound === "1") {
-                return;
-            }
-
+            if (element.dataset.effectBound === "1") return;
             element.dataset.effectBound = "1";
-
-            element.addEventListener("mouseenter", () => {
-                launchPerfectGradeEffect(element);
-            });
+            element.addEventListener("mouseenter", () => launchPerfectGradeEffect(element));
         });
     }
 
-    function normalizeGrade(item, index) {
-        const gradeValue =
-            item.grade_value ??
-            item.grade ??
-            item.value ??
-            null;
-
-        const courseTitle =
-            item.course_title ||
-            item.course_name ||
-            item.course ||
-            translate("grades.course_not_specified", "Курс не вказано");
-
-        const taskTitle =
-            item.task_title ||
-            item.task_name ||
-            item.task ||
-            translate("grades.task_not_specified", "Завдання не вказано");
-
-        return {
-            id: item.id || `${item.student_id || "student"}-${item.task_id || index}`,
-            studentId: item.student_id || null,
-            taskId: item.task_id || null,
-            courseTitle,
-            taskTitle,
-            gradeValue: gradeValue === null ? null : Number(gradeValue),
-            feedback: item.feedback || "",
-            createdAt: item.created_at || item.date || null,
-            colorAccent: item.color_accent || item.color || null
-        };
-    }
-
     async function loadGrades() {
-        const token = getToken();
+        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+        const lang = document.documentElement.lang || "uk";
 
         if (!token) {
-            showEmptyState(
-                translate("errors.UNAUTHORIZED", "Ви не авторизовані."),
-                ""
-            );
+            showEmptyState(getTranslation(lang, "errors.UNAUTHORIZED"), "");
             return;
         }
 
@@ -251,45 +112,43 @@ document.addEventListener("DOMContentLoaded", () => {
                 <tr>
                     <td colspan="5">
                         <div class="empty-grades">
-                            <h3>${translate("profile.loading", "Завантаження...")}</h3>
-                            <p>${translate("dashboard.status_loading", "Отримуємо актуальну інформацію...")}</p>
+                            <h3>${getTranslation(lang, "profile.loading")}</h3>
+                            <p>${getTranslation(lang, "dashboard.status_loading")}</p>
                         </div>
                     </td>
                 </tr>
             `;
 
-            const response = await fetch(`${API_BASE_URL}/student/profile`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
+            const response = await fetch(`${API_BASE_URL}/student/grades`, {
+                headers: { Authorization: `Bearer ${token}` }
             });
 
             if (!response.ok) {
-                throw new Error(`Profile API error: ${response.status}`);
+                const errorData = await response.json();
+                showToast(getTranslation(lang, `errors.${errorData.message}`), 'error');
+                console.error(`[Dev Mode] Grades API error. Status: ${response.status}, Code: ${errorData.message}`);
+
+                if (response.status === 401 || response.status === 403) {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    window.location.href = '../index.html';
+                }
+                showEmptyState(getTranslation(lang, "grades.empty_title"), getTranslation(lang, "errors.SERVER_ERROR_PROFILE"));
+                return;
             }
 
             const data = await response.json();
+            allGrades = data.grades || [];
 
-            const backendGrades = Array.isArray(data.fullGrades)
-                ? data.fullGrades
-                : Array.isArray(data.grades)
-                    ? data.grades
-                    : [];
+            renderStats(data.stats);
+            fillCourseFilter(allGrades, lang);
+            renderGradesTable(allGrades, lang);
+            renderCourseProgress(allGrades, lang);
 
-            grades = backendGrades.map(normalizeGrade);
-
-            fillCourseFilter();
-            updateStats();
-            renderGrades();
-            renderCourseProgress();
-            bindPerfectGradeHoverEffects();
         } catch (error) {
-            console.error("[Grades Page] Не вдалося завантажити оцінки:", error);
-
-            showEmptyState(
-                translate("grades.empty_title", "Оцінок не знайдено"),
-                translate("errors.SERVER_ERROR_PROFILE", "Не вдалося завантажити дані профілю")
-            );
+            console.error("[Dev Mode] Critical failure during grades load:", error);
+            showToast(getTranslation(lang, 'errors.UNKNOWN_ERROR'), 'error');
+            showEmptyState(getTranslation(lang, "grades.empty_title"), getTranslation(lang, "errors.SERVER_ERROR_PROFILE"));
         }
     }
 
@@ -304,11 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </td>
             </tr>
         `;
-
-        if (courseProgressList) {
-            courseProgressList.innerHTML = "";
-        }
-
+        if (courseProgressList) courseProgressList.innerHTML = "";
         if (avgGradeValue) avgGradeValue.textContent = "—";
         if (gradedTasksValue) gradedTasksValue.textContent = "0";
         if (coursesCountValue) coursesCountValue.textContent = "0";
@@ -318,17 +173,29 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    function fillCourseFilter() {
-        if (!gradeFilter) {
-            return;
+    function renderStats(stats) {
+        if (avgGradeValue) avgGradeValue.textContent = stats.avgGrade ? stats.avgGrade.toFixed(1) : "—";
+        if (gradedTasksValue) gradedTasksValue.textContent = stats.gradedCount || 0;
+        if (coursesCountValue) coursesCountValue.textContent = stats.coursesCount || 0;
+        
+        if (bestGradeValue) {
+            bestGradeValue.textContent = stats.bestGrade || "—";
+            if (Number(stats.bestGrade) === 100) {
+                bestGradeValue.classList.add("perfect-grade");
+            } else {
+                bestGradeValue.classList.remove("perfect-grade");
+            }
         }
+        bindPerfectGradeHoverEffects();
+    }
+
+    function fillCourseFilter(data, lang) {
+        if (!gradeFilter) return;
 
         const currentValue = gradeFilter.value || "all";
-        const uniqueCourses = [...new Set(grades.map(item => item.courseTitle))];
+        const uniqueCourses = [...new Set(data.map(item => item.course_title))].filter(Boolean);
 
-        gradeFilter.innerHTML = `
-            <option value="all">${translate("grades.filter_all", "Усі курси")}</option>
-        `;
+        gradeFilter.innerHTML = `<option value="all">${getTranslation(lang, "grades.filter_all")}</option>`;
 
         uniqueCourses.forEach(course => {
             const option = document.createElement("option");
@@ -340,185 +207,136 @@ document.addEventListener("DOMContentLoaded", () => {
         gradeFilter.value = uniqueCourses.includes(currentValue) ? currentValue : "all";
     }
 
-    function updateStats() {
-        const validGrades = grades.filter(item => {
-            return typeof item.gradeValue === "number" && !Number.isNaN(item.gradeValue);
-        });
-
-        const avg = validGrades.length
-            ? Math.round(validGrades.reduce((sum, item) => sum + item.gradeValue, 0) / validGrades.length)
-            : 0;
-
-        const best = validGrades.length
-            ? Math.max(...validGrades.map(item => item.gradeValue))
-            : 0;
-
-        const uniqueCourses = new Set(grades.map(item => item.courseTitle));
-
-        if (avgGradeValue) avgGradeValue.textContent = avg || "—";
-        if (gradedTasksValue) gradedTasksValue.textContent = validGrades.length;
-        if (coursesCountValue) coursesCountValue.textContent = uniqueCourses.size;
-
-        if (bestGradeValue) {
-            bestGradeValue.textContent = best || "—";
-            bestGradeValue.classList.remove("perfect-grade");
-        }
-    }
-
-    function renderGrades() {
-        const searchValue = gradeSearch ? gradeSearch.value.toLowerCase().trim() : "";
-        const selectedCourse = gradeFilter ? gradeFilter.value : "all";
-
-        const filteredGrades = grades.filter(item => {
-            const course = item.courseTitle.toLowerCase();
-            const task = item.taskTitle.toLowerCase();
-            const feedback = item.feedback.toLowerCase();
-
-            const matchesSearch =
-                course.includes(searchValue) ||
-                task.includes(searchValue) ||
-                feedback.includes(searchValue);
-
-            const matchesFilter =
-                selectedCourse === "all" || item.courseTitle === selectedCourse;
-
-            return matchesSearch && matchesFilter;
-        });
-
+    function renderGradesTable(dataToRender, lang) {
         gradesTableBody.innerHTML = "";
 
-        if (filteredGrades.length === 0) {
-            showEmptyState(
-                translate("grades.empty_title", "Оцінок не знайдено"),
-                translate("grades.empty_text", "Спробуйте змінити пошук або фільтр.")
-            );
+        if (dataToRender.length === 0) {
+            gradesTableBody.innerHTML = `
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-grades">
+                            <h3>${getTranslation(lang, "grades.empty_title")}</h3>
+                            <p>${getTranslation(lang, "grades.empty_text")}</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
             return;
         }
 
-        filteredGrades.forEach(item => {
+        dataToRender.forEach(item => {
             const row = document.createElement("tr");
 
-            if (item.colorAccent) {
-                row.style.setProperty("--grade-accent", item.colorAccent);
+            const gradeValue = item.grade_value !== null ? Number(item.grade_value) : null;
+            const isNumeric = gradeValue !== null && !Number.isNaN(gradeValue);
+            const gradeText = isNumeric ? gradeValue : getTranslation(lang, "grades.no_grade");
+
+            const gradeClass = getGradeClass(item.grade_value);
+            const isPerfectGrade = gradeValue === 100;
+
+            let statusClass = "passed";
+            let statusKey = "grades.status_passed";
+
+            if (isNumeric && gradeValue < 60) {
+                statusClass = "failed";
+                statusKey = "grades.status_failed";
             }
-
-            const gradeText =
-                item.gradeValue === null || Number.isNaN(item.gradeValue)
-                    ? translate("grades.no_grade", "Немає")
-                    : item.gradeValue;
-
-            const gradeClass = getGradeClass(item.gradeValue);
-            const isPerfectGrade = item.gradeValue === 100;
 
             row.innerHTML = `
                 <td>
-                    <span class="grade-course">${item.courseTitle}</span>
+                    <span class="grade-course" style="color: ${item.color_accent || 'var(--text-gold)'}">
+                        ${item.course_title || getTranslation(lang, "grades.course_not_specified")}
+                    </span>
                 </td>
-
                 <td>
-                    <span class="grade-task">${item.taskTitle}</span>
-                    ${
-                        item.feedback && getCurrentLang() === "uk"
-                            ? `<p class="grade-feedback">${item.feedback}</p>`
-                            : ""
-                    }
+                    <span class="grade-task">${item.task_title || getTranslation(lang, "grades.task_not_specified")}</span>
+                    ${item.feedback ? `<p class="grade-feedback">${item.feedback}</p>` : ""}
                 </td>
-
-                <td>${formatDate(item.createdAt)}</td>
-
+                <td>${formatDate(item.created_at)}</td>
                 <td>
                     <span class="grade-value ${gradeClass} ${isPerfectGrade ? "perfect-grade" : ""}">
                         ${gradeText}
                     </span>
                 </td>
-
-                <td>
-                    <span class="grade-status passed">
-                        ${translate("grades.status_passed", "Зараховано")}
-                    </span>
-                </td>
+                <td><span class="grade-status ${statusClass}">${getTranslation(lang, statusKey)}</span></td>
             `;
-
             gradesTableBody.appendChild(row);
         });
 
         bindPerfectGradeHoverEffects();
     }
 
-    function renderCourseProgress() {
-        if (!courseProgressList) {
-            return;
-        }
+    function renderCourseProgress(data, lang) {
+        if (!courseProgressList) return;
 
         const grouped = {};
-
-        grades.forEach(item => {
-            if (!grouped[item.courseTitle]) {
-                grouped[item.courseTitle] = [];
-            }
-
-            if (typeof item.gradeValue === "number" && !Number.isNaN(item.gradeValue)) {
-                grouped[item.courseTitle].push(item.gradeValue);
+        data.forEach(item => {
+            if (!item.course_title) return;
+            if (!grouped[item.course_title]) grouped[item.course_title] = [];
+            
+            if (item.grade_value !== null && !Number.isNaN(Number(item.grade_value))) {
+                grouped[item.course_title].push(Number(item.grade_value));
             }
         });
 
         courseProgressList.innerHTML = "";
-
         const courseNames = Object.keys(grouped);
 
         if (courseNames.length === 0) {
             courseProgressList.innerHTML = `
-                <div class="empty-grades">
-                    <p>${translate("grades.empty_text", "Оцінок поки немає.")}</p>
-                </div>
+                <div class="empty-grades"><p>${getTranslation(lang, "grades.empty_text")}</p></div>
             `;
             return;
         }
 
         courseNames.forEach(courseName => {
             const courseGrades = grouped[courseName];
-
             const avg = courseGrades.length
                 ? Math.round(courseGrades.reduce((sum, value) => sum + value, 0) / courseGrades.length)
                 : 0;
 
-            const item = document.createElement("div");
-            item.className = "course-progress-item";
-
-            item.innerHTML = `
+            const div = document.createElement("div");
+            div.className = "course-progress-item";
+            div.innerHTML = `
                 <div class="course-progress-top">
                     <span class="course-progress-title">${courseName}</span>
                     <span class="course-progress-grade">${avg || "—"}</span>
                 </div>
-
                 <div class="course-progress-bar">
                     <div class="course-progress-fill" style="width: ${avg || 0}%"></div>
                 </div>
             `;
-
-            courseProgressList.appendChild(item);
+            courseProgressList.appendChild(div);
         });
     }
 
-    function updatePageAfterLanguageChange() {
-        applyPageTranslations();
-        loadGrades();
+    function applyFilters() {
+        const lang = document.documentElement.lang || "uk";
+        const searchValue = gradeSearch ? gradeSearch.value.toLowerCase().trim() : "";
+        const selectedCourse = gradeFilter ? gradeFilter.value : "all";
+
+        const filteredGrades = allGrades.filter(item => {
+            const course = (item.course_title || "").toLowerCase();
+            const task = (item.task_title || "").toLowerCase();
+            const feedback = (item.feedback || "").toLowerCase();
+
+            const matchesSearch = course.includes(searchValue) || task.includes(searchValue) || feedback.includes(searchValue);
+            const matchesFilter = selectedCourse === "all" || item.course_title === selectedCourse;
+
+            return matchesSearch && matchesFilter;
+        });
+
+        renderGradesTable(filteredGrades, lang);
     }
 
-    if (gradeSearch) {
-        gradeSearch.addEventListener("input", renderGrades);
-    }
-
-    if (gradeFilter) {
-        gradeFilter.addEventListener("change", renderGrades);
-    }
+    if (gradeSearch) gradeSearch.addEventListener("input", applyFilters);
+    if (gradeFilter) gradeFilter.addEventListener("change", applyFilters);
 
     document.querySelectorAll('input[name="lang"]').forEach(radio => {
         radio.addEventListener("change", () => {
-            setTimeout(updatePageAfterLanguageChange, 200);
+            setTimeout(loadGrades, 200);
         });
     });
 
-    applyPageTranslations();
     loadGrades();
 });

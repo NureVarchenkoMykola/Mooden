@@ -1,32 +1,17 @@
 .grades-header {
-    margin-bottom: 1.5rem;
-    padding: 0;
-    background: transparent;
-    border: none;
-    box-shadow: none;
+    margin-bottom: 2rem;
 }
 
 .grades-header h1 {
-    margin: 0 0 0.6rem;
     font-size: 2.8rem;
-    line-height: 1.05;
-    font-family: var(--font-heading);
-    color: var(--text-main);
-}
-
-.grades-header .header-desc {
-    margin: 0;
-    max-width: 860px;
-    font-size: 1rem;
-    line-height: 1.6;
-    color: var(--text-muted);
+    margin-bottom: 0.6rem;
 }
 
 .grades-stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1.5rem;
-    margin: 2rem 0;
+    margin-bottom: 2.5rem;
 }
 
 .grade-stat-card {
@@ -40,14 +25,14 @@
 }
 
 .grade-stat-icon {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     background: var(--bg-input);
     width: 3rem;
     height: 3rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 0.6rem;
+    border-radius: 0.8rem;
 }
 
 .grade-stat-value {
@@ -60,24 +45,27 @@
 .grade-stat-label {
     font-size: 0.8rem;
     color: var(--text-muted);
+    margin-top: 0.3rem;
 }
 
 .grades-toolbar {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .search-box {
     flex: 1;
-    min-width: 240px;
 }
 
-.search-box input,
+.search-box input {
+    height: 3.2rem;
+}
+
 .grade-filter {
-    width: 100%;
-    height: 3rem;
+    height: 3.2rem;
+    max-width: 25rem;
     padding: 0 1rem;
     border-radius: 0.8rem;
     border: 1px solid var(--border-main);
@@ -87,25 +75,16 @@
     font-size: 0.9rem;
     outline: none;
     transition: 0.2s ease;
+    cursor: pointer;
 }
 
-.search-box input::placeholder {
-    color: var(--text-muted);
-}
-
-.search-box input:focus,
 .grade-filter:focus {
     border-color: var(--accent-gold);
 }
 
-.grade-filter {
-    max-width: 280px;
-    cursor: pointer;
-}
-
 .grades-layout {
     display: grid;
-    grid-template-columns: 1fr 330px;
+    grid-template-columns: minmax(0, 3fr) 1.2fr;
     gap: 1.5rem;
     align-items: start;
 }
@@ -124,30 +103,38 @@
 
 .grades-table-header h2,
 .grades-side-panel h2 {
-    margin: 0;
     font-size: 1.5rem;
-    font-family: var(--font-heading);
-    color: var(--text-main);
 }
 
 .grades-table-wrapper {
     width: 100%;
     overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-main) transparent;
+}
+
+.grades-table-wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+
+.grades-table-wrapper::-webkit-scrollbar-thumb {
+    background: var(--border-main);
+    border-radius: 10px;
 }
 
 .grades-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 720px;
+    min-width: 38rem;
 }
 
 .grades-table th {
-    text-align: left;
-    padding: 0.9rem 0.8rem;
+    text-align: center;
+    padding: 0.8rem;
     font-size: 0.8rem;
     color: var(--text-muted);
     border-bottom: 1px solid var(--border-main);
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .grades-table td {
@@ -163,21 +150,28 @@
 }
 
 .grade-course {
-    color: var(--text-gold);
-    font-weight: 700;
+    font-weight: 600;
+    font-size: 0.95rem;
 }
 
 .grade-task {
     color: var(--text-main);
-    font-weight: 600;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.grade-feedback {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.3rem;
 }
 
 .grade-value {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 46px;
-    height: 32px;
+    min-width: 2.8rem;
+    height: 2rem;
     border-radius: 0.7rem;
     background: var(--bg-input);
     border: 1px solid var(--border-main);
@@ -186,18 +180,23 @@
 }
 
 .grade-value.high {
-    color: #2ecc71;
-    background: rgba(46, 204, 113, 0.12);
+    color: var(--color-offline);
+    background: color-mix(in srgb, var(--color-offline) 12%, transparent);
 }
 
 .grade-value.medium {
     color: var(--text-gold);
-    background: rgba(232, 164, 74, 0.12);
+    background: color-mix(in srgb, var(--text-gold) 12%, transparent);
 }
 
 .grade-value.low {
-    color: #e74c3c;
-    background: rgba(231, 76, 60, 0.12);
+    color: var(--color-practical);
+    background: color-mix(in srgb, var(--color-practical) 12%, transparent);
+}
+
+.grade-value.fail {
+    color: var(--color-exam);
+    background: color-mix(in srgb, var(--color-exam) 12%, transparent);
 }
 
 .grade-status {
@@ -207,22 +206,19 @@
     padding: 0.3rem 0.7rem;
     border-radius: 2rem;
     font-size: 0.75rem;
-    font-weight: 700;
+    font-weight: 600;
+    text-align: center;
+
 }
 
 .grade-status.passed {
-    color: #2ecc71;
-    background: rgba(46, 204, 113, 0.14);
-}
-
-.grade-status.pending {
-    color: var(--text-gold);
-    background: rgba(232, 164, 74, 0.14);
+    color: var(--color-offline);
+    background: color-mix(in srgb, var(--color-offline) 14%, transparent);
 }
 
 .grade-status.failed {
-    color: #e74c3c;
-    background: rgba(231, 76, 60, 0.14);
+    color: var(--color-exam);
+    background: color-mix(in srgb, var(--color-exam) 14%, transparent);
 }
 
 .course-progress-list {
@@ -282,51 +278,12 @@
 }
 
 .empty-grades h3 {
-    margin: 0 0 0.5rem;
+    margin-bottom: 0.5rem;
     font-size: 1.4rem;
     color: var(--text-main);
     font-family: var(--font-heading);
 }
 
-.empty-grades p {
-    margin: 0;
-    font-size: 0.9rem;
-}
-
-@media (max-width: 1200px) {
-    .grades-layout {
-        grid-template-columns: 1fr;
-    }
-
-    .grades-stats {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 768px) {
-    .grades-header h1 {
-        font-size: 2.1rem;
-    }
-
-    .grades-stats {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-
-    .grades-toolbar {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .grade-filter {
-        max-width: 100%;
-    }
-
-    .grades-table-card,
-    .grades-side-panel {
-        padding: 1.2rem;
-    }
-}
 .grade-value.perfect-grade {
     position: relative;
     cursor: pointer;
@@ -347,8 +304,6 @@
 
 .celebration-particle {
     position: fixed;
-    left: 0;
-    top: 0;
     pointer-events: none;
     z-index: 99999;
     transform: translate(-50%, -50%);
@@ -428,5 +383,34 @@
             )
             scale(0.9)
             rotate(12deg);
+    }
+}
+
+@media (max-width: 768px) {
+    .grades-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .grades-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .grades-header h1 {
+        font-size: 2.2rem;
+    }
+
+    .grades-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .grade-filter {
+        max-width: 100%;
+    }
+
+    .grades-table-card,
+    .grades-side-panel {
+        padding: 1.2rem;
     }
 }

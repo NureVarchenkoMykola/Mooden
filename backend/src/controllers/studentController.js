@@ -430,6 +430,50 @@ exports.getSchedule = async (req, res) => {
     }
 };
 
+exports.getGradesPageData = async (req, res) => {
+    const userId = req.user.id;
+
+    try {
+        const userResult = await db.query('SELECT lang FROM users WHERE id = $1', [userId]);
+        const lang = userResult.rows[0]?.lang || 'uk';
+
+        const stats = await db.query(`
+            SELECT 
+                (SELECT ROUND(AVG(grade_value), 1) FROM public.grades WHERE student_id = $1) as avg_grade,
+                (SELECT COUNT(*) FROM public.grades WHERE student_id = $1) as graded_count,
+                (SELECT COUNT(*) FROM public.student_courses WHERE student_id = $1) as courses_count,
+                (SELECT MAX(grade_value) FROM public.grades WHERE student_id = $1) as best_grade
+        `, [userId]);
+
+        const grades = await db.query(`
+            SELECT 
+                g.grade_value, g.feedback, g.created_at,
+                t.title_${lang} as task_title,
+                c.title_${lang} as course_title,
+                c.color_accent
+            FROM public.grades g
+            JOIN public.tasks t ON g.task_id = t.id
+            JOIN public.courses c ON t.course_id = c.id
+            WHERE g.student_id = $1
+            ORDER BY g.created_at DESC
+        `, [userId]);
+
+        res.json({
+            stats: {
+                avgGrade: parseFloat(stats.rows[0].avg_grade) || 0,
+                gradedCount: parseInt(stats.rows[0].graded_count) || 0,
+                coursesCount: parseInt(stats.rows[0].courses_count) || 0,
+                bestGrade: parseFloat(stats.rows[0].best_grade) || 0
+            },
+            grades: grades.rows
+        });
+
+    } catch (err) {
+        console.error("[Dev Mode] Grades Controller Error:", err.message);
+        res.status(500).json({ message: 'SERVER_ERROR_GRADES' });
+    }
+};
+
 exports.getTaskDetail = async (req, res) => {
     const userId = req.user.id;
     const taskId = req.params.id;
@@ -539,10 +583,27 @@ exports.getCourseDetail = async (req, res) => {
             ORDER BY t.deadline ASC
         `, [courseId, userId]);
 
+        const attendance = await db.query(`
+            SELECT 
+                s.id AS schedule_id, 
+                s.lesson_date, 
+                s.time_start, 
+                s.time_end,
+                s.lesson_type AS type,
+                s.is_open_for_attendance AS can_mark,
+                CASE WHEN a.marked_at IS NOT NULL THEN true ELSE false END AS is_present
+            FROM public.schedule s
+            LEFT JOIN public.attendance a ON s.id = a.schedule_id AND a.student_id = $2
+            WHERE s.course_id = $1 AND s.lesson_date <= CURRENT_DATE
+            ORDER BY s.lesson_date DESC, s.time_start DESC
+            LIMIT 3
+        `, [courseId, userId]);
+
         res.json({
             course: courseInfo.rows[0],
             materials: materials.rows,
-            tasks: tasks.rows
+            tasks: tasks.rows,
+            attendance: attendance.rows
         });
 
     } catch (err) {
@@ -560,7 +621,7 @@ exports.getCourseAttendance = async (req, res) => {
         const lang = userResult.rows[0]?.lang || 'uk';
 
         const attendance = await db.query(`
-            SELECT s.id AS schedule_id, s.lesson_date, s.time_start, s.lesson_type AS type,
+            SELECT s.id AS schedule_id, s.lesson_date, s.time_start, s.time_end, s.lesson_type AS type, s.room,
                    CASE WHEN a.marked_at IS NOT NULL THEN true ELSE false END AS is_present,
                    s.is_open_for_attendance AS can_mark
             FROM public.schedule s

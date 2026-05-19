@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const errorData = await response.json();
             const currentLang = document.documentElement.lang || 'uk';
             showToast(getTranslation(currentLang, `errors.${errorData.message}`), 'error');
-            console.error(`[Dev Mode] Dashboard load failed. Status: ${response.status}, Code: ${errorData.message}`); // сделать лог
+            console.error(`[Dev Mode] Dashboard load failed. Status: ${response.status}, Code: ${errorData.message}`);
 
             if (response.status === 401 || response.status === 403) {
                 localStorage.clear();
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (error) {
         const currentLang = document.documentElement.lang || 'uk';
         showToast(getTranslation(currentLang, 'errors.UNKNOWN_ERROR'), 'error');
-        console.error('[Dev Mode] Critical failure during dashboard initialization:', error);  // сделать лог
+        console.error('[Dev Mode] Critical failure during dashboard initialization:', error);
     }
 });
 
@@ -58,7 +58,7 @@ function renderDashboard(data) {
     const coursesContainer = document.getElementById('coursesContainer');
     if (data.courses && data.courses.length > 0) {
         coursesContainer.innerHTML = data.courses.map(course => `
-        <a href="course.html?id=${course.id}" class="course-item" style="--accent-color: ${course.color_accent || 'var(--text-gold)'}">
+        <a href="./student-course-detail.html?id=${course.id}" class="course-item" style="--accent-color: ${course.color_accent || 'var(--text-gold)'}">
             <div class="course-info">
                 <p class="course-title"><strong>${course.title}</strong></p>
                 <div class="progress-wrapper">
@@ -146,7 +146,7 @@ async function openAnnouncement(id) {
             headers: { 'Authorization': `Bearer ${token}` }
         });
     } catch (err) {
-        console.error("[Dev Mode] Failed to mark announcement as read via API:", err); // сделать лог
+        console.error("[Dev Mode] Failed to mark announcement as read via API:", err);
     }
 }
 

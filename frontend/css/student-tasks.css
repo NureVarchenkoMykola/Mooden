@@ -243,6 +243,10 @@
         gap: 1.2rem;
     }
 
+    .tasks-header h1 {
+        font-size: 2.2rem;
+    }
+
     .open-task-btn {
         width: 100%;
         text-align: center;

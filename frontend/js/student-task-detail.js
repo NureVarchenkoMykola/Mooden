@@ -39,25 +39,37 @@ document.addEventListener("DOMContentLoaded", () => {
     function isOverdue(deadline) {
         if (!deadline) return false;
 
-        const date = new Date(deadline);
+        const deadlineDate = new Date(deadline);
 
-        if (Number.isNaN(date.getTime())) {
+        if (Number.isNaN(deadlineDate.getTime())) {
             return false;
         }
 
-        return date < new Date();
+        const today = new Date();
+
+        today.setHours(0, 0, 0, 0);
+        deadlineDate.setHours(0, 0, 0, 0);
+
+        return deadlineDate < today;
     }
 
     function getTaskStatus(task) {
-        if (task.grade_value !== null && task.grade_value !== undefined) {
+        const hasGrade =
+            task.grade_value !== null &&
+            task.grade_value !== undefined;
+
+        const hasSubmission = Boolean(task.submitted_at);
+        const overdue = isOverdue(task.deadline);
+
+        if (hasGrade) {
             return "graded";
         }
 
-        if (task.submitted_at) {
+        if (hasSubmission) {
             return "submitted";
         }
 
-        if (isOverdue(task.deadline)) {
+        if (!hasSubmission && overdue) {
             return "overdue";
         }
 
@@ -174,8 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         ${
                             task.is_exam
-                                ? `<span class="task-exam-badge">${getTranslation(lang, "tasks.exam")}</span>`
-                                : ""
+                                ? `<span class="task-exam-badge">${getTranslation(lang, "tasks.exam")}</span>` : ""
                         }
 
                         <span class="task-status-badge ${status}">
@@ -186,35 +197,35 @@ document.addEventListener("DOMContentLoaded", () => {
                     <h1>
                         ${task.title || getTranslation(lang, "tasks.unknown_task")}
                     </h1>
-
-                    <p>
-                        ${task.description || getTranslation(lang, "task_detail.no_description")}
-                    </p>
                 </div>
+
+                <button class="course-back-link task-back-btn" type="button">
+                    ← ${getTranslation(lang, "common.go_back")}
+                </button>
             </header>
 
             <section class="task-detail-stats">
                 <div class="task-detail-stat">
                     <span class="task-detail-stat-icon">⏰</span>
                     <div>
-                        <strong>${formatDate(task.deadline)}</strong>
-                        <p>${getTranslation(lang, "tasks.deadline")}</p>
+                        <p class="task-stat-value">${formatDate(task.deadline)}</p>
+                        <p class="task-stat-label">${getTranslation(lang, "tasks.deadline")}</p>
                     </div>
                 </div>
 
                 <div class="task-detail-stat">
                     <span class="task-detail-stat-icon">⭐</span>
                     <div>
-                        <strong>${gradeText}</strong>
-                        <p>${getTranslation(lang, "tasks.grade")}</p>
+                        <p class="task-stat-value">${gradeText}</p>
+                        <p class="task-stat-label">${getTranslation(lang, "tasks.grade")}</p>
                     </div>
                 </div>
 
                 <div class="task-detail-stat">
                     <span class="task-detail-stat-icon">📤</span>
                     <div>
-                        <strong>${submittedText}</strong>
-                        <p>${getTranslation(lang, "task_detail.submission_status")}</p>
+                        <p class="task-stat-value">${submittedText}</p>
+                        <p class="task-stat-label">${getTranslation(lang, "task_detail.submission_status")}</p>
                     </div>
                 </div>
             </section>
@@ -233,23 +244,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     <div class="task-result-list">
                         <div class="task-result-item">
-                            <span>${getTranslation(lang, "tasks.grade")}</span>
-                            <strong>${gradeText}</strong>
+                            <span class="task-result-label">${getTranslation(lang, "tasks.grade")}</span>
+                            <span class="task-result-value">${gradeText}</span>
                         </div>
 
                         <div class="task-result-item">
-                            <span>${getTranslation(lang, "task_detail.feedback")}</span>
-                            <strong>${task.feedback || getTranslation(lang, "task_detail.no_feedback")}</strong>
+                            <span class="task-result-label">${getTranslation(lang, "task_detail.feedback")}</span>
+                            <span class="task-result-value">${task.feedback || getTranslation(lang, "task_detail.no_feedback")}</span>
                         </div>
 
                         <div class="task-result-item">
-                            <span>${getTranslation(lang, "task_detail.submitted_at")}</span>
-                            <strong>${submittedText}</strong>
+                            <span class="task-result-label">${getTranslation(lang, "task_detail.submitted_at")}</span>
+                            <span class="task-result-value">${submittedText}</span>
                         </div>
                     </div>
                 </aside>
             </section>
         `;
+
+        const backButton = taskContent.querySelector(".task-back-btn");
+
+        backButton?.addEventListener("click", () => {
+            if (window.history.length > 1) {
+                window.history.back();
+                return;
+            }
+
+            window.location.href = "./student-tasks.html";
+        });
     }
 
     if (typeof applyStaticTranslations === "function") {

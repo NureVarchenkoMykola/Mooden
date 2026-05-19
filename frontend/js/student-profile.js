@@ -71,7 +71,7 @@ function renderProfile(data) {
             const courseColor = course.color_accent || 'var(--text-gold)';
             
             return `
-            <a href="course.html?id=${course.id}" class="p-course-item" style="--accent-color: ${courseColor}">
+            <a href="./student-course-detail.html?id=${course.id}" class="p-course-item" style="--accent-color: ${courseColor}">
                 <div class="p-course-info">
                     <p class="p-course-title"><strong>${course.title}</strong></p>
                     <div class="p-progress-wrapper">
@@ -234,25 +234,47 @@ function renderProfile(data) {
     }
 
     initGlobalPasswordChange('changePasswordForm');
+
+    const achievementsLink = document.querySelector('.achievements-link-all');
+
+    if (achievementsLink) {
+        achievementsLink.addEventListener('click', event => {
+            event.preventDefault();
+            openProfileTab('achievements');
+
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
+}
+
+function openProfileTab(tabName) {
+    const tabButtons = document.querySelectorAll('.tab-item');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+        button.classList.toggle(
+            'active',
+            button.dataset.tab === tabName
+        );
+    });
+
+    tabContents.forEach(content => {
+        content.classList.toggle(
+            'active',
+            content.id === `tab-${tabName}`
+        );
+    });
 }
 
 function initTabs() {
     const tabButtons = document.querySelectorAll('.tab-item');
-    const tabContents = document.querySelectorAll('.tab-content');
 
     tabButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-            const targetTab = btn.getAttribute('data-tab');
-
-            tabButtons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            tabContents.forEach(content => {
-                content.classList.remove('active');
-                if (content.id === `tab-${targetTab}`) {
-                    content.classList.add('active');
-                }
-            });
+            openProfileTab(btn.dataset.tab);
         });
     });
 }
