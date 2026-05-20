@@ -152,7 +152,8 @@
     font-size: 0.8rem;
     font-weight: 600;
     padding: 0.3rem 0.7rem;
-    border-radius: 2rem;
+    border-radius: 1rem;
+    white-space: nowrap;
 }
 
 .task-status-badge.pending {
@@ -163,6 +164,11 @@
 .task-status-badge.graded {
     background: color-mix(in srgb, var(--color-success) 10%, transparent);
     color: var(--color-success);
+}
+
+.task-status-badge.submitted {
+    background: color-mix(in srgb, var(--color-online) 15%, transparent);
+    color: var(--color-online);
 }
 
 .task-status-badge.overdue {

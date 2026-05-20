@@ -129,7 +129,7 @@
 
 .profile-content-layout {
     display: grid;
-    grid-template-columns: 1.7fr 1fr;
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
     gap: 2rem;
 }
 
@@ -540,6 +540,13 @@
     color: var(--text-gold);
 }
 
+@media (max-width: 1200px) {
+    .profile-content-layout {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+}
+
 @media (max-width: 768px) {
     .profile-stats-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -548,11 +555,6 @@
 
     .p-stat-card {
         padding: 1rem;
-    }
-
-    .profile-content-layout {
-        grid-template-columns: 1fr;
-        gap: 0;
     }
 
     .profile-hero-card {

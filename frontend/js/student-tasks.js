@@ -34,6 +34,12 @@ async function loadTasks() {
 
         const data = await response.json();
         allTasks = data.tasks;
+        const filterSelect = document.getElementById("taskFilter");
+
+        if (filterSelect) {
+            filterSelect.value = "pending";
+        }
+
         const initialFiltered = allTasks.filter(t => t.status === 'pending');
 
         document.getElementById('totalTasks').textContent = data.stats.total;
@@ -105,8 +111,8 @@ function setupFilters() {
     const filterSelect = document.getElementById("taskFilter");
 
     const applyFilters = () => {
-        const query = searchInput.value.toLowerCase();
-        const status = filterSelect.value;
+        const query = searchInput?.value.toLowerCase() || "";
+        const status = filterSelect?.value || "pending";
         const lang = document.documentElement.lang || 'uk';
 
         const filtered = allTasks.filter(t => {

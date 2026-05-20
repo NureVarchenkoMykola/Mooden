@@ -1,4 +1,6 @@
 const db = require('../db');
+const path = require('path');
+const fs = require('fs');
 
 exports.getDashboardData = async (req, res) => {
     const userId = req.user.id;
@@ -6,9 +8,9 @@ exports.getDashboardData = async (req, res) => {
     try {
         const profile = await db.query(`
             SELECT u.full_name, u.lang, g.name_uk, g.name_en, s.coins
-            FROM users u
-            JOIN students s ON u.id = s.user_id
-            LEFT JOIN groups g ON s.group_id = g.id
+            FROM public.users u
+            JOIN public.students s ON u.id = s.user_id
+            LEFT JOIN public.groups g ON s.group_id = g.id
             WHERE u.id = $1
         `, [userId]);
 
@@ -21,27 +23,28 @@ exports.getDashboardData = async (req, res) => {
 
         const stats = await db.query(`
             SELECT 
-                (SELECT ROUND(AVG(grade_value), 1) FROM grades WHERE student_id = $1) as avg_grade,
-                (SELECT COUNT(*) FROM grades WHERE student_id = $1) as completed_tasks
+                (SELECT ROUND(AVG(grade_value), 1) FROM public.grades WHERE student_id = $1) as avg_grade,
+                (SELECT COUNT(*) FROM public.submissions WHERE student_id = $1) as completed_tasks
         `, [userId]);
 
         const courses = await db.query(`
             SELECT c.id, c.title_${lang} AS title, c.color_accent, sc.progress_percent
-            FROM courses c
-            JOIN student_courses sc ON c.id = sc.course_id
+            FROM public.courses c
+            JOIN public.student_courses sc ON c.id = sc.course_id
             WHERE sc.student_id = $1
         `, [userId]);
 
         const deadlines = await db.query(`
             SELECT t.title_${lang} AS title, t.deadline, c.title_${lang} AS course_name, c.color_accent
-            FROM tasks t
-            JOIN courses c ON t.course_id = c.id
-            JOIN student_courses sc ON c.id = sc.course_id
-            LEFT JOIN grades gr ON gr.task_id = t.id AND gr.student_id = $1
-            WHERE sc.student_id = $1 
-            AND gr.task_id IS NULL 
+            FROM public.tasks t
+            JOIN public.courses c ON t.course_id = c.id
+            JOIN public.student_courses sc ON c.id = sc.course_id
+            LEFT JOIN public.submissions s 
+                ON s.task_id = t.id AND s.student_id = $1
+            WHERE sc.student_id = $1
+            AND s.id IS NULL
             AND t.deadline >= CURRENT_DATE
-            ORDER BY t.deadline ASC 
+            ORDER BY t.deadline ASC
             LIMIT 3
         `, [userId]);
 
@@ -53,14 +56,14 @@ exports.getDashboardData = async (req, res) => {
                 a.created_at, 
                 u.full_name as author_name, 
                 c.title_${lang} AS course_name
-            FROM announcements a
-            JOIN users u ON a.author_id = u.id
-            LEFT JOIN courses c ON a.course_id = c.id
+            FROM public.announcements a
+            JOIN public.users u ON a.author_id = u.id
+            LEFT JOIN public.courses c ON a.course_id = c.id
             WHERE (a.course_id IS NULL OR a.course_id IN (
-                SELECT sc.course_id FROM student_courses sc WHERE sc.student_id = $1
+                SELECT sc.course_id FROM public.student_courses sc WHERE sc.student_id = $1
             ))
             AND NOT EXISTS (
-                SELECT 1 FROM read_announcements ra 
+                SELECT 1 FROM public.read_announcements ra 
                 WHERE ra.announcement_id = a.id AND ra.user_id = $1
             )
             ORDER BY a.created_at DESC 
@@ -85,7 +88,7 @@ exports.getDashboardData = async (req, res) => {
         });
 
     } catch (err) {
-        console.error(err.message);
+        console.error("[Dev Mode] Dashboard Controller Error:", err.message);
         res.status(500).json({ message: 'SERVER_ERROR_DASHBOARD' });
     }
 };
@@ -96,7 +99,7 @@ exports.markAsRead = async (req, res) => {
         const userId = req.user.id;
         
         await db.query(
-            'INSERT INTO read_announcements (user_id, announcement_id) VALUES ($1, $2) ON CONFLICT DO NOTHING',
+            'INSERT INTO public.read_announcements (user_id, announcement_id) VALUES ($1, $2) ON CONFLICT DO NOTHING',
             [userId, id]
         );
 
@@ -115,7 +118,7 @@ exports.updateSettings = async (req, res) => {
             return res.status(400).json({ error: 'Unsupported language' });
         }
 
-        await db.query('UPDATE users SET lang = $1 WHERE id = $2', [lang, userId]);
+        await db.query('UPDATE public.users SET lang = $1 WHERE id = $2', [lang, userId]);
         
         res.json({ success: true });
     } catch (err) {
@@ -153,7 +156,7 @@ exports.getProfileData = async (req, res) => {
         const stats = await db.query(`
             SELECT 
                 (SELECT ROUND(AVG(grade_value), 1) FROM public.grades WHERE student_id = $1) as avg_grade,
-                (SELECT COUNT(*) FROM public.grades WHERE student_id = $1) as completed_tasks,
+                (SELECT COUNT(*) FROM public.submissions WHERE student_id = $1) as completed_tasks,
                 (SELECT COUNT(*) FROM public.student_courses WHERE student_id = $1) as active_courses
         `, [userId]);
 
@@ -205,18 +208,19 @@ exports.getProfileData = async (req, res) => {
             FROM public.tasks t
             JOIN public.courses c ON t.course_id = c.id
             JOIN public.student_courses sc ON c.id = sc.course_id
-            LEFT JOIN public.grades gr ON gr.task_id = t.id AND gr.student_id = $1
-            WHERE sc.student_id = $1 
-            AND gr.task_id IS NULL 
+            LEFT JOIN public.submissions s 
+                ON s.task_id = t.id AND s.student_id = $1
+            WHERE sc.student_id = $1
+            AND s.id IS NULL
             AND t.deadline >= CURRENT_DATE
-            ORDER BY t.deadline ASC 
+            ORDER BY t.deadline ASC
             LIMIT 3
         `, [userId]);
 
         const activity = await db.query(`
-            SELECT d::date as day_raw, COUNT(g.task_id) as count
+            SELECT d::date as day_raw, COUNT(s.id) as count
             FROM GENERATE_SERIES(CURRENT_DATE - INTERVAL '6 days', CURRENT_DATE, '1 day') d
-            LEFT JOIN public.grades g ON DATE(g.created_at) = DATE(d) AND g.student_id = $1
+            LEFT JOIN public.submissions s ON DATE(s.submitted_at) = DATE(d) AND s.student_id = $1
             GROUP BY d ORDER BY d ASC
         `, [userId]);
 
@@ -321,7 +325,7 @@ exports.getAllCourses = async (req, res) => {
     const userId = req.user.id;
 
     try {
-        const userResult = await db.query('SELECT lang FROM users WHERE id = $1', [userId]);
+        const userResult = await db.query('SELECT lang FROM public.users WHERE id = $1', [userId]);
         const lang = userResult.rows[0]?.lang || 'uk';
 
         const result = await db.query(`
@@ -351,7 +355,7 @@ exports.getAllTasks = async (req, res) => {
     const userId = req.user.id;
 
     try {
-        const userResult = await db.query('SELECT lang FROM users WHERE id = $1', [userId]);
+        const userResult = await db.query('SELECT lang FROM public.users WHERE id = $1', [userId]);
         const lang = userResult.rows[0]?.lang || 'uk';
 
         const result = await db.query(`
@@ -363,8 +367,10 @@ exports.getAllTasks = async (req, res) => {
                 c.title_${lang} AS course_name,
                 c.color_accent,
                 g.grade_value,
+                s.submitted_at,
                 CASE 
                     WHEN g.grade_value IS NOT NULL THEN 'graded'
+                    WHEN s.submitted_at IS NOT NULL THEN 'submitted'
                     WHEN t.deadline < CURRENT_DATE THEN 'overdue'
                     ELSE 'pending'
                 END as status
@@ -372,6 +378,7 @@ exports.getAllTasks = async (req, res) => {
             JOIN public.courses c ON t.course_id = c.id
             JOIN public.student_courses sc ON c.id = sc.course_id
             LEFT JOIN public.grades g ON t.id = g.task_id AND g.student_id = $1
+            LEFT JOIN public.submissions s ON t.id = s.task_id AND s.student_id = $1
             WHERE sc.student_id = $1
             ORDER BY t.deadline ASC
         `, [userId]);
@@ -400,7 +407,7 @@ exports.getSchedule = async (req, res) => {
     const { from, to } = req.query;
 
     try {
-        const userResult = await db.query('SELECT lang FROM users WHERE id = $1', [userId]);
+        const userResult = await db.query('SELECT lang FROM public.users WHERE id = $1', [userId]);
         const lang = userResult.rows[0]?.lang || 'uk';
 
         const result = await db.query(`
@@ -434,7 +441,7 @@ exports.getGradesPageData = async (req, res) => {
     const userId = req.user.id;
 
     try {
-        const userResult = await db.query('SELECT lang FROM users WHERE id = $1', [userId]);
+        const userResult = await db.query('SELECT lang FROM public.users WHERE id = $1', [userId]);
         const lang = userResult.rows[0]?.lang || 'uk';
 
         const stats = await db.query(`
@@ -479,7 +486,7 @@ exports.getTaskDetail = async (req, res) => {
     const taskId = req.params.id;
 
     try {
-        const userResult = await db.query('SELECT lang FROM users WHERE id = $1', [userId]);
+        const userResult = await db.query('SELECT lang FROM public.users WHERE id = $1', [userId]);
         const lang = userResult.rows[0]?.lang || 'uk';
 
         const result = await db.query(`
@@ -494,7 +501,9 @@ exports.getTaskDetail = async (req, res) => {
                 c.color_accent,
                 g.grade_value,
                 g.feedback,
-                s.submitted_at
+                s.submitted_at,
+                s.file_url,
+                s.content AS submission_comment
             FROM public.tasks t
             JOIN public.courses c ON t.course_id = c.id
             JOIN public.student_courses sc ON c.id = sc.course_id
@@ -547,7 +556,7 @@ exports.getCourseDetail = async (req, res) => {
     const courseId = req.params.id;
 
     try {
-        const userResult = await db.query('SELECT lang FROM users WHERE id = $1', [userId]);
+        const userResult = await db.query('SELECT lang FROM public.users WHERE id = $1', [userId]);
         const lang = userResult.rows[0]?.lang || 'uk';
 
         const courseInfo = await db.query(`
@@ -571,14 +580,16 @@ exports.getCourseDetail = async (req, res) => {
 
         const tasks = await db.query(`
             SELECT t.id, t.title_${lang} AS title, t.deadline, t.is_exam,
-                   g.grade_value,
-                   CASE 
-                       WHEN g.grade_value IS NOT NULL THEN 'graded'
-                       WHEN t.deadline < CURRENT_DATE THEN 'overdue'
-                       ELSE 'pending'
-                   END as status
+                g.grade_value, s.submitted_at,
+                CASE 
+                    WHEN g.grade_value IS NOT NULL THEN 'graded'
+                    WHEN s.submitted_at IS NOT NULL THEN 'submitted'
+                    WHEN t.deadline < CURRENT_DATE THEN 'overdue'
+                    ELSE 'pending'
+                END as status
             FROM public.tasks t
             LEFT JOIN public.grades g ON t.id = g.task_id AND g.student_id = $2
+            LEFT JOIN public.submissions s ON t.id = s.task_id AND s.student_id = $2
             WHERE t.course_id = $1
             ORDER BY t.deadline ASC
         `, [courseId, userId]);
@@ -617,7 +628,7 @@ exports.getCourseAttendance = async (req, res) => {
     const courseId = req.params.id;
 
     try {
-        const userResult = await db.query('SELECT lang FROM users WHERE id = $1', [userId]);
+        const userResult = await db.query('SELECT lang FROM public.users WHERE id = $1', [userId]);
         const lang = userResult.rows[0]?.lang || 'uk';
 
         const attendance = await db.query(`
@@ -634,5 +645,128 @@ exports.getCourseAttendance = async (req, res) => {
     } catch (err) {
         console.error("[Dev Mode] Get Course Attendance Error:", err.message);
         res.status(500).json({ message: 'SERVER_ERROR_ATTENDANCE' });
+    }
+};
+
+function deleteSubmissionFile(fileUrl) {
+    if (!fileUrl) return;
+
+    try {
+        const fileName = path.basename(new URL(fileUrl).pathname);
+        const filePath = path.join(__dirname, '../../uploads/submissions', fileName);
+
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+    } catch (err) {
+        console.error('[Dev Mode] Old submission file delete failed:', err.message);
+    }
+}
+
+async function updateCourseProgressForTask(taskId, studentId) {
+    const result = await db.query(`
+        SELECT course_id
+        FROM public.tasks
+        WHERE id = $1
+    `, [taskId]);
+
+    if (result.rows.length === 0) return;
+
+    const courseId = result.rows[0].course_id;
+
+    await db.query(`
+        UPDATE public.student_courses sc
+        SET progress_percent = COALESCE(progress.value, 0)
+        FROM (
+            SELECT 
+                ROUND(
+                    COUNT(DISTINCT s.task_id)::numeric 
+                    / NULLIF(COUNT(DISTINCT t.id), 0)::numeric 
+                    * 100
+                ) AS value
+            FROM public.tasks t
+            LEFT JOIN public.submissions s
+                ON s.task_id = t.id
+                AND s.student_id = $2
+            WHERE t.course_id = $1
+        ) progress
+        WHERE sc.course_id = $1
+        AND sc.student_id = $2
+    `, [courseId, studentId]);
+}
+
+exports.submitTask = async (req, res) => {
+    const userId = req.user.id;
+    const taskId = req.params.id;
+    const content = req.body.content?.trim() || null;
+
+    if (content && content.length > 2000) {
+        return res.status(400).json({ message: 'SUBMISSION_COMMENT_TOO_LONG' });
+    }
+
+    try {
+        const taskAccess = await db.query(`
+            SELECT t.id
+            FROM public.tasks t
+            JOIN public.student_courses sc ON t.course_id = sc.course_id
+            WHERE t.id = $1 AND sc.student_id = $2
+        `, [taskId, userId]);
+
+        if (taskAccess.rows.length === 0) {
+            return res.status(404).json({ message: 'TASK_NOT_FOUND' });
+        }
+
+        const existingSubmission = await db.query(`
+            SELECT id, file_url
+            FROM public.submissions
+            WHERE task_id = $1 AND student_id = $2
+        `, [taskId, userId]);
+
+        const newFileUrl = req.file
+            ? `${req.protocol}://${req.get('host')}/uploads/submissions/${req.file.filename}`
+            : null;
+
+        if (existingSubmission.rows.length > 0) {
+            const currentFileUrl = existingSubmission.rows[0].file_url;
+            const finalFileUrl = newFileUrl || currentFileUrl;
+
+            if (!finalFileUrl && !content) {
+                return res.status(400).json({ message: 'EMPTY_SUBMISSION' });
+            }
+
+            await db.query(`
+                UPDATE public.submissions
+                SET file_url = $1,
+                    content = $2,
+                    submitted_at = CURRENT_TIMESTAMP
+                WHERE task_id = $3 AND student_id = $4
+            `, [finalFileUrl, content, taskId, userId]);
+
+            if (newFileUrl && currentFileUrl && newFileUrl !== currentFileUrl) {
+                deleteSubmissionFile(currentFileUrl);
+            }
+
+            await updateCourseProgressForTask(taskId, userId);
+
+            return res.json({ success: true, updated: true });
+        }
+
+        if (!req.file && !content) {
+            return res.status(400).json({ message: 'EMPTY_SUBMISSION' });
+        }
+
+        await db.query(`
+            INSERT INTO public.submissions 
+                (task_id, student_id, file_url, content, submitted_at)
+            VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+        `, [taskId, userId, newFileUrl, content]);
+
+        await updateCourseProgressForTask(taskId, userId);
+
+        return res.json({ success: true, updated: false });
+
+    } catch (err) {
+        console.error('[Dev Mode] Submit Task Error:', err.message);
+        res.status(500).json({ message: 'SUBMISSION_ERROR' });
     }
 };

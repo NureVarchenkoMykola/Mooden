@@ -36,6 +36,26 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    function formatDateTime(dateValue) {
+        const lang = getCurrentLang();
+
+        if (!dateValue) {
+            return getTranslation(lang, "task_detail.not_submitted");
+        }
+
+        const date = new Date(dateValue);
+        if (Number.isNaN(date.getTime())) return dateValue;
+
+        const time = date.toLocaleTimeString(lang === "en" ? "en-US" : "uk-UA", {
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+
+        const formattedDate = formatDate(dateValue);
+
+        return `${time}<br><span class="task-date-secondary">${formattedDate}</span>`;
+    }
+
     function isOverdue(deadline) {
         if (!deadline) return false;
 
@@ -145,13 +165,126 @@ document.addEventListener("DOMContentLoaded", () => {
 
             renderTask(data);
         } catch (error) {
-            console.error("[Task Detail] Не вдалося завантажити завдання:", error);
+            console.error("[Dev Mode] Task detail load failed:", error);
 
             showEmpty(
                 getTranslation(lang, "task_detail.unavailable_title"),
                 getTranslation(lang, "task_detail.unavailable_text")
             );
         }
+    }
+
+
+    function renderSubmissionBlock(task) {
+        const lang = getCurrentLang();
+        const isSubmitted = Boolean(task.submitted_at);
+        const isEditing = taskContent.dataset.editingSubmission === "true";
+
+        if (isSubmitted) {
+            if (isEditing) {
+                return `
+                    <div class="task-detail-card task-submission-card">
+                        <h2>${getTranslation(lang, "task_detail.edit_submission_title")}</h2>
+
+                        ${task.file_url ? `
+                            <a class="submitted-file-card" href="${task.file_url}" target="_blank" rel="noopener noreferrer">
+                        ` : `
+                            <div class="submitted-file-card">
+                        `}
+                            <span class="submitted-file-icon">📎</span>
+                            <div>
+                                <p class="submitted-file-title">${getTranslation(lang, "task_detail.current_file")}</p>
+                                <p class="submitted-file-link">${task.file_url ? getTranslation(lang, "task_detail.download_file") : getTranslation(lang, "task_detail.no_file_uploaded")}</p>
+                            </div>
+                        ${task.file_url ? `</a>` : `</div>`}
+
+                        <form class="task-submit-form" id="taskSubmitForm" data-has-current-file="${task.file_url ? "true" : "false"}">
+                            <label class="task-file-drop">
+                                <input type="file" id="taskFileInput" name="file">
+                                <span class="task-file-icon">📎</span>
+                                <strong>${getTranslation(lang, "task_detail.choose_new_file")}</strong>
+                                <small id="selectedFileName">${getTranslation(lang, "task_detail.no_file_selected")}</small>
+                            </label>
+
+                            <textarea 
+                                id="taskContentInput"
+                                name="content"
+                                rows="4"
+                                maxlength="2000"
+                                placeholder="${getTranslation(lang, "task_detail.comment_placeholder")}"
+                            >${task.submission_comment || ""}</textarea>
+
+                            <button type="submit" class="task-submit-btn" id="taskSubmitBtn">
+                                ${getTranslation(lang, "task_detail.save_submission_btn")}
+                            </button>
+
+                            <button type="button" class="task-cancel-edit-btn" id="cancelEditSubmissionBtn">
+                                ${getTranslation(lang, "common.cancel")}
+                            </button>
+                        </form>
+                    </div>
+                `;
+            }
+            return `
+                <div class="task-detail-card task-submission-card">
+                    <h2>${getTranslation(lang, "task_detail.submission_title")}</h2>
+
+                    ${task.file_url ? `
+                        <a class="submitted-file-card" href="${task.file_url}" target="_blank" rel="noopener noreferrer">
+                            <span class="submitted-file-icon">📎</span>
+                            <div>
+                                <p class="submitted-file-title">${getTranslation(lang, "task_detail.submitted_file")}</p>
+                                <p class="submitted-file-link">${getTranslation(lang, "task_detail.download_file")}</p>
+                            </div>
+                        </a>
+                        
+                    ` : `
+                        <div class="submitted-file-card">
+                            <span class="submitted-file-icon">📎</span>
+                            <div>
+                                <p class="submitted-file-title">${getTranslation(lang, "task_detail.no_file_uploaded")}</p>
+                            </div>
+                        </div>
+                    `}
+
+                    <div class="submission-comment-box">
+                        <span>${getTranslation(lang, "task_detail.submission_comment")}</span>
+                        <p>${task.submission_comment || getTranslation(lang, "task_detail.no_submission_comment")}</p>
+                    </div>
+
+                    <button class="task-edit-submission-btn" type="button" id="editSubmissionBtn">
+                        ${getTranslation(lang, "task_detail.edit_submission_btn")}
+                    </button>
+                </div>
+            `;
+        }
+
+        return `
+            <div class="task-detail-card task-submission-card">
+                <h2>${getTranslation(lang, "task_detail.submit_title")}</h2>
+
+                <form class="task-submit-form" id="taskSubmitForm">
+                    <label class="task-file-drop">
+                        <input type="file" id="taskFileInput" name="file">
+                        <span class="task-file-icon">📎</span>
+                        <strong>${getTranslation(lang, "task_detail.drop_file")}</strong>
+                        <small id="selectedFileName">${getTranslation(lang, "task_detail.no_file_selected")}</small>
+                    </label>
+
+                    <textarea 
+                        id="taskContentInput"
+                        name="content"
+                        rows="4"
+                        maxlength="2000"
+                        placeholder="${getTranslation(lang, "task_detail.comment_placeholder")}"
+                    ></textarea>
+
+                    <button type="submit" class="task-submit-btn">
+                        ${getTranslation(lang, "task_detail.submit_btn")}
+                    </button>
+                </form>
+            </div>
+        `;
     }
 
     function renderTask(task) {
@@ -166,6 +299,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const submittedText =
             task.submitted_at
                 ? formatDate(task.submitted_at)
+                : getTranslation(lang, "task_detail.not_submitted");
+
+        const submittedDateTime =
+            task.submitted_at
+                ? formatDateTime(task.submitted_at)
                 : getTranslation(lang, "task_detail.not_submitted");
 
         if (task.color_accent) {
@@ -231,12 +369,16 @@ document.addEventListener("DOMContentLoaded", () => {
             </section>
 
             <section class="task-detail-layout">
-                <div class="task-detail-card">
-                    <h2>${getTranslation(lang, "task_detail.description_title")}</h2>
+                <div class="task-detail-main-col">
+                    <div class="task-detail-card">
+                        <h2>${getTranslation(lang, "task_detail.description_title")}</h2>
 
-                    <p class="task-detail-text">
-                        ${task.description || getTranslation(lang, "task_detail.no_description")}
-                    </p>
+                        <p class="task-detail-text">
+                            ${task.description || getTranslation(lang, "task_detail.no_description")}
+                        </p>
+                    </div>
+
+                    ${renderSubmissionBlock(task)}
                 </div>
 
                 <aside class="task-detail-card">
@@ -255,7 +397,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         <div class="task-result-item">
                             <span class="task-result-label">${getTranslation(lang, "task_detail.submitted_at")}</span>
-                            <span class="task-result-value">${submittedText}</span>
+                            <span class="task-result-value">${submittedDateTime}</span>
                         </div>
                     </div>
                 </aside>
@@ -271,6 +413,98 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             window.location.href = "./student-tasks.html";
+        });
+
+        bindSubmitForm();
+        bindEditSubmissionButtons(task);
+    }
+
+    function bindSubmitForm() {
+        const form = document.getElementById("taskSubmitForm");
+        const fileInput = document.getElementById("taskFileInput");
+        const fileName = document.getElementById("selectedFileName");
+
+        fileInput?.addEventListener("change", () => {
+            const lang = getCurrentLang();
+
+            fileName.textContent =
+                fileInput.files[0]?.name ||
+                getTranslation(lang, "task_detail.no_file_selected");
+        });
+
+        form?.addEventListener("submit", async event => {
+            event.preventDefault();
+
+            const lang = getCurrentLang();
+            const token = getToken();
+
+            if (!token) return;
+
+            const commentValue = document.getElementById("taskContentInput")?.value.trim() || "";
+            const hasFile = Boolean(fileInput?.files?.length);
+
+            const hasCurrentFile = form.dataset.hasCurrentFile === "true";
+
+            if (!hasFile && !commentValue && !hasCurrentFile) {
+                showToast(getTranslation(lang, "errors.EMPTY_SUBMISSION"), "error");
+                return;
+            }
+
+            const submitBtn = form.querySelector(".task-submit-btn");
+            const formData = new FormData(form);
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = getTranslation(lang, "task_detail.submitting");
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/student/tasks/${taskId}/submit`, {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    throw new Error(data.message || "SUBMISSION_ERROR");
+                }
+
+                taskContent.dataset.editingSubmission = "false";
+                loadTask();
+                
+            } catch (error) {
+                console.error("[Dev Mode] Task submission failed:", error);
+
+                submitBtn.disabled = false;
+                submitBtn.textContent = getTranslation(lang, "task_detail.submit_btn");
+
+                const errorKey = `errors.${error.message}`;
+                const translatedError = getTranslation(lang, errorKey);
+
+                showToast(
+                    translatedError !== errorKey
+                        ? translatedError
+                        : getTranslation(lang, "errors.SUBMISSION_ERROR"),
+                    "error"
+                );
+             }
+        });
+    }
+
+    function bindEditSubmissionButtons(task) {
+        const editBtn = document.getElementById("editSubmissionBtn");
+        const cancelBtn = document.getElementById("cancelEditSubmissionBtn");
+
+        editBtn?.addEventListener("click", () => {
+            taskContent.dataset.editingSubmission = "true";
+            renderTask(task);
+        });
+
+        cancelBtn?.addEventListener("click", () => {
+            taskContent.dataset.editingSubmission = "false";
+            renderTask(task);
         });
     }
 

@@ -39,7 +39,7 @@
 
 .content-grid {
     display: grid;
-    grid-template-columns: 1.8fr 1fr;
+    grid-template-columns: minmax(0, 1.8fr) minmax(15rem, 1fr);
     gap: 2rem;
 }
 
@@ -295,15 +295,17 @@
     border-radius: 1rem;
 }
 
+@media (max-width: 1024px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+}
+
 @media (max-width: 768px) {
     .stats-row {
         grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
-    }
-
-    .content-grid {
-        grid-template-columns: 1fr;
-        gap: 0;
     }
 
     .dashboard-header h1 {

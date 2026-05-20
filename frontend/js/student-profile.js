@@ -155,7 +155,7 @@ function renderProfile(data) {
                 return `
                     <div class="activity-col">
                         <div class="bar-wrapper">
-                            <div class="activity-bar" style="height: ${height}%" title="Оцінок: ${currentCount}"></div>
+                            <div class="activity-bar" style="height: ${height}%" title="${getTranslation(lang, 'profile.submissions_count')}: ${currentCount}"></div>
                         </div>
                         <span class="activity-date">${formattedDate}</span>
                     </div>`;

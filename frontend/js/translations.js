@@ -27,7 +27,8 @@ const translations = {
             go_back: "Повернутися",
             redirecting: " Повертаємо вас до вашого кабінету...",
             nav_grading: "📝 Перевірка",
-            nav_constructor: "🔧 Конструктор"
+            nav_constructor: "🔧 Конструктор",
+            cancel: "Скасувати"
         },
         login: {
             welcome_badge: "ЛАСКАВО ПРОСИМО",
@@ -176,9 +177,29 @@ const translations = {
             submission_status: "Дата здачі",
             description_title: "Опис завдання",
             result_title: "Результат",
-            feedback: "Коментар",
+            feedback: "Коментар вчителя",
             no_feedback: "Коментаря поки немає",
-            submitted_at: "Дата здачі"
+            submitted_at: "Дата здачі",
+
+            submission_title: "Ваша робота",
+            submit_title: "Здати роботу",
+            submitted_file: "Прикріплений файл",
+            download_file: "Завантажити файл",
+            submission_comment: "Коментар до роботи",
+            no_submission_comment: "Коментар не додано",
+            drop_file: "Перетягніть або виберіть файл",
+            no_file_selected: "Файл не вибрано",
+            comment_placeholder: "Коментар до роботи...",
+            submit_btn: "Надіслати роботу",
+            submitting: "Надсилаємо...",
+            submission_success: "Роботу успішно надіслано",
+            no_file_uploaded: "Файл не прикріплено",
+
+            edit_submission_btn: "Редагувати роботу",
+            edit_submission_title: "Редагувати роботу",
+            current_file: "Поточний файл",
+            choose_new_file: "Виберіть новий файл",
+            save_submission_btn: "Зберегти зміни"
         },
         tasks: {
             page_title: "Завдання",
@@ -297,7 +318,7 @@ const translations = {
             link_all: "Всі →",
             empty_achievements: "У вас поки немає відкритих досягнень",
             empty_skills: "Навички з'являться після проходження курсів",
-
+            submissions_count: "Зданих робіт",
 
             card_grades_full: "🎓 Повна академічна успішність",
             th_course: "Курс",
@@ -346,7 +367,11 @@ const translations = {
             ATTENDANCE_ERROR: "Сталася помилка при спробі відмітитися.",
             COURSE_NOT_FOUND: "Курс не знайдено або ви на нього не записані.",
             SERVER_ERROR_COURSE_DETAIL: "Не вдалося завантажити дані курсу.",
-            SERVER_ERROR_ATTENDANCE: "Не вдалося завантажити історію відвідувань."
+            SERVER_ERROR_ATTENDANCE: "Не вдалося завантажити історію відвідувань.",
+            SUBMISSION_ALREADY_EXISTS: "Роботу вже здано.",
+            SUBMISSION_ERROR: "Не вдалося надіслати роботу.",
+            EMPTY_SUBMISSION: "Додайте файл або коментар до роботи.",
+            SUBMISSION_COMMENT_TOO_LONG: "Коментар занадто довгий"
         }
     },
     en: {
@@ -377,7 +402,8 @@ const translations = {
             go_back: "Go Back",
             redirecting: " Redirecting to your panel...",
             nav_grading: "📝 Grading",
-            nav_constructor: "🔧 Constructor"
+            nav_constructor: "🔧 Constructor",
+            cancel: "Cancel"
         },
         login: {
             welcome_badge: "WELCOME BACK",
@@ -466,9 +492,29 @@ const translations = {
             submission_status: "Submission date",
             description_title: "Task description",
             result_title: "Result",
-            feedback: "Feedback",
+            feedback: "Teacher`s feedback",
             no_feedback: "No feedback yet",
-            submitted_at: "Submission date"
+            submitted_at: "Submission date",
+
+            submission_title: "Your submission",
+            submit_title: "Submit work",
+            submitted_file: "Attached file",
+            download_file: "Download file",
+            submission_comment: "Submission comment",
+            no_submission_comment: "No comment added",
+            drop_file: "Drag or choose a file",
+            no_file_selected: "No file selected",
+            comment_placeholder: "Comment for your work...",
+            submit_btn: "Submit work",
+            submitting: "Submitting...",
+            submission_success: "Work submitted successfully",
+            no_file_uploaded: "No file attached",
+
+            edit_submission_btn: "Edit submission",
+            edit_submission_title: "Edit submission",
+            current_file: "Current file",
+            choose_new_file: "Choose a new file",
+            save_submission_btn: "Save changes"
         },
         course_detail: {
             progress: "Course progress",
@@ -647,7 +693,7 @@ const translations = {
             link_all: "All →",
             empty_achievements: "You have no achievements unlocked yet",
             empty_skills: "Skills will appear after completing the courses",
-
+            submissions_count: "Submitted tasks",
 
             card_grades_full: "🎓 Full Academic Record",
             th_course: "Course",
@@ -696,7 +742,11 @@ const translations = {
             ATTENDANCE_ERROR: "An error occurred while marking attendance.",
             COURSE_NOT_FOUND: "Course not found or you are not enrolled.",
             SERVER_ERROR_COURSE_DETAIL: "Failed to load course data.",
-            SERVER_ERROR_ATTENDANCE: "Failed to load attendance history."
+            SERVER_ERROR_ATTENDANCE: "Failed to load attendance history.",
+            SUBMISSION_ALREADY_EXISTS: "The work has already been submitted.",
+            SUBMISSION_ERROR: "Failed to submit work.",
+            EMPTY_SUBMISSION: "Add a file or a comment to submit your work.",
+            SUBMISSION_COMMENT_TOO_LONG: "Comment is too long"
         }
     }
 };
