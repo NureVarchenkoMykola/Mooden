@@ -9,13 +9,39 @@ exports.getSidebarData = async (req, res) => {
         if (role === 'student') {
             const result = await db.query(`
                 SELECT u.full_name, u.lang, g.name_uk, g.name_en,
-                (SELECT COUNT(*) FROM tasks t JOIN student_courses sc ON t.course_id = sc.course_id 
-                 LEFT JOIN grades gr ON gr.task_id = t.id AND gr.student_id = sc.student_id
-                 WHERE sc.student_id = $1 AND gr.task_id IS NULL AND t.deadline >= CURRENT_DATE) as badge_tasks,
-                (SELECT COUNT(*) FROM notifications WHERE user_id = $1 AND is_read = false) as badge_notif
-                FROM users u
-                JOIN students s ON u.id = s.user_id
-                LEFT JOIN groups g ON s.group_id = g.id
+                (
+                    SELECT COUNT(*)
+                    FROM public.tasks t
+                    JOIN public.student_courses sc ON t.course_id = sc.course_id
+                    LEFT JOIN public.grades gr ON gr.task_id = t.id AND gr.student_id = $1
+                    LEFT JOIN public.submissions s ON s.task_id = t.id AND s.student_id = $1
+                    WHERE sc.student_id = $1
+                    AND gr.task_id IS NULL
+                    AND s.id IS NULL
+                ) as badge_tasks,
+                (
+                    SELECT COUNT(*)
+                    FROM public.announcements a
+                    WHERE (
+                        a.course_id IS NULL
+                        OR a.course_id IN (
+                            SELECT sc.course_id
+                            FROM public.student_courses sc
+                            WHERE sc.student_id = $1
+                        )
+                    )
+                    AND NOT EXISTS (
+                        SELECT 1
+                        FROM public.read_announcements ra
+                        WHERE ra.announcement_id = a.id
+                        AND ra.user_id = $1
+                    )
+                ) as badge_announcements,
+
+                (SELECT COUNT(*) FROM public.notifications WHERE user_id = $1 AND is_read = false) as badge_notif
+                FROM public.users u
+                JOIN public.students s ON u.id = s.user_id
+                LEFT JOIN public.groups g ON s.group_id = g.id
                 WHERE u.id = $1
             `, [userId]);
 
@@ -28,6 +54,7 @@ exports.getSidebarData = async (req, res) => {
                 sub_info: row.lang === 'en' ? (row.name_en || row.name_uk) : row.name_uk,
                 badges: { 
                     tasks: parseInt(row.badge_tasks) || 0, 
+                    announcements: parseInt(row.badge_announcements) || 0,
                     notifications: parseInt(row.badge_notif) || 0 
                 }
             });
@@ -35,9 +62,36 @@ exports.getSidebarData = async (req, res) => {
         } else if (role === 'teacher') {
             const result = await db.query(`
                 SELECT u.full_name, u.lang, t.title_uk, t.title_en, d.name_uk, d.name_en,
-                (SELECT COUNT(*) FROM public.submissions s JOIN public.tasks tsk ON s.task_id = tsk.id 
-                 JOIN public.teacher_courses tc ON tsk.course_id = tc.course_id 
-                 WHERE tc.teacher_id = $1 AND s.grade IS NULL) as badge_grading,
+                (
+                    SELECT COUNT(*)
+                    FROM public.submissions s
+                    JOIN public.tasks tsk ON s.task_id = tsk.id
+                    JOIN public.teacher_courses tc ON tsk.course_id = tc.course_id
+                    LEFT JOIN public.grades g 
+                        ON g.task_id = s.task_id 
+                        AND g.student_id = s.student_id
+                    WHERE tc.teacher_id = $1
+                    AND g.id IS NULL
+                ) as badge_grading,
+                (
+                    SELECT COUNT(*)
+                    FROM public.announcements a
+                    WHERE (
+                        a.course_id IS NULL
+                        OR a.course_id IN (
+                            SELECT tc.course_id
+                            FROM public.teacher_courses tc
+                            WHERE tc.teacher_id = $1
+                        )
+                    )
+                    AND NOT EXISTS (
+                        SELECT 1
+                        FROM public.read_announcements ra
+                        WHERE ra.announcement_id = a.id
+                        AND ra.user_id = $1
+                    )
+                ) as badge_announcements,
+
                 (SELECT COUNT(*) FROM public.notifications WHERE user_id = $1 AND is_read = false) as badge_notif
                 FROM public.users u
                 JOIN public.teachers t ON u.id = t.user_id
@@ -57,6 +111,7 @@ exports.getSidebarData = async (req, res) => {
                 sub_info: `${title} • ${dept}`,
                 badges: { 
                     tasks: parseInt(row.badge_grading) || 0, 
+                    announcements: parseInt(row.badge_announcements) || 0,
                     notifications: parseInt(row.badge_notif) || 0 
                 }
             });
@@ -93,5 +148,173 @@ exports.changePassword = async (req, res) => {
     } catch (err) {
         console.error("[Dev Mode] Change Password Error:", err.message);
         res.status(500).json({ message: 'PASSWORD_UPDATE_ERROR' });
+    }
+};
+
+exports.getNotifications = async (req, res) => {
+    const userId = req.user.id;
+
+    try {
+        const langResult = await db.query(
+            'SELECT lang FROM public.users WHERE id = $1',
+            [userId]
+        );
+
+        const lang = langResult.rows[0]?.lang || 'uk';
+
+        const result = await db.query(`
+            SELECT 
+                id,
+                message_${lang} AS message,
+                is_read,
+                created_at
+            FROM public.notifications
+            WHERE user_id = $1
+            ORDER BY created_at DESC
+        `, [userId]);
+
+        res.json({
+            user: { lang },
+            notifications: result.rows
+        });
+    } catch (err) {
+        console.error("[Dev Mode] Notifications Error:", err.message);
+        res.status(500).json({ message: "NOTIFICATIONS_ERROR" });
+    }
+};
+
+exports.markNotificationRead = async (req, res) => {
+    const userId = req.user.id;
+    const { id } = req.params;
+
+    try {
+        await db.query(`
+            UPDATE public.notifications
+            SET is_read = true
+            WHERE id = $1 AND user_id = $2
+        `, [id, userId]);
+
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ message: "NOTIFICATION_READ_ERROR" });
+    }
+};
+
+exports.markAllNotificationsRead = async (req, res) => {
+    const userId = req.user.id;
+
+    try {
+        await db.query(`
+            UPDATE public.notifications
+            SET is_read = true
+            WHERE user_id = $1
+        `, [userId]);
+
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ message: "NOTIFICATION_READ_ERROR" });
+    }
+};
+
+exports.getAnnouncements = async (req, res) => {
+    const userId = req.user.id;
+    const role = req.user.role;
+
+    try {
+        const langResult = await db.query(
+            'SELECT lang FROM public.users WHERE id = $1',
+            [userId]
+        );
+
+        const lang = langResult.rows[0]?.lang || 'uk';
+
+        const courseFilter = role === 'teacher'
+            ? `SELECT course_id FROM public.teacher_courses WHERE teacher_id = $1`
+            : `SELECT course_id FROM public.student_courses WHERE student_id = $1`;
+
+        const result = await db.query(`
+            SELECT 
+                a.id,
+                a.title_${lang} AS title,
+                a.content_${lang} AS content,
+                a.created_at,
+                u.full_name AS author_name,
+                c.title_${lang} AS course_name,
+                CASE WHEN ra.user_id IS NULL THEN false ELSE true END AS is_read
+            FROM public.announcements a
+            JOIN public.users u ON a.author_id = u.id
+            LEFT JOIN public.courses c ON a.course_id = c.id
+            LEFT JOIN public.read_announcements ra 
+                ON ra.announcement_id = a.id AND ra.user_id = $1
+            WHERE a.course_id IS NULL
+            OR a.course_id IN (${courseFilter})
+            ORDER BY a.created_at DESC
+        `, [userId]);
+
+        res.json({
+            user: { lang },
+            announcements: result.rows
+        });
+    } catch (err) {
+        console.error("[Dev Mode] Announcements Error:", err.message);
+        res.status(500).json({ message: "ANNOUNCEMENTS_ERROR" });
+    }
+};
+
+exports.markAnnouncementRead = async (req, res) => {
+    const userId = req.user.id;
+    const { id } = req.params;
+
+    try {
+        await db.query(`
+            INSERT INTO public.read_announcements (user_id, announcement_id)
+            VALUES ($1, $2)
+            ON CONFLICT DO NOTHING
+        `, [userId, id]);
+
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ message: "ANNOUNCEMENT_READ_ERROR" });
+    }
+};
+
+exports.markAllAnnouncementsRead = async (req, res) => {
+    const userId = req.user.id;
+    const role = req.user.role;
+
+    try {
+        const courseFilter = role === 'teacher'
+            ? `SELECT course_id FROM public.teacher_courses WHERE teacher_id = $1`
+            : `SELECT course_id FROM public.student_courses WHERE student_id = $1`;
+
+        await db.query(`
+            INSERT INTO public.read_announcements (user_id, announcement_id)
+            SELECT $1, a.id
+            FROM public.announcements a
+            WHERE a.course_id IS NULL
+            OR a.course_id IN (${courseFilter})
+            ON CONFLICT DO NOTHING
+        `, [userId]);
+
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ message: "ANNOUNCEMENT_READ_ERROR" });
+    }
+};
+
+exports.updateSettings = async (req, res) => {
+    try {
+        const { lang } = req.body;
+        const userId = req.user.id;
+
+        if (!['uk', 'en'].includes(lang)) {
+            return res.status(400).json({ error: 'Unsupported language' });
+        }
+
+        await db.query('UPDATE public.users SET lang = $1 WHERE id = $2', [lang, userId]);
+
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ message: 'ERROR_UPDATE_SETTINGS' });
     }
 };

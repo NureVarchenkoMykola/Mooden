@@ -93,40 +93,6 @@ exports.getDashboardData = async (req, res) => {
     }
 };
 
-exports.markAsRead = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const userId = req.user.id;
-        
-        await db.query(
-            'INSERT INTO public.read_announcements (user_id, announcement_id) VALUES ($1, $2) ON CONFLICT DO NOTHING',
-            [userId, id]
-        );
-
-        res.json({ success: true });
-    } catch (err) {
-        res.status(500).json({ message: 'ERROR_MARK_READ' });
-    }
-};
-
-exports.updateSettings = async (req, res) => {
-    try {
-        const { lang } = req.body;
-        const userId = req.user.id;
-
-        if (!['uk', 'en'].includes(lang)) {
-            return res.status(400).json({ error: 'Unsupported language' });
-        }
-
-        await db.query('UPDATE public.users SET lang = $1 WHERE id = $2', [lang, userId]);
-        
-        res.json({ success: true });
-    } catch (err) {
-        res.status(500).json({ message: 'ERROR_UPDATE_SETTINGS' });
-    }
-};
-
-
 exports.getProfileData = async (req, res) => {
     const userId = req.user.id;
 
@@ -385,7 +351,7 @@ exports.getAllTasks = async (req, res) => {
 
         const stats = {
             total: result.rows.length,
-            pending: result.rows.filter(r => r.status === 'pending').length,
+            pending: result.rows.filter(r => r.status === 'pending' || r.status === 'overdue').length,
             overdue: result.rows.filter(r => r.status === 'overdue').length,
             avgGrade: result.rows.filter(r => r.grade_value !== null)
                 .reduce((acc, curr, _, arr) => acc + curr.grade_value / arr.length, 0).toFixed(1)
@@ -695,6 +661,37 @@ async function updateCourseProgressForTask(taskId, studentId) {
     `, [courseId, studentId]);
 }
 
+async function createSubmissionNotification(studentId, taskId, type) {
+    const result = await db.query(`
+        SELECT 
+            t.title_uk AS task_title_uk,
+            t.title_en AS task_title_en,
+            c.title_uk AS course_title_uk,
+            c.title_en AS course_title_en
+        FROM public.tasks t
+        JOIN public.courses c ON t.course_id = c.id
+        WHERE t.id = $1
+    `, [taskId]);
+
+    if (result.rows.length === 0) return;
+
+    const task = result.rows[0];
+
+    const messageUk = type === "updated"
+        ? `Ви оновили роботу "${task.task_title_uk}" з курсу "${task.course_title_uk}".`
+        : `Ви здали роботу "${task.task_title_uk}" з курсу "${task.course_title_uk}".`;
+
+    const messageEn = type === "updated"
+        ? `You updated the submission "${task.task_title_en || task.task_title_uk}" for the course "${task.course_title_en || task.course_title_uk}".`
+        : `You submitted "${task.task_title_en || task.task_title_uk}" for the course "${task.course_title_en || task.course_title_uk}".`;
+
+    await db.query(`
+        INSERT INTO public.notifications 
+            (user_id, message_uk, message_en, is_read, created_at)
+        VALUES ($1, $2, $3, false, CURRENT_TIMESTAMP)
+    `, [studentId, messageUk, messageEn]);
+}
+
 exports.submitTask = async (req, res) => {
     const userId = req.user.id;
     const taskId = req.params.id;
@@ -747,6 +744,7 @@ exports.submitTask = async (req, res) => {
             }
 
             await updateCourseProgressForTask(taskId, userId);
+            await createSubmissionNotification(userId, taskId, "updated");
 
             return res.json({ success: true, updated: true });
         }
@@ -762,6 +760,7 @@ exports.submitTask = async (req, res) => {
         `, [taskId, userId, newFileUrl, content]);
 
         await updateCourseProgressForTask(taskId, userId);
+        await createSubmissionNotification(userId, taskId, "created");
 
         return res.json({ success: true, updated: false });
 

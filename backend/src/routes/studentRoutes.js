@@ -5,8 +5,6 @@ const auth = require('../middleware/authMiddleware');
 const uploadSubmission = require('../middleware/uploadSubmission');
 
 router.get('/dashboard', auth, studentController.getDashboardData);
-router.post('/announcements/:id/read', auth, studentController.markAsRead);
-router.patch('/settings', auth, studentController.updateSettings);
 router.get('/profile', auth, studentController.getProfileData);
 router.get('/courses', auth, studentController.getAllCourses);
 router.get('/tasks', auth, studentController.getAllTasks);
