@@ -150,7 +150,7 @@ async function openAnnouncement(id) {
 
     try {
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        await fetch(`${API_BASE_URL}/teacher/announcements/${info.id}/read`, {
+        await fetch(`${API_BASE_URL}/user/announcements/${info.id}/read`, {
             method: 'POST',
             headers: { 
                 'Authorization': `Bearer ${token}`,

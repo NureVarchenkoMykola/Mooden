@@ -91,10 +91,16 @@ function renderSidebar(data) {
         notifBadge.textContent = data.badges.notifications;
         notifBadge.style.display = data.badges.notifications > 0 ? 'block' : 'none';
     }
+
+    const announcementsBadge = document.getElementById('announcementsBadge');
+    if (announcementsBadge) {
+        announcementsBadge.textContent = data.badges.announcements;
+        announcementsBadge.style.display = data.badges.announcements > 0 ? 'block' : 'none';
+    }
 }
 
 /**
- * Формує "красивий" ідентифікатор користувача
+ * Формує ідентифікатор користувача
  * @param {Object} user - об'єкт користувача з полями id, role, regYear
  * @returns {string} - відформатований ID (напр. STU-2026-01)
  */

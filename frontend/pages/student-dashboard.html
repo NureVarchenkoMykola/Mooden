@@ -48,8 +48,11 @@
             </nav>
             <nav class="nav-menu">
                 <p class="nav-label" data-i18n="common.nav_label_community">СПІЛЬНОТА</p>
-                <a href="#" class="nav-link"><span data-i18n="common.nav_discussions">💬 Обговорення</span></a>
-                <a href="#" class="nav-link">
+                <a href="./student-announcements.html" class="nav-link">
+                    <span data-i18n="common.nav_announcements">📢 Оголошення</span>
+                    <span class="badge-count" id="announcementsBadge">0</span>
+                </a>
+                <a href="./student-notifications.html" class="nav-link">
                     <span data-i18n="common.nav_notifications">🔔 Сповіщення</span> 
                     <span class="badge-count" id="notifBadge">0</span>
                 </a>
@@ -145,7 +148,7 @@
                 <section class="dashboard-card">
                     <div class="card-header">
                         <h3 data-i18n="dashboard.title_announcements">Оголошення</h3>
-                        <a href="#" class="link-more" data-i18n="dashboard.link_announcements">Всі оголошення</a>
+                        <a href="./student-announcements.html" class="link-more" data-i18n="dashboard.link_announcements">Всі оголошення</a>
                     </div>
                     <div id="announcementsContainer" class="list-container"></div>
                 </section>

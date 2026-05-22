@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (token && typeof API_BASE_URL !== 'undefined') {
                 try {
-                    await fetch(`${API_BASE_URL}/student/settings`, {
+                    await fetch(`${API_BASE_URL}/user/settings`, {
                         method: 'PATCH',
                         headers: {
                             'Authorization': `Bearer ${token}`,

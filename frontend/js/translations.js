@@ -9,7 +9,7 @@ const translations = {
             nav_grades: "⭐ Оцінки",
             nav_shop: "💎 Крамниця",
             nav_label_community: "СПІЛЬНОТА",
-            nav_discussions: "💬 Обговорення",
+            nav_announcements: "📢 Оголошення",
             nav_notifications: "🔔 Сповіщення",
             logout_btn: "🚪 Вийти з акаунту",
             theme_dark: "Темна тема",
@@ -339,6 +339,23 @@ const translations = {
             empty_history: "Подій ще не зафіксовано",
             link_copied: "Посилання на профіль скопійовано"
         },
+        notifications: {
+            title: "Сповіщення",
+            subtitle: "Ваші особисті повідомлення",
+            list_title: "Усі сповіщення",
+            empty: "Сповіщень поки немає",
+            read: "Прочитано",
+            unread: "Нове",
+            mark_read: "Позначити як прочитане",
+            mark_all_read: "Позначити всі як прочитані"
+        },
+        announcements: {
+            title: "Оголошення",
+            subtitle: "Усі важливі повідомлення курсів та платформи",
+            list_title: "Усі оголошення",
+            mark_all: "Позначити всі як прочитані",
+            empty: "Оголошень поки немає"
+        },
         errors: {
             INVALID_CREDENTIALS: "Невірний email або пароль.",
             SERVER_ERROR: "Помилка сервера. Спробуйте пізніше.",
@@ -371,7 +388,9 @@ const translations = {
             SUBMISSION_ALREADY_EXISTS: "Роботу вже здано.",
             SUBMISSION_ERROR: "Не вдалося надіслати роботу.",
             EMPTY_SUBMISSION: "Додайте файл або коментар до роботи.",
-            SUBMISSION_COMMENT_TOO_LONG: "Коментар занадто довгий"
+            SUBMISSION_COMMENT_TOO_LONG: "Коментар занадто довгий",
+            NOTIFICATIONS_ERROR: "Не вдалося завантажити сповіщення.",
+            NOTIFICATION_READ_ERROR: "Не вдалося оновити статус сповіщення."
         }
     },
     en: {
@@ -384,7 +403,7 @@ const translations = {
             nav_grades: "⭐ Grades",
             nav_shop: "💎 Shop",
             nav_label_community: "COMMUNITY",
-            nav_discussions: "💬 Discussions",
+            nav_announcements: "📢 Announcements",
             nav_notifications: "🔔 Notifications",
             logout_btn: "🚪 Log Out",
             theme_dark: "Dark Mode",
@@ -714,6 +733,23 @@ const translations = {
             empty_history: "No events recorded yet",
             link_copied: "Profile link copied"
         },
+        notifications: {
+            title: "Notifications",
+            subtitle: "Your personal messages",
+            list_title: "All notifications",
+            empty: "No notifications yet",
+            read: "Read",
+            unread: "New",
+            mark_read: "Mark as read",
+            mark_all_read: "Mark all as read"
+        },
+        announcements: {
+            title: "Announcements",
+            subtitle: "All important course and platform messages",
+            list_title: "All announcements",
+            mark_all: "Mark all as read",
+            empty: "No announcements yet"
+        },
         errors: {
             INVALID_CREDENTIALS: "Invalid email or password.",
             SERVER_ERROR: "Server error. Try again later.",
@@ -746,7 +782,9 @@ const translations = {
             SUBMISSION_ALREADY_EXISTS: "The work has already been submitted.",
             SUBMISSION_ERROR: "Failed to submit work.",
             EMPTY_SUBMISSION: "Add a file or a comment to submit your work.",
-            SUBMISSION_COMMENT_TOO_LONG: "Comment is too long"
+            SUBMISSION_COMMENT_TOO_LONG: "Comment is too long",
+            NOTIFICATIONS_ERROR: "Failed to load notifications.",
+            NOTIFICATION_READ_ERROR: "Failed to update notification status."
         }
     }
 };

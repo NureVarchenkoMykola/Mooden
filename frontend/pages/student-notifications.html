@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mooden | Мої курси</title>
+    <title>Mooden | Сповіщення</title>
     <meta name="page-role" content="student">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,9 +21,8 @@
 
     <link rel="stylesheet" href="../css/variables.css">
     <link rel="stylesheet" href="../css/global.css">
-    <link rel="stylesheet" href="../css/student-courses.css">
+    <link rel="stylesheet" href="../css/student-notifications.css">
 </head>
-
 <body class="dashboard-layout container">
 
     <aside class="sidebar">
@@ -31,10 +30,8 @@
             <div class="logo">Mooden</div>
             <nav class="nav-menu">
                 <p class="nav-label" data-i18n="common.nav_label_main">НАВІГАЦІЯ</p>
-                <a href="./student-dashboard.html" class="nav-link">
-                    <span data-i18n="common.nav_dashboard">📊 Дашборд</span>
-                </a>
-                <a href="./student-courses.html" class="nav-link active">
+                <a href="./student-dashboard.html" class="nav-link"><span data-i18n="common.nav_dashboard">📊 Дашборд</span></a>
+                <a href="./student-courses.html" class="nav-link">
                     <span data-i18n="common.nav_courses">📖 Мої курси</span>
                 </a>
                 <a href="./student-tasks.html" class="nav-link">
@@ -44,7 +41,7 @@
                 <a href="./student-schedule.html" class="nav-link">
                     <span data-i18n="common.nav_schedule">📅 Розклад</span>
                 </a>
-                <a href="./student-grades.html" class="nav-link">
+                 <a href="./student-grades.html" class="nav-link">
                     <span data-i18n="common.nav_grades">⭐ Оцінки</span>
                 </a>
                 <a href="#" class="nav-link"><span data-i18n="common.nav_shop">💎 Крамниця</span></a>
@@ -55,8 +52,8 @@
                     <span data-i18n="common.nav_announcements">📢 Оголошення</span>
                     <span class="badge-count" id="announcementsBadge">0</span>
                 </a>
-                <a href="./student-notifications.html" class="nav-link">
-                    <span data-i18n="common.nav_notifications">🔔 Сповіщення</span>
+                <a href="./student-notifications.html" class="nav-link active">
+                    <span data-i18n="common.nav_notifications">🔔 Сповіщення</span> 
                     <span class="badge-count" id="notifBadge">0</span>
                 </a>
             </nav>
@@ -80,8 +77,10 @@
                 <div class="lang-slider">
                     <input type="radio" name="lang" id="lang-uk" value="uk">
                     <label for="lang-uk">UA</label>
+                    
                     <input type="radio" name="lang" id="lang-en" value="en">
                     <label for="lang-en">EN</label>
+                    
                     <div class="slider-bg"></div>
                 </div>
             </div>
@@ -94,39 +93,22 @@
             <button id="menuToggle" class="menu-btn">☰</button>
             <div class="logo-mobile">Mooden</div>
         </div>
-
-        <header class="courses-header">
-            <div>
-                <h1 data-i18n="courses.page_title">📖 Мої курси</h1>
-                <p class="header-desc" data-i18n="courses.page_desc">
-                    Тут зібрані всі курси, на які ви записані. Переглядайте свій прогрес та переходьте до навчання.
-                </p>
-            </div>
+        <header class="notifications-header">
+            <h1 data-i18n="notifications.title">Сповіщення</h1>
+            <p class="header-desc" data-i18n="notifications.subtitle">Ваші особисті повідомлення</p>
         </header>
 
-        <section class="courses-toolbar">
-            <div class="search-box">
-                <div class="input-wrapper">
-                    <input 
-                        type="text" 
-                        id="courseSearch" 
-                        placeholder="Пошук за назвою курсу..."
-                        data-i18n-placeholder="courses.search_placeholder"
-                    >
-                </div>
+        <section class="notifications-card">
+            <div class="notifications-head">
+                <h2 data-i18n="notifications.list_title">Усі сповіщення</h2>
+                <button id="markAllReadBtn" class="mark-all-btn" type="button" data-i18n="notifications.mark_all_read">
+                    Позначити всі як прочитані
+                </button>
             </div>
 
-            <select id="courseFilter" class="course-filter">
-                <option value="all" data-i18n="courses.filter_all">Усі курси</option>
-                <option value="active" data-i18n="courses.filter_active">Активні</option>
-                <option value="completed" data-i18n="courses.filter_completed">Завершені</option>
-                <option value="new" data-i18n="courses.filter_new">Нові</option>
-            </select>
+            <div id="notificationsList" class="notifications-list"></div>
         </section>
-
-        <section id="coursesGrid" class="courses-grid"></section>
     </main>
-
-    <script src="../js/student-courses.js"></script>
+    <script src="../js/student-notifications.js"></script>
 </body>
 </html>

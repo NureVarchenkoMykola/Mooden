@@ -40,7 +40,7 @@ async function loadTasks() {
             filterSelect.value = "pending";
         }
 
-        const initialFiltered = allTasks.filter(t => t.status === 'pending');
+        const initialFiltered = allTasks.filter(t => t.status === "pending" || t.status === "overdue");
 
         document.getElementById('totalTasks').textContent = data.stats.total;
         document.getElementById('pendingTasks').textContent = data.stats.pending;
@@ -117,7 +117,7 @@ function setupFilters() {
 
         const filtered = allTasks.filter(t => {
             const matchesSearch = t.title.toLowerCase().includes(query) || t.course_name.toLowerCase().includes(query);
-            const matchesStatus = (status === 'all') || (t.status === status);
+            const matchesStatus = status === "all" || t.status === status || (status === "pending" && t.status === "overdue");
             return matchesSearch && matchesStatus;
         });
 
