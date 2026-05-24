@@ -63,6 +63,10 @@
     font-size: 0.9rem;
 }
 
+.link-more:hover {
+    color: var(--accent-gold-hover);
+}
+
 .list-container {
     display: flex;
     flex-direction: column;
@@ -84,7 +88,7 @@
 
 .course-item:hover {
     transform: translateX(2px);
-    background: rgba(255, 255, 255, 0.05);
+    background: color-mix(in srgb, var(--text-main) 5%, var(--bg-input));
     cursor: pointer;
 }
 
@@ -194,7 +198,7 @@
 }
 
 .announcement-card:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: color-mix(in srgb, var(--text-main) 5%, var(--bg-input));
     cursor: pointer;
 }
 
@@ -235,7 +239,6 @@
     color: var(--text-muted);
 }
 
-
 .modal {
     display: none; 
     position: fixed;
@@ -251,7 +254,7 @@
 }
 
 .modal-content {
-    background: #1a1f2b;
+    background: var(--bg-modal);
     padding: 2rem;
     border-radius: 1.5rem;
     width: 90%;
@@ -300,14 +303,14 @@
         grid-template-columns: 1fr;
         gap: 0;
     }
-}
 
-@media (max-width: 768px) {
     .stats-row {
         grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
     }
+}
 
+@media (max-width: 768px) {
     .dashboard-header h1 {
         font-size: 2.2rem;
     }
@@ -323,25 +326,4 @@
     .modal-content {
         padding: 1.5rem;
     }
-}
-.sidebar-user .user-sub {
-    color: var(--text-muted) !important;
-}
-
-.sidebar-user .user-card:hover .user-sub,
-.sidebar-user .user-card-link:hover .user-sub {
-    color: var(--text-muted) !important;
-}
-
-.sidebar-user .user-card-link {
-    text-decoration: none;
-    color: inherit;
-}
-
-.sidebar-user .user-card-link .user-name {
-    color: var(--text-main);
-}
-
-.sidebar-user .user-card-link:hover .user-name {
-    color: var(--text-gold);
 }

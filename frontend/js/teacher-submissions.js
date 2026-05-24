@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const list = document.getElementById("teacherSubmissionsList");
     const searchInput = document.getElementById("submissionSearch");
     const filterSelect = document.getElementById("submissionFilter");
+    const courseFilter = document.getElementById("courseFilter");
+    const taskFilter = document.getElementById("taskFilter");
 
     const totalEl = document.getElementById("submissionsTotal");
     const pendingEl = document.getElementById("submissionsPending");
@@ -9,9 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let submissions = [];
 
-    if (!list) {
-        console.error("Не знайдено #teacherSubmissionsList");
-        return;
+    if (filterSelect) {
+        filterSelect.value = "pending";
     }
 
     function getToken() {
@@ -38,6 +39,27 @@ document.addEventListener("DOMContentLoaded", () => {
             day: "2-digit",
             month: "short",
             year: "numeric"
+        });
+    }
+
+    function formatDateTime(dateValue) {
+        if (!dateValue) {
+            return "—";
+        }
+
+        const lang = getCurrentLang();
+        const date = new Date(dateValue);
+
+        if (Number.isNaN(date.getTime())) {
+            return dateValue;
+        }
+
+        return date.toLocaleString(lang === "en" ? "en-US" : "uk-UA", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
         });
     }
 
@@ -91,6 +113,8 @@ document.addEventListener("DOMContentLoaded", () => {
             submissions = Array.isArray(data.submissions) ? data.submissions : [];
 
             updateStats(data.stats || {});
+            populateCourseFilter();
+            populateTaskFilter();
             renderSubmissions();
         } catch (error) {
             console.error("[Teacher Submissions] Помилка:", error);
@@ -112,9 +136,74 @@ document.addEventListener("DOMContentLoaded", () => {
         gradedEl.textContent = graded;
     }
 
+    function populateCourseFilter() {
+        const lang = getCurrentLang();
+
+        if (!courseFilter) return;
+
+        const selectedValue = courseFilter.value || "all";
+
+        const coursesMap = new Map();
+
+        submissions.forEach(item => {
+            if (item.course_id && item.course_title) {
+                coursesMap.set(String(item.course_id), item.course_title);
+            }
+        });
+
+        courseFilter.innerHTML = `
+            <option value="all">${getTranslation(lang, "teacher_submissions.filter_course_all")}</option>
+            ${Array.from(coursesMap.entries()).sort((a, b) => a[1].localeCompare(b[1])).map(([id, title]) => `
+                <option value="${id}">${title}</option>
+            `).join("")}
+        `;
+
+        if ([...coursesMap.keys()].includes(selectedValue)) {
+            courseFilter.value = selectedValue;
+        } else {
+            courseFilter.value = "all";
+        }
+    }
+
+    function populateTaskFilter() {
+        const lang = getCurrentLang();
+
+        if (!taskFilter) return;
+
+        const selectedCourseId = courseFilter?.value || "all";
+        const selectedTaskId = taskFilter.value || "all";
+
+        const tasksMap = new Map();
+
+        submissions.forEach(item => {
+            const matchesCourse =
+                selectedCourseId === "all" ||
+                String(item.course_id) === selectedCourseId;
+
+            if (matchesCourse && item.task_id && item.task_title) {
+                tasksMap.set(String(item.task_id), item.task_title);
+            }
+        });
+
+        taskFilter.innerHTML = `
+            <option value="all">${getTranslation(lang, "teacher_submissions.filter_task_all")}</option>
+            ${Array.from(tasksMap.entries()).sort((a, b) => a[1].localeCompare(b[1])).map(([id, title]) => `
+                <option value="${id}">${title}</option>
+            `).join("")}
+        `;
+
+        if ([...tasksMap.keys()].includes(selectedTaskId)) {
+            taskFilter.value = selectedTaskId;
+        } else {
+            taskFilter.value = "all";
+        }
+    }
+
     function getFilteredSubmissions() {
         const query = String(searchInput?.value || "").trim().toLowerCase();
         const filter = filterSelect?.value || "all";
+        const selectedCourseId = courseFilter?.value || "all";
+        const selectedTaskId = taskFilter?.value || "all";
 
         let result = [...submissions];
 
@@ -124,6 +213,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (filter === "graded") {
             result = result.filter(item => isSubmissionGraded(item));
+        }
+
+        if (selectedCourseId !== "all") {
+            result = result.filter(item => String(item.course_id) === selectedCourseId);
+        }
+
+        if (selectedTaskId !== "all") {
+            result = result.filter(item => String(item.task_id) === selectedTaskId);
         }
 
         if (query) {
@@ -186,10 +283,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const isGraded = isSubmissionGraded(item);
 
-        const accent = isGraded
-            ? "#2ecc71"
-            : "#E8A44A";
-
         const contentBlock = item.content
             ? `<p class="submission-content">${item.content}</p>`
             : `<p class="submission-content muted">${getTranslation(lang, "teacher_submissions.no_content")}</p>`;
@@ -203,7 +296,7 @@ document.addEventListener("DOMContentLoaded", () => {
             : `<span class="submission-no-file">${getTranslation(lang, "teacher_submissions.no_file")}</span>`;
 
         return `
-            <article class="teacher-submission-card ${isGraded ? "graded" : "pending"}" style="--submission-accent: ${accent}">
+            <article class="teacher-submission-card ${isGraded ? "graded" : "pending"}">
                 <div class="submission-card-top">
                     <div>
                         <span class="submission-course">${item.course_title || "—"}</span>
@@ -222,13 +315,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
 
                     <div>
-                        <span>Email</span>
+                        <span>${getTranslation(lang, "teacher_submissions.email")}</span>
                         <strong>${item.student_email || "—"}</strong>
                     </div>
 
                     <div>
                         <span>${getTranslation(lang, "teacher_submissions.submitted_at")}</span>
-                        <strong>${formatDate(item.submitted_at)}</strong>
+                        <strong>${formatDateTime(item.submitted_at)}</strong>
                     </div>
 
                     <div>
@@ -297,7 +390,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function launchConfetti(card) {
-        const colors = ["#E8A44A", "#2ecc71", "#ffffff", "#f7d774"];
+        const rootStyles = getComputedStyle(document.documentElement);
+
+        const colors = [
+            rootStyles.getPropertyValue("--accent-gold").trim(),
+            rootStyles.getPropertyValue("--color-offline").trim(),
+            rootStyles.getPropertyValue("--text-main").trim(),
+            rootStyles.getPropertyValue("--accent-gold-hover").trim()
+        ];
+
         const cardWidth = card.offsetWidth;
         const cardHeight = card.offsetHeight;
 
@@ -393,18 +494,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 const lang = getCurrentLang();
                 const card = button.closest(".teacher-submission-card");
                 const submissionId = button.dataset.submissionId;
+                const originalButtonText = button.textContent;
 
                 const gradeInput = card.querySelector(".grade-input");
                 const feedbackInput = card.querySelector(".feedback-input");
 
-                const gradeValue = Number(gradeInput.value);
+                const gradeRaw = gradeInput.value.trim();
+                const gradeValue = Number(gradeRaw);
                 const feedback = feedbackInput.value.trim();
 
-                if (Number.isNaN(gradeValue) || gradeValue < 0 || gradeValue > 100) {
-                    if (typeof showToast === "function") {
-                        showToast(getTranslation(lang, "teacher_submissions.invalid_grade"), "error");
-                    }
-
+                if (gradeRaw === "" || Number.isNaN(gradeValue) || gradeValue < 0 || gradeValue > 100) {
+                    showToast(getTranslation(lang, "teacher_submissions.invalid_grade"), "error");
                     return;
                 }
 
@@ -440,7 +540,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.error("[Teacher Submissions] Не вдалося оцінити:", error);
 
                     button.disabled = false;
-                    button.textContent = getTranslation(lang, "teacher_submissions.grade_btn");
+                    button.textContent = originalButtonText;
 
                     if (typeof showToast === "function") {
                         showToast(getTranslation(lang, "teacher_submissions.grade_error"), "error");
@@ -456,6 +556,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (filterSelect) {
         filterSelect.addEventListener("change", renderSubmissions);
+    }
+
+    if (courseFilter) {
+        courseFilter.addEventListener("change", () => {
+            populateTaskFilter();
+            renderSubmissions();
+        });
+    }
+
+    if (taskFilter) {
+        taskFilter.addEventListener("change", renderSubmissions);
     }
 
     if (typeof applyStaticTranslations === "function") {

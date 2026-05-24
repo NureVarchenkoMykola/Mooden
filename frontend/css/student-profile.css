@@ -169,7 +169,7 @@
 
 .p-course-item:hover {
     transform: translateX(2px);
-    background: rgba(255, 255, 255, 0.05);
+    background: color-mix(in srgb, var(--text-main) 5%, var(--bg-input));
     cursor: pointer;
 }
 
@@ -359,6 +359,7 @@
     border-radius: 0.8rem;
     font-weight: bold;
     cursor: pointer;
+    color: var(--text-button);
 }
 
 .btn-gold:hover {

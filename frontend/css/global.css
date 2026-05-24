@@ -74,6 +74,16 @@ a:hover {
     color: var(--color-exam);
 }
 
+.type-seminar {
+    background: color-mix(in srgb, var(--color-offline) 15%, transparent);
+    color: var(--color-offline);
+}
+
+.type-consultation {
+    background: color-mix(in srgb, var(--accent-gold) 15%, transparent);
+    color: var(--text-gold);
+}
+
 .format-online {
     background: color-mix(in srgb, var(--color-online) 15%, transparent);
     color: var(--color-online);
@@ -280,7 +290,7 @@ input:-webkit-autofill:active {
 }
 
 .nav-link:hover, .nav-link.active {
-    background: rgba(232, 164, 74, 0.08);
+    background: color-mix(in srgb, var(--accent-gold) 8%, transparent);
     color: var(--text-gold);
 }
 
@@ -307,10 +317,11 @@ input:-webkit-autofill:active {
     display: flex;
     align-items: center;
     gap: 0.8rem;
+    padding: 0.5rem;
 }
 
 .user-card.active {
-    background: rgba(232, 164, 74, 0.08);
+    background: color-mix(in srgb, var(--accent-gold) 8%, transparent);
     color: var(--text-gold);
     border-radius: 0.5rem;
 }
@@ -320,7 +331,7 @@ input:-webkit-autofill:active {
     height: 2.8rem;
     background: var(--bg-input);
     border: 1px solid var(--text-gold);
-    border-radius: 50%;
+    border-radius: 40%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -350,7 +361,7 @@ input:-webkit-autofill:active {
 }
 
 .logout-btn:hover {
-    background: rgba(128, 42, 42, 0.1);
+    background: color-mix(in srgb, var(--color-error) 10%, transparent);
 }
 
 .main-content {
@@ -431,7 +442,7 @@ input:-webkit-autofill:active {
 
 .theme-toggle-btn:hover {
     border-color: var(--accent-gold);
-    background: rgba(232, 164, 74, 0.05);
+    background: color-mix(in srgb, var(--accent-gold) 5%, transparent);
 }
 
 .theme-icon {

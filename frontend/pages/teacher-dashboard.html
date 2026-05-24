@@ -50,26 +50,25 @@
             </nav>
             <nav class="nav-menu">
                 <p class="nav-label" data-i18n="common.nav_label_community">СПІЛЬНОТА</p>
-                <a href="./announcements.html" class="nav-link">
+                <a href="./teacher-announcements.html" class="nav-link">
                     <span data-i18n="common.nav_announcements">📢 Оголошення</span>
                     <span class="badge-count" id="announcementsBadge">0</span>
                 </a>
-                <a href="./notifications.html" class="nav-link">
+                <a href="./teacher-notifications.html" class="nav-link">
                 <span data-i18n="common.nav_notifications">🔔 Сповіщення</span>
                     <span class="badge-count" id="notifBadge">0</span>
                 </a>
             </nav>
         </div>
 
-                <div class="sidebar-user">
-            <a href="./teacher-profile.html" class="user-card user-card-link">
+        <div class="sidebar-user">
+            <div class="user-card">
                 <div class="user-avatar" id="avatarInitial">?</div>
-
                 <div class="user-meta">
                     <p class="user-name" id="profileName">...</p>
-                    <p class="user-sub" id="profileGroup">Завантаження...</p>
+                    <p class="user-sub" id="profileRole" data-i18n="dashboard.user_loading">Завантаження...</p>
                 </div>
-            </a>
+            </div>
 
             <div class="theme-switch-container">
                 <button id="themeToggle" class="theme-toggle-btn">
@@ -148,7 +147,7 @@
             <div class="side-column">
                 <section class="dashboard-card">
                     <div class="card-header">
-                        <h3 data-i18n="dashboard.title_schedule">Розклад сьогодні</h3>
+                        <h3 data-i18n="dashboard.title_schedule">Розклад на сьогодні</h3>
                         <a href="./teacher-schedule.html" class="link-more" data-i18n="dashboard.link_calendar">Календар</a>
                     </div>
                     <div id="scheduleContainer" class="list-container"></div>
@@ -165,7 +164,7 @@
                 <section class="dashboard-card">
                     <div class="card-header">
                         <h3 data-i18n="dashboard.title_announcements">Оголошення</h3>
-                        <a href="#" class="link-more" data-i18n="dashboard.link_announcements">Всі оголошення</a>
+                        <a href="./teacher-announcements.html" class="link-more" data-i18n="dashboard.link_announcements">Всі оголошення</a>
                     </div>
                     <div id="announcementsContainer" class="list-container"></div>
                 </section>

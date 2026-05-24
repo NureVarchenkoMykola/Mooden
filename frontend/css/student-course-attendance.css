@@ -10,7 +10,7 @@
 
 .attendance-loading h2,
 .attendance-empty h2 {
-   margin-bottom: 0.6rem;
+    margin-bottom: 0.6rem;
     font-family: var(--font-heading);
     font-size: 1.9rem;
     color: var(--text-main);

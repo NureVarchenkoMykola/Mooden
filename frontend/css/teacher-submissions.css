@@ -1,26 +1,10 @@
-.teacher-submissions-page {
-    width: 100%;
-}
-
 .teacher-submissions-header {
-    margin-bottom: 1.8rem;
+    margin-bottom: 2rem;
 }
 
 .teacher-submissions-header h1 {
-    margin: 0 0 0.5rem;
-    font-family: var(--font-heading);
-    color: var(--text-main);
     font-size: 2.8rem;
-    line-height: 1.05;
-    font-weight: 700;
-}
-
-.teacher-submissions-header p {
-    margin: 0.5rem 0 0;
-    font-size: 1rem;
-    color: var(--text-muted);
-    line-height: 1.6;
-    max-width: 850px;
+    margin-bottom: 0.5rem;
 }
 
 .teacher-submissions-stats {
@@ -32,18 +16,13 @@
 
 .teacher-submission-stat {
     background: var(--bg-right);
-    padding: 1.5rem;
+    padding: 1rem;
     border-radius: 1rem;
     display: flex;
     align-items: center;
     gap: 1rem;
     border: 1px solid var(--border-main);
     transition: 0.2s ease;
-}
-
-.teacher-submission-stat:hover {
-    border-color: var(--accent-gold);
-    transform: translateY(-2px);
 }
 
 .teacher-submission-stat span {
@@ -59,25 +38,32 @@
 }
 
 .teacher-submission-stat strong {
-    display: block;
     font-size: 1.8rem;
     font-family: var(--font-heading);
     color: var(--text-main);
     line-height: 1;
-    font-weight: 700;
 }
 
 .teacher-submission-stat p {
-    margin: 0;
+    margin-top: 0.3rem;
     font-size: 0.8rem;
     color: var(--text-muted);
 }
 
 .teacher-submissions-controls {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 220px;
+    grid-template-columns: minmax(0, 1fr) 15rem;
     gap: 1rem;
     margin-bottom: 1.5rem;
+}
+
+.teacher-submissions-controls.secondary-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: -0.5rem;
+}
+
+.teacher-submissions-controls.secondary-controls .teacher-submission-select {
+    width: 100%;
 }
 
 .teacher-submission-search,
@@ -125,9 +111,7 @@
 
 .teacher-submissions-loading h2,
 .teacher-submissions-empty h2 {
-    margin: 0 0 0.6rem;
-    font-family: var(--font-heading);
-    color: var(--text-main);
+    margin-top: 0.6rem;
     font-size: 1.9rem;
 }
 
@@ -141,29 +125,8 @@
     transition: 0.2s ease;
 }
 
-.teacher-submission-card::before {
-    display: none;
-}
-
-.teacher-submission-card:hover {
-    border-color: var(--submission-accent, var(--accent-gold));
-    transform: translateY(-2px);
-}
-
-.teacher-submission-card.pending {
-    border-color: rgba(232, 164, 74, 0.45);
-}
-
 .teacher-submission-card.graded {
-    border-color: rgba(46, 204, 113, 0.55);
-}
-
-.teacher-submission-card.graded:hover {
-    border-color: #2ecc71;
-}
-
-.teacher-submission-card.pending:hover {
-    border-color: #E8A44A;
+    border-color: color-mix(in srgb, var(--color-offline) 55%, transparent);
 }
 
 .submission-card-top {
@@ -180,39 +143,33 @@
     display: inline-flex;
     margin-bottom: 0.55rem;
     color: var(--text-gold);
-    font-size: 0.78rem;
-    font-weight: 800;
+    font-size: 0.8rem;
+    font-weight: 700;
 }
 
 .submission-card-top h2 {
-    margin: 0;
-    color: var(--text-main);
-    font-family: var(--font-heading);
     font-size: 1.5rem;
-    line-height: 1.2;
 }
 
 .submission-status {
-    padding: 0.38rem 0.75rem;
-    border-radius: 999px;
+    padding: 0.4rem 0.8rem;
+    border-radius: 1rem;
     font-size: 0.75rem;
-    font-weight: 800;
+    font-weight: 700;
     white-space: nowrap;
 }
 
 .submission-status.pending {
-    background: rgba(232, 164, 74, 0.14);
+    background: color-mix(in srgb, var(--accent-gold) 14%, transparent);
     color: var(--text-gold);
 }
 
 .submission-status.graded {
-    background: rgba(46, 204, 113, 0.14);
-    color: #2ecc71;
+    background: color-mix(in srgb, var(--color-offline) 14%, transparent);
+    color: var(--color-offline);
 }
 
 .submission-meta {
-    position: relative;
-    z-index: 1;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 0.8rem;
@@ -235,13 +192,13 @@
 
 .submission-meta strong {
     color: var(--text-main);
-    font-size: 0.86rem;
+    font-size: 0.85rem;
     overflow-wrap: anywhere;
 }
 
 .submission-body {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 220px;
+    grid-template-columns: minmax(0, 1fr) 15rem;
     gap: 1rem;
     margin-bottom: 1.2rem;
 }
@@ -254,28 +211,25 @@
 }
 
 .submission-body h3 {
-    margin: 0 0 0.7rem;
+    margin-bottom: 0.7rem;
     color: var(--text-main);
     font-size: 0.95rem;
 }
 
 .submission-content {
-    margin: 0;
     color: var(--text-muted);
-    line-height: 1.55;
     font-size: 0.9rem;
 }
 
 .submission-content.muted,
 .submission-no-file {
     color: var(--text-muted);
-    font-size: 0.86rem;
+    font-size: 0.85rem;
 }
 
 .submission-file-link {
     display: inline-flex;
     color: var(--text-gold);
-    font-weight: 800;
     text-decoration: none;
 }
 
@@ -285,7 +239,7 @@
 
 .submission-grade-panel {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 180px;
+    grid-template-columns: minmax(0, 1fr) 10rem;
     gap: 1rem;
     align-items: end;
     background: var(--bg-input);
@@ -296,7 +250,7 @@
 
 .submission-grade-inputs {
     display: grid;
-    grid-template-columns: 150px minmax(0, 1fr);
+    grid-template-columns: 10rem minmax(0, 1fr);
     gap: 1rem;
 }
 
@@ -305,27 +259,29 @@
     margin-bottom: 0.45rem;
     color: var(--text-muted);
     font-size: 0.78rem;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .feedback-input {
     resize: vertical;
+    min-height: 3rem;
+    line-height: 1.4;
 }
 
 .grade-submit-btn {
     border: 1px solid var(--accent-gold);
-    background: rgba(232, 164, 74, 0.12);
+    background: color-mix(in srgb, var(--accent-gold) 12%, transparent);
     color: var(--text-gold);
     border-radius: 0.85rem;
     padding: 0.85rem 1rem;
     font-family: inherit;
-    font-weight: 900;
+    font-weight: 700;
     cursor: pointer;
     transition: 0.2s ease;
 }
 
 .grade-submit-btn:hover {
-    background: rgba(232, 164, 74, 0.18);
+    background: color-mix(in srgb, var(--accent-gold) 18%, transparent);
     transform: translateY(-1px);
 }
 
@@ -333,20 +289,6 @@
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
-}
-
-.teacher-submission-card.graded .grade-submit-btn,
-.teacher-submission-card.pending .grade-submit-btn {
-    border-color: var(--accent-gold);
-    background: rgba(232, 164, 74, 0.12);
-    color: var(--text-gold);
-}
-
-.teacher-submission-card.graded .grade-submit-btn:hover,
-.teacher-submission-card.pending .grade-submit-btn:hover {
-    border-color: var(--accent-gold);
-    background: rgba(232, 164, 74, 0.18);
-    color: var(--text-gold);
 }
 
 .perfect-confetti {
@@ -408,21 +350,22 @@
 
 @keyframes perfectGradePulse {
     0% {
-        box-shadow: 0 0 0 rgba(232, 164, 74, 0);
+        box-shadow: 0 0 0 color-mix(in srgb, var(--accent-gold) 0%, transparent);
     }
 
     45% {
-        box-shadow: 0 0 32px rgba(232, 164, 74, 0.35);
+        box-shadow: 0 0 32px color-mix(in srgb, var(--accent-gold) 35%, transparent);
     }
 
     100% {
-        box-shadow: 0 0 0 rgba(232, 164, 74, 0);
+        box-shadow: 0 0 0 color-mix(in srgb, var(--accent-gold) 0%, transparent);
     }
 }
 
-@media (max-width: 1100px) {
-    .teacher-submissions-stats {
-        grid-template-columns: repeat(2, 1fr);
+@media (max-width: 1024px) {
+    .teacher-submissions-controls,
+    .teacher-submissions-controls.secondary-controls {
+        grid-template-columns: 1fr;
     }
 
     .submission-meta {
@@ -436,14 +379,12 @@
     }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 768px) {
     .teacher-submissions-header h1 {
         font-size: 2.2rem;
     }
 
-    .teacher-submissions-stats,
-    .teacher-submissions-controls,
-    .submission-meta {
+    .teacher-submissions-stats {
         grid-template-columns: 1fr;
     }
 

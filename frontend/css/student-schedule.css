@@ -70,6 +70,7 @@
 .l-time {
     color: var(--text-gold);
     font-size: 0.85rem;
+    white-space: nowrap;
 }
 
 .l-info {
@@ -103,10 +104,12 @@
     color: var(--text-main);
     padding: 0.8rem 1.5rem;
     font-size: 0.9rem;
+    transition: 0.2s ease;
 }
 
 .week-btn:hover {
     border-color: var(--accent-gold);
+    transform: translateY(-1px);
 }
 
 .week-label {

@@ -21,7 +21,7 @@
 
     <link rel="stylesheet" href="../css/variables.css">
     <link rel="stylesheet" href="../css/global.css">
-    <link rel="stylesheet" href="../css/student-notifications.css">
+    <link rel="stylesheet" href="../css/user-notifications.css">
 </head>
 <body class="dashboard-layout container">
 
@@ -48,11 +48,11 @@
             </nav>
             <nav class="nav-menu">
                 <p class="nav-label" data-i18n="common.nav_label_community">СПІЛЬНОТА</p>
-                <a href="./announcements.html" class="nav-link">
+                <a href="./student-announcements.html" class="nav-link">
                     <span data-i18n="common.nav_announcements">📢 Оголошення</span>
                     <span class="badge-count" id="announcementsBadge">0</span>
                 </a>
-                <a href="./notifications.html" class="nav-link">
+                <a href="./student-notifications.html" class="nav-link">
                 <span data-i18n="common.nav_notifications">🔔 Сповіщення</span>
                     <span class="badge-count" id="notifBadge">0</span>
                 </a>
@@ -98,6 +98,32 @@
             <p class="header-desc" data-i18n="notifications.subtitle">Ваші особисті повідомлення</p>
         </header>
 
+        <section class="notifications-stats">
+            <div class="notification-stat-card">
+                <span>🔔</span>
+                <div>
+                    <strong id="totalNotifications">0</strong>
+                    <p data-i18n="notifications.stat_total">Усього</p>
+                </div>
+            </div>
+
+            <div class="notification-stat-card">
+                <span>📩</span>
+                <div>
+                    <strong id="unreadNotifications">0</strong>
+                    <p data-i18n="notifications.stat_unread">Непрочитані</p>
+                </div>
+            </div>
+
+            <div class="notification-stat-card">
+                <span>✅</span>
+                <div>
+                    <strong id="readNotifications">0</strong>
+                    <p data-i18n="notifications.stat_read">Прочитані</p>
+                </div>
+            </div>
+        </section>
+
         <section class="notifications-card">
             <div class="notifications-head">
                 <h2 data-i18n="notifications.list_title">Усі сповіщення</h2>
@@ -106,9 +132,25 @@
                 </button>
             </div>
 
+            <section class="notifications-controls">
+                <input
+                    id="notificationSearch"
+                    class="notification-search"
+                    type="text"
+                    data-i18n-placeholder="notifications.search_placeholder"
+                    placeholder="Пошук сповіщень..."
+                >
+
+                <select id="notificationFilter" class="notification-select">
+                    <option value="all" data-i18n="notifications.filter_all">Усі</option>
+                    <option value="unread" data-i18n="notifications.filter_unread">Непрочитані</option>
+                    <option value="read" data-i18n="notifications.filter_read">Прочитані</option>
+                </select>
+            </section>
+
             <div id="notificationsList" class="notifications-list"></div>
         </section>
     </main>
-    <script src="../js/student-notifications.js"></script>
+    <script src="../js/user-notifications.js"></script>
 </body>
 </html>

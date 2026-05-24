@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mooden | Оголошення</title>
-    <meta name="page-role" content="student">
+    <meta name="page-role" content="teacher">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,32 +28,38 @@
     <aside class="sidebar">
         <div class="sidebar-top">
             <div class="logo">Mooden</div>
+
             <nav class="nav-menu">
                 <p class="nav-label" data-i18n="common.nav_label_main">НАВІГАЦІЯ</p>
-                <a href="./student-dashboard.html" class="nav-link"><span data-i18n="common.nav_dashboard">📊 Дашборд</span></a>
-                <a href="./student-courses.html" class="nav-link">
+
+                <a href="./teacher-dashboard.html" class="nav-link">
+                    <span data-i18n="common.nav_dashboard">📊 Дашборд</span>
+                </a>
+
+                <a href="./teacher-courses.html" class="nav-link">
                     <span data-i18n="common.nav_courses">📖 Мої курси</span>
                 </a>
-                <a href="./student-tasks.html" class="nav-link">
-                    <span data-i18n="common.nav_tasks">📝 Завдання</span>
-                    <span class="badge-count" id="tasksBadge">0</span>
+
+                <a href="./teacher-submissions.html" class="nav-link">
+                    <span data-i18n="common.nav_grading">📝 Перевірка</span>
+                    <span class="badge-count" id="gradingBadge">0</span>
                 </a>
-                <a href="./student-schedule.html" class="nav-link">
+
+                <a href="./teacher-schedule.html" class="nav-link">
                     <span data-i18n="common.nav_schedule">📅 Розклад</span>
                 </a>
-                 <a href="./student-grades.html" class="nav-link">
-                    <span data-i18n="common.nav_grades">⭐ Оцінки</span>
-                </a>
-                <a href="#" class="nav-link"><span data-i18n="common.nav_shop">💎 Крамниця</span></a>
             </nav>
+
             <nav class="nav-menu">
                 <p class="nav-label" data-i18n="common.nav_label_community">СПІЛЬНОТА</p>
-                <a href="./student-announcements.html" class="nav-link">
+
+                <a href="./teacher-announcements.html" class="nav-link active">
                     <span data-i18n="common.nav_announcements">📢 Оголошення</span>
                     <span class="badge-count" id="announcementsBadge">0</span>
                 </a>
-                <a href="./student-notifications.html" class="nav-link">
-                <span data-i18n="common.nav_notifications">🔔 Сповіщення</span>
+
+                <a href="./teacher-notifications.html" class="nav-link">
+                    <span data-i18n="common.nav_notifications">🔔 Сповіщення</span>
                     <span class="badge-count" id="notifBadge">0</span>
                 </a>
             </nav>
@@ -64,26 +70,29 @@
                 <div class="user-avatar" id="avatarInitial">?</div>
                 <div class="user-meta">
                     <p class="user-name" id="profileName">...</p>
-                    <p class="user-sub" id="profileGroup" data-i18n="dashboard.user_loading">Завантаження...</p>
+                    <p class="user-sub" id="profileRole" data-i18n="dashboard.user_loading">Завантаження...</p>
                 </div>
             </div>
+
             <div class="theme-switch-container">
                 <button id="themeToggle" class="theme-toggle-btn">
                     <span class="theme-icon">🌙</span>
                     <span class="theme-text" data-i18n="common.theme_dark">Темна тема</span>
                 </button>
             </div>
+
             <div class="lang-switch-container">
                 <div class="lang-slider">
                     <input type="radio" name="lang" id="lang-uk" value="uk">
                     <label for="lang-uk">UA</label>
-                    
+
                     <input type="radio" name="lang" id="lang-en" value="en">
                     <label for="lang-en">EN</label>
-                    
+
                     <div class="slider-bg"></div>
                 </div>
             </div>
+
             <button id="logoutBtn" class="logout-btn" data-i18n="common.logout_btn">🚪 Вийти з акаунту</button>
         </div>
     </aside>
@@ -93,9 +102,9 @@
             <button id="menuToggle" class="menu-btn">☰</button>
             <div class="logo-mobile">Mooden</div>
         </div>
+
         <header class="announcements-header">
             <h1 data-i18n="announcements.title">Оголошення</h1>
-
             <p class="header-desc" data-i18n="announcements.subtitle">
                 Усі важливі повідомлення курсів та платформи
             </p>
@@ -128,11 +137,8 @@
         </section>
 
         <section class="announcements-card">
-
             <div class="announcements-head">
-                <h2 data-i18n="announcements.list_title">
-                    Усі оголошення
-                </h2>
+                <h2 data-i18n="announcements.list_title">Усі оголошення</h2>
 
                 <button id="markAllReadBtn"
                         class="mark-all-btn"
@@ -159,9 +165,7 @@
             </section>
 
             <div id="announcementsList" class="announcements-list"></div>
-
         </section>
-
     </main>
 
     <script src="../js/user-announcements.js"></script>

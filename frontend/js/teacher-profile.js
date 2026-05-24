@@ -14,25 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return localStorage.getItem("mooden-lang") || document.documentElement.lang || "uk";
     }
 
-    function formatDate(dateValue) {
-        if (!dateValue) {
-            return "—";
-        }
-
-        const lang = getCurrentLang();
-        const date = new Date(dateValue);
-
-        if (Number.isNaN(date.getTime())) {
-            return dateValue;
-        }
-
-        return date.toLocaleDateString(lang === "en" ? "en-US" : "uk-UA", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-        });
-    }
-
     async function fetchJson(url, token) {
         const response = await fetch(url, {
             headers: {
@@ -127,10 +108,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
                 <div class="teacher-profile-main">
-                    <span class="teacher-profile-role">
-                        ${getTranslation(lang, "teacher_profile.role_label")}
-                    </span>
-
                     <h1>${user.full_name || getTranslation(lang, "teacher_profile.unknown_teacher")}</h1>
 
                     <p>
@@ -222,6 +199,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="teacher-profile-card">
                     <div class="teacher-profile-card-header">
                         <h2>${getTranslation(lang, "teacher_profile.courses_title")}</h2>
+                        <a href="./teacher-courses.html" class="teacher-profile-card-link">
+                            ${getTranslation(lang, "profile.link_all")}
+                        </a>
                     </div>
 
                     ${renderCourses(courses)}
@@ -245,12 +225,17 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="teacher-profile-courses">
                 ${courses.map(course => {
                     const progress = Math.round(Number(course.group_avg_progress || 0));
-                    const accent = course.color_accent || "#E8A44A";
+                    const accent = course.color_accent || "var(--accent-gold)";
 
                     return `
-                        <article class="teacher-profile-course" style="--course-accent: ${accent}">
-                            <div>
+                        <a href="./teacher-course-detail.html?id=${course.id}" 
+                        class="teacher-profile-course" 
+                        style="--course-accent: ${accent}">
+                            <div class="profile-course-header">
                                 <h3>${course.title || getTranslation(lang, "teacher_courses.untitled_course")}</h3>
+                                <span class="teacher-profile-course-arrow">➔</span>
+                            </div>
+                            <div class="profile-course-body">
                                 <p>
                                     ${Number(course.students_count || 0)}
                                     ${getTranslation(lang, "teacher_courses.students_label")}
@@ -258,13 +243,12 @@ document.addEventListener("DOMContentLoaded", () => {
                                     ${Number(course.tasks_count || 0)}
                                     ${getTranslation(lang, "teacher_courses.tasks_label")}
                                 </p>
+                                <div class="teacher-profile-course-progress">
+                                    <strong>${progress}%</strong>
+                                    <span>${getTranslation(lang, "teacher_profile.progress_label")}</span>
+                                </div>
                             </div>
-
-                            <div class="teacher-profile-course-progress">
-                                <strong>${progress}%</strong>
-                                <span>${getTranslation(lang, "teacher_profile.progress_label")}</span>
-                            </div>
-                        </article>
+                        </a>
                     `;
                 }).join("")}
             </div>
@@ -275,5 +259,6 @@ document.addEventListener("DOMContentLoaded", () => {
         applyStaticTranslations(getCurrentLang());
     }
 
+    initGlobalPasswordChange("changePasswordForm");
     loadProfile();
 });

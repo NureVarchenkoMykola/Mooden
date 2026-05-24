@@ -169,10 +169,12 @@ exports.getProfileData = async (req, res) => {
                 c.title_${lang} AS title,
                 c.color_accent,
                 COALESCE(ROUND(AVG(sc.progress_percent), 0), 0) as group_avg_progress,
-                COUNT(DISTINCT sc.student_id) as students_count
+                COUNT(DISTINCT sc.student_id) as students_count,
+                COUNT(DISTINCT t.id) as tasks_count
             FROM public.courses c
             JOIN public.teacher_courses tc ON c.id = tc.course_id
             LEFT JOIN public.student_courses sc ON c.id = sc.course_id
+            LEFT JOIN public.tasks t ON c.id = t.course_id
             WHERE tc.teacher_id = $1
             GROUP BY c.id, c.title_${lang}, c.color_accent
             ORDER BY c.title_${lang} ASC
@@ -284,10 +286,12 @@ exports.getCourseDetail = async (req, res) => {
                 t.deadline,
                 t.is_exam,
                 COUNT(DISTINCT s.id) as submissions_count,
-                COUNT(DISTINCT g.student_id) as graded_count
+                COUNT(DISTINCT CASE 
+                    WHEN gr.student_id IS NOT NULL THEN s.student_id
+                END) AS graded_count
             FROM public.tasks t
             LEFT JOIN public.submissions s ON t.id = s.task_id
-            LEFT JOIN public.grades g ON t.id = g.task_id
+            LEFT JOIN public.grades gr ON gr.task_id = s.task_id AND gr.student_id = s.student_id
             WHERE t.course_id = $1
             GROUP BY t.id, t.title_${lang}, t.description_${lang}, t.deadline, t.is_exam
             ORDER BY t.deadline ASC

@@ -78,7 +78,7 @@ const translations = {
             stat_students: "Студентів",
             stat_grading: "На перевірці",
             stat_rating: "Рейтинг",
-            title_schedule: "Розклад сьогодні",
+            title_schedule: "Розклад на сьогодні",
             title_grading_list: "Черга перевірки",
             link_grading: "Перевірити →",
             teacher_status_info: "Викладає на: ",
@@ -88,7 +88,7 @@ const translations = {
             pending_submissions: "Роботи чекають на перевірку",
             items: "шт."
         },
-                teacher_courses: {
+        teacher_courses: {
             page_title: "Мої курси",
             page_desc: "Тут відображаються курси, які ви викладаєте, кількість студентів, завдань та середній прогрес груп.",
 
@@ -116,8 +116,8 @@ const translations = {
             empty_text: "Спробуйте змінити пошук або перевірте, чи вам призначені курси.",
             nav_grading: "📝 Перевірка",
             nav_profile: "👤 Профіль",
-            unavailable_title: "Курси поки недоступні",
-            unavailable_text: "Не вдалося завантажити курси з backend."
+            unavailable_title: "Курси недоступні",
+            unavailable_text: "Не вдалося завантажити курси."
             
         },
         teacher_course_detail: {
@@ -137,16 +137,19 @@ const translations = {
             no_tasks: "Завдання для цього курсу поки не додані.",
             no_students: "Студентів на цьому курсі поки немає.",
             no_materials: "Матеріали для цього курсу поки не додані.",
+            checked_submissions: "Перевірено",
+            no_submissions_status: "Немає робіт",
+            needs_grading_status: "Очікує перевірки",
 
             unknown_student: "Невідомий студент",
 
             not_found_title: "Курс не знайдено",
             not_found_text: "Поверніться на сторінку курсів і відкрийте курс ще раз.",
 
-            unavailable_title: "Деталі курсу поки недоступні",
-            unavailable_text: "Не вдалося завантажити деталі курсу з backend."
+            unavailable_title: "Деталі курсу недоступні",
+            unavailable_text: "Не вдалося завантажити деталі курсу."
         },
-                teacher_submissions: {
+        teacher_submissions: {
             page_title: "Перевірка робіт",
             page_desc: "Тут відображаються роботи студентів, які очікують оцінювання або вже були оцінені.",
 
@@ -163,7 +166,11 @@ const translations = {
             status_pending: "Очікує перевірки",
             status_graded: "Оцінено",
 
+            filter_course_all: "Усі курси",
+            filter_task_all: "Усі завдання",
+
             student: "Студент",
+            email: "Електронна пошта",
             submitted_at: "Здано",
             work_content: "Вміст роботи",
             file: "Файл",
@@ -183,8 +190,8 @@ const translations = {
             empty_title: "Робіт не знайдено",
             empty_text: "Спробуйте змінити фільтр або пошуковий запит.",
 
-            unavailable_title: "Роботи поки недоступні",
-            unavailable_text: "Не вдалося завантажити роботи з backend."
+            unavailable_title: "Роботи недоступні",
+            unavailable_text: "Не вдалося завантажити роботи."
         },
         teacher_schedule: {
             page_title: "Розклад",
@@ -216,11 +223,10 @@ const translations = {
             empty_title: "Занять не знайдено",
             empty_text: "На цьому тижні у вас немає занять.",
 
-            unavailable_title: "Розклад поки недоступний",
-            unavailable_text: "Не вдалося завантажити розклад з backend."
+            unavailable_title: "Розклад недоступний",
+            unavailable_text: "Не вдалося завантажити розклад."
         },
         teacher_profile: {
-            role_label: "Профіль викладача",
             unknown_teacher: "Невідомий викладач",
             since: "з",
 
@@ -238,76 +244,10 @@ const translations = {
 
             courses_title: "Курси викладача",
             progress_label: "прогрес",
-            no_courses: "Курси викладача поки не знайдені.",
+            no_courses: "Курси викладача не знайдені.",
 
-            unavailable_title: "Профіль поки недоступний",
-            unavailable_text: "Не вдалося завантажити профіль викладача з backend."
-        },
-                notifications_page: {
-            page_title: "Сповіщення",
-            page_desc: "Тут зібрані ваші системні повідомлення, оцінки, нагадування та інші важливі події.",
-
-            mark_all: "Позначити всі як прочитані",
-            mark_read: "Позначити як прочитане",
-            saving: "Збереження...",
-
-            stat_total: "Усього",
-            stat_unread: "Непрочитані",
-            stat_read: "Прочитані",
-
-            search_placeholder: "Пошук сповіщень...",
-
-            filter_all: "Усі",
-            filter_unread: "Непрочитані",
-            filter_read: "Прочитані",
-
-            status_unread: "Нове",
-            status_read: "Прочитано",
-
-            marked_read: "Сповіщення позначено як прочитане.",
-            all_marked_read: "Усі сповіщення позначено як прочитані.",
-            mark_error: "Не вдалося оновити сповіщення.",
-
-            empty_title: "Сповіщень не знайдено",
-            empty_text: "Спробуйте змінити фільтр або пошуковий запит.",
-
-            unavailable_title: "Сповіщення поки недоступні",
-            unavailable_text: "Не вдалося завантажити сповіщення з backend."
-        },
-                announcements_page: {
-            page_title: "Оголошення",
-            page_desc: "Тут зібрані загальні та курсові оголошення, які стосуються вашого навчання або викладання.",
-
-            mark_all: "Позначити всі як прочитані",
-            mark_read: "Позначити як прочитане",
-            saving: "Збереження...",
-
-            stat_total: "Усього",
-            stat_unread: "Непрочитані",
-            stat_read: "Прочитані",
-
-            search_placeholder: "Пошук оголошень...",
-
-            filter_all: "Усі",
-            filter_unread: "Непрочитані",
-            filter_read: "Прочитані",
-
-            status_unread: "Нове",
-            status_read: "Прочитано",
-
-            general_announcement: "Загальне оголошення",
-            untitled: "Оголошення без назви",
-            no_content: "Текст оголошення відсутній.",
-
-            marked_read: "Оголошення позначено як прочитане.",
-            all_marked_read: "Усі оголошення позначено як прочитані.",
-            mark_error: "Не вдалося оновити оголошення.",
-
-            empty_title: "Оголошень не знайдено",
-            empty_text: "Спробуйте змінити фільтр або пошуковий запит.",
-
-            unavailable_title: "Оголошення поки недоступні",
-            unavailable_text: "Не вдалося завантажити оголошення з backend."
+            unavailable_title: "Профіль недоступний",
+            unavailable_text: "Не вдалося завантажити профіль викладача."
         },
         courses: {
             page_title: "Мої курси",
@@ -364,8 +304,8 @@ const translations = {
 
             not_found_title: "Курс не знайдено",
             not_found_text: "Поверніться на сторінку курсів і виберіть курс ще раз.",
-            unavailable_title: "Деталі курсу поки недоступні",
-            unavailable_text: "Не вдалося завантажити деталі курсу з backend."
+            unavailable_title: "Деталі курсу недоступні",
+            unavailable_text: "Не вдалося завантажити деталі курсу."
         },
         attendance_page: {
             page_title: "Відвідуваність",
@@ -383,8 +323,8 @@ const translations = {
             not_found_title: "Курс не знайдено",
             not_found_text: "Поверніться на сторінку курсу та відкрийте історію відвідуваності ще раз.",
 
-            unavailable_title: "Відвідуваність поки недоступна",
-            unavailable_text: "Не вдалося завантажити історію відвідуваності з backend."
+            unavailable_title: "Відвідуваність недоступна",
+            unavailable_text: "Не вдалося завантажити історію відвідуваності"
         },
         task_detail: {
             no_deadline: "Дедлайн не вказано",
@@ -392,8 +332,8 @@ const translations = {
             not_found_title: "Завдання не знайдено",
             not_found_text: "Поверніться до курсу або сторінки завдань і виберіть завдання ще раз.",
 
-            unavailable_title: "Деталі завдання поки недоступні",
-            unavailable_text: "Не вдалося завантажити деталі завдання з backend.",
+            unavailable_title: "Деталі завдання недоступні",
+            unavailable_text: "Не вдалося завантажити деталі завдання.",
 
             no_description: "Опис завдання поки не додано.",
             not_submitted: "Ще не здано",
@@ -567,6 +507,13 @@ const translations = {
             title: "Сповіщення",
             subtitle: "Ваші особисті повідомлення",
             list_title: "Усі сповіщення",
+            stat_total: "Усього",
+            stat_unread: "Непрочитані",
+            stat_read: "Прочитані",
+            search_placeholder: "Пошук сповіщень...",
+            filter_all: "Усі",
+            filter_unread: "Непрочитані",
+            filter_read: "Прочитані",
             empty: "Сповіщень поки немає",
             read: "Прочитано",
             unread: "Нове",
@@ -577,6 +524,13 @@ const translations = {
             title: "Оголошення",
             subtitle: "Усі важливі повідомлення курсів та платформи",
             list_title: "Усі оголошення",
+            stat_total: "Усього",
+            stat_unread: "Непрочитані",
+            stat_read: "Прочитані",
+            search_placeholder: "Пошук оголошень...",
+            filter_all: "Усі",
+            filter_unread: "Непрочитані",
+            filter_read: "Прочитані",
             mark_all: "Позначити всі як прочитані",
             empty: "Оголошень поки немає"
         },
@@ -706,7 +660,7 @@ const translations = {
             pending_submissions: "Submissions waiting for review",
             items: "pcs."
         },
-                teacher_courses: {
+        teacher_courses: {
             page_title: "My Courses",
             page_desc: "Here you can view the courses you teach, the number of students, tasks and the average group progress.",
 
@@ -733,8 +687,8 @@ const translations = {
             empty_title: "No courses found",
             empty_text: "Try changing the search query or check whether courses are assigned to you.",
             
-            unavailable_title: "Courses are not available yet",
-            unavailable_text: "Failed to load courses from backend."
+            unavailable_title: "Courses are not available",
+            unavailable_text: "Failed to load courses."
         },
         teacher_course_detail: {
             course_label: "Teacher course",
@@ -753,16 +707,19 @@ const translations = {
             no_tasks: "Tasks for this course have not been added yet.",
             no_students: "There are no students in this course yet.",
             no_materials: "Materials for this course have not been added yet.",
+            checked_submissions: "Checked",
+            no_submissions_status: "No submissions",
+            needs_grading_status: "Needs grading",
 
             unknown_student: "Unknown student",
 
             not_found_title: "Course not found",
             not_found_text: "Please return to the courses page and open the course again.",
 
-            unavailable_title: "Course details are not available yet",
-            unavailable_text: "Failed to load course details from backend."
+            unavailable_title: "Course details are not available",
+            unavailable_text: "Failed to load course details."
         },
-                teacher_submissions: {
+        teacher_submissions: {
             page_title: "Submissions",
             page_desc: "Here you can view student submissions that are waiting for grading or have already been graded.",
 
@@ -779,8 +736,12 @@ const translations = {
             status_pending: "Pending review",
             status_graded: "Graded",
 
+            filter_course_all: "All courses",
+            filter_task_all: "All assignments",
+
             student: "Student",
             submitted_at: "Submitted",
+            email: "Email",
             work_content: "Work content",
             file: "File",
             open_file: "Open file",
@@ -799,8 +760,8 @@ const translations = {
             empty_title: "No submissions found",
             empty_text: "Try changing the filter or search query.",
 
-            unavailable_title: "Submissions are not available yet",
-            unavailable_text: "Failed to load submissions from backend."
+            unavailable_title: "Submissions are not available",
+            unavailable_text: "Failed to load submissions."
         },
         teacher_schedule: {
             page_title: "Schedule",
@@ -836,7 +797,6 @@ const translations = {
             unavailable_text: "Failed to load schedule from backend."
         },
         teacher_profile: {
-            role_label: "Teacher profile",
             unknown_teacher: "Unknown teacher",
             since: "since",
 
@@ -858,72 +818,6 @@ const translations = {
 
             unavailable_title: "Profile is not available yet",
             unavailable_text: "Failed to load teacher profile from backend."
-        },
-                notifications_page: {
-            page_title: "Notifications",
-            page_desc: "Here you can view your system messages, grades, reminders and other important events.",
-
-            mark_all: "Mark all as read",
-            mark_read: "Mark as read",
-            saving: "Saving...",
-
-            stat_total: "Total",
-            stat_unread: "Unread",
-            stat_read: "Read",
-
-            search_placeholder: "Search notifications...",
-
-            filter_all: "All",
-            filter_unread: "Unread",
-            filter_read: "Read",
-
-            status_unread: "New",
-            status_read: "Read",
-
-            marked_read: "Notification has been marked as read.",
-            all_marked_read: "All notifications have been marked as read.",
-            mark_error: "Failed to update notifications.",
-
-            empty_title: "No notifications found",
-            empty_text: "Try changing the filter or search query.",
-
-            unavailable_title: "Notifications are not available yet",
-            unavailable_text: "Failed to load notifications from backend."
-        },
-                announcements_page: {
-            page_title: "Announcements",
-            page_desc: "Here you can view general and course announcements related to your studying or teaching.",
-
-            mark_all: "Mark all as read",
-            mark_read: "Mark as read",
-            saving: "Saving...",
-
-            stat_total: "Total",
-            stat_unread: "Unread",
-            stat_read: "Read",
-
-            search_placeholder: "Search announcements...",
-
-            filter_all: "All",
-            filter_unread: "Unread",
-            filter_read: "Read",
-
-            status_unread: "New",
-            status_read: "Read",
-
-            general_announcement: "General announcement",
-            untitled: "Untitled announcement",
-            no_content: "Announcement content is missing.",
-
-            marked_read: "Announcement has been marked as read.",
-            all_marked_read: "All announcements have been marked as read.",
-            mark_error: "Failed to update announcements.",
-
-            empty_title: "No announcements found",
-            empty_text: "Try changing the filter or search query.",
-
-            unavailable_title: "Announcements are not available yet",
-            unavailable_text: "Failed to load announcements from backend."
         },
         courses: {
             page_title: "My Courses",
@@ -1183,6 +1077,13 @@ const translations = {
             title: "Notifications",
             subtitle: "Your personal messages",
             list_title: "All notifications",
+            stat_total: "Total",
+            stat_unread: "Unread",
+            stat_read: "Read",
+            search_placeholder: "Search notifications...",
+            filter_all: "All",
+            filter_unread: "Unread",
+            filter_read: "Read",
             empty: "No notifications yet",
             read: "Read",
             unread: "New",
@@ -1193,6 +1094,13 @@ const translations = {
             title: "Announcements",
             subtitle: "All important course and platform messages",
             list_title: "All announcements",
+            stat_total: "Total",
+            stat_unread: "Unread",
+            stat_read: "Read",
+            search_placeholder: "Search announcements...",
+            filter_all: "All",
+            filter_unread: "Unread",
+            filter_read: "Read",
             mark_all: "Mark all as read",
             empty: "No announcements yet"
         },

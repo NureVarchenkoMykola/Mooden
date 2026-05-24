@@ -5,13 +5,6 @@
 .schedule-header h1 {
     font-size: 2.8rem;
     margin-bottom: 0.5rem;
-    color: var(--text-main);
-}
-
-.schedule-header p {
-    color: var(--text-muted);
-    line-height: 1.6;
-    max-width: 850px;
 }
 
 .today-overview-card {
@@ -20,7 +13,7 @@
     border-radius: 1rem;
     padding: 1.5rem;
     margin-bottom: 2.5rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
 }
 
 .today-card-head {
@@ -34,8 +27,6 @@
     font-size: 1.1rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: var(--text-main);
-    margin: 0;
 }
 
 #todayCount {
@@ -78,11 +69,6 @@
     transition: 0.2s ease;
 }
 
-.lesson-today-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--accent);
-}
-
 .l-time {
     color: var(--text-gold);
     font-size: 0.85rem;
@@ -93,42 +79,19 @@
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
-    min-width: 0;
 }
 
 .l-name {
     color: var(--text-main);
-    margin: 0;
-    font-weight: 700;
-    line-height: 1.3;
 }
 
 .l-meta {
-    font-size: 0.85rem;
-    margin: 0;
-    color: var(--text-muted);
-}
-
-.type-tag {
-    color: var(--text-muted);
-}
-
-.text-gold {
-    color: var(--text-gold);
-}
-
-.text-green {
-    color: #2ecc71;
-}
-
-.text-muted {
-    color: var(--text-muted);
+    font-size: 0.9rem;
 }
 
 .today-empty {
     color: var(--text-muted);
     font-style: italic;
-    margin: 0;
 }
 
 .schedule-toolbar {
@@ -148,14 +111,11 @@
     color: var(--text-main);
     padding: 0.8rem 1.5rem;
     font-size: 0.9rem;
-    border-radius: 0.7rem;
-    cursor: pointer;
     transition: 0.2s ease;
 }
 
 .week-btn:hover {
     border-color: var(--accent-gold);
-    color: var(--text-gold);
     transform: translateY(-1px);
 }
 
@@ -191,13 +151,11 @@
     font-size: 0.95rem;
     color: var(--text-main);
     text-transform: uppercase;
-    margin: 0;
 }
 
 .day-date {
     font-size: 0.8rem;
     margin-top: 0.2rem;
-    color: var(--text-muted);
 }
 
 .lessons-list {
@@ -210,7 +168,7 @@
 .lesson-card {
     background: var(--bg-input);
     border: 1px solid var(--border-main);
-    border-left: 4px solid var(--lesson-accent);
+    border-left: 1px solid var(--lesson-accent);
     padding: 0.8rem;
     border-radius: 0.7rem;
     transition: all 0.2s ease;
@@ -232,7 +190,7 @@
     font-size: 0.9rem;
     color: var(--text-main);
     line-height: 1.4;
-    margin: 0 0 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .lesson-meta {
@@ -259,48 +217,13 @@
     text-transform: uppercase;
 }
 
-.type-lecture {
-    background: rgba(52, 152, 219, 0.14);
-    color: #3498db;
-}
-
-.type-practical {
-    background: rgba(155, 89, 182, 0.14);
-    color: #9b59b6;
-}
-
-.type-lab {
-    background: rgba(232, 164, 74, 0.14);
-    color: var(--text-gold);
-}
-
-.type-seminar {
-    background: rgba(46, 204, 113, 0.14);
-    color: #2ecc71;
-}
-
-.format-online {
-    background: rgba(52, 152, 219, 0.14);
-    color: #3498db;
-}
-
-.format-offline {
-    background: rgba(232, 164, 74, 0.14);
-    color: var(--text-gold);
-}
-
-.format-hybrid {
-    background: rgba(155, 89, 182, 0.14);
-    color: #9b59b6;
-}
-
 .attendance-open {
-    background: rgba(46, 204, 113, 0.14);
-    color: #2ecc71;
+    background: color-mix(in srgb, var(--accent-gold) 14%, transparent);
+    color: var(--accent-gold);
 }
 
 .attendance-closed {
-    background: rgba(134, 155, 190, 0.14);
+    background: color-mix(in srgb, var(--text-muted) 14%, transparent);
     color: var(--text-muted);
 }
 
@@ -320,34 +243,6 @@
     border: 1px solid var(--border-main);
     border-radius: 1.5rem;
     color: var(--text-muted);
-}
-
-.schedule-empty-state h3 {
-    color: var(--text-main);
-    margin: 0 0 0.5rem;
-}
-
-.schedule-empty-state p {
-    margin: 0;
-    color: var(--text-muted);
-}
-
-.user-card-link {
-    text-decoration: none;
-    color: inherit;
-    cursor: pointer;
-    transition: 0.2s ease;
-}
-
-.user-card-link:hover {
-    background: var(--bg-input);
-    border-color: var(--accent-gold);
-    transform: translateY(-1px);
-}
-
-.user-card-link .user-sub,
-.user-card-link:hover .user-sub {
-    color: var(--text-muted) !important;
 }
 
 @media (max-width: 768px) {

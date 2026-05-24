@@ -177,11 +177,11 @@ function renderLessonCard(lesson, lang) {
 
             <div class="lesson-badges">
                 <span class="lesson-badge type-${lesson.lesson_type}">
-                    ${getLessonTypeText(lesson.lesson_type, lang)}
+                    ${getTranslation(lang, "schedule.type_" + lesson.lesson_type)}
                 </span>
 
                 <span class="lesson-badge format-${lesson.lesson_format}">
-                    ${getLessonFormatText(lesson.lesson_format, lang)}
+                    ${getTranslation(lang, "schedule.format_" + lesson.lesson_format)}
                 </span>
 
                 <span class="lesson-badge attendance-${isOpen ? "open" : "closed"}">
@@ -276,13 +276,13 @@ function renderTodayPanel(lang) {
                     <p class="l-name">${lesson.course_name || "—"}</p>
 
                     <p class="l-meta">
-                        <span class="type-tag">${getLessonTypeText(lesson.lesson_type, lang)}</span>
+                        <span class="type-tag">${getTranslation(lang, "schedule.type_" + lesson.lesson_type)}</span>
                         •
                         <span class="text-gold">${lesson.group_name || getTranslation(lang, "teacher_schedule.no_group")}</span>
                     </p>
 
                     <p class="l-meta">
-                        <span class="${isOpen ? "text-green" : "text-muted"}">
+                        <span class="${isOpen ? "attendance-open" : "attendance-closed"}">
                             ${
                                 isOpen
                                     ? getTranslation(lang, "teacher_schedule.attendance_open")
@@ -372,33 +372,4 @@ function formatTime(timeValue) {
     }
 
     return String(timeValue).slice(0, 5);
-}
-
-function getLessonTypeText(type, lang) {
-    if (!type) {
-        return "—";
-    }
-
-    const scheduleKey = `schedule.type_${type}`;
-    const scheduleText = getTranslation(lang, scheduleKey);
-
-    if (scheduleText !== scheduleKey) {
-        return scheduleText;
-    }
-
-    const courseDetailKey = `course_detail.lesson_${type}`;
-    const courseDetailText = getTranslation(lang, courseDetailKey);
-
-    return courseDetailText !== courseDetailKey ? courseDetailText : type;
-}
-
-function getLessonFormatText(format, lang) {
-    if (!format) {
-        return "—";
-    }
-
-    const key = `schedule.format_${format}`;
-    const result = getTranslation(lang, key);
-
-    return result !== key ? result : format;
 }

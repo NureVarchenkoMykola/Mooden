@@ -129,26 +129,34 @@ document.addEventListener("DOMContentLoaded", () => {
             : result;
     }
 
-    function getTaskStatusText(task) {
+    function getTaskReviewStatus(task) {
+        const submissionsCount = Number(task.submissions_count || 0);
+        const gradedCount = Number(task.graded_count || 0);
+
+        if (submissionsCount === 0) {
+            return "no-submissions";
+        }
+
+        if (gradedCount >= submissionsCount) {
+            return "graded";
+        }
+
+        return "needs-grading";
+    }
+
+    function getTaskReviewStatusText(task) {
         const lang = getCurrentLang();
+        const status = getTaskReviewStatus(task);
 
-        if (task.grade_value !== undefined && task.grade_value !== null) {
-            return getTranslation(lang, "tasks.status_graded");
+        if (status === "graded") {
+            return getTranslation(lang, "teacher_submissions.status_graded");
         }
 
-        if (task.status === "graded") {
-            return getTranslation(lang, "tasks.status_graded");
+        if (status === "needs-grading") {
+            return getTranslation(lang, "teacher_course_detail.needs_grading_status");
         }
 
-        if (task.status === "overdue") {
-            return getTranslation(lang, "tasks.status_overdue");
-        }
-
-        if (task.status === "submitted") {
-            return getTranslation(lang, "tasks.status_submitted");
-        }
-
-        return getTranslation(lang, "tasks.status_pending");
+        return getTranslation(lang, "teacher_course_detail.no_submissions_status");
     }
 
     function renderCourseDetail(data) {
@@ -166,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const accent = course.color_accent || "#E8A44A";
+        const accent = course.color_accent || "var(--accent-gold)";
         const progress = Math.round(Number(course.group_avg_progress || 0));
 
         content.style.setProperty("--course-accent", accent);
@@ -278,6 +286,13 @@ document.addEventListener("DOMContentLoaded", () => {
                                 ${getTranslation(lang, "tasks.deadline")}:
                                 <strong>${formatDate(task.deadline)}</strong>
                             </p>
+
+                            <p>
+                                ${getTranslation(lang, "teacher_course_detail.checked_submissions")}:
+                                <strong>${Number(task.graded_count || 0)}</strong>
+                                /
+                                <strong>${Number(task.submissions_count || 0)}</strong>
+                            </p>
                         </div>
 
                         <div class="teacher-task-right">
@@ -287,8 +302,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                     : ""
                             }
 
-                            <span class="teacher-task-status ${task.status || "pending"}">
-                                ${getTaskStatusText(task)}
+                            <span class="teacher-task-status ${getTaskReviewStatus(task)}">
+                                ${getTaskReviewStatusText(task)}
                             </span>
                         </div>
                     </article>
@@ -312,15 +327,16 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="teacher-students-list">
                 ${students.map(student => `
                     <article class="teacher-student-card">
-                        <div class="teacher-student-avatar">
-                            ${String(student.full_name || "?").trim().charAt(0).toUpperCase()}
-                        </div>
+                        <div class="teacher-student-left">
+                            <div class="teacher-student-avatar">
+                                ${String(student.full_name || "?").trim().charAt(0).toUpperCase()}
+                            </div>
 
-                        <div class="teacher-student-info">
-                            <h3>${student.full_name || getTranslation(lang, "teacher_course_detail.unknown_student")}</h3>
-                            <p>${student.email || "—"}</p>
+                            <div class="teacher-student-info">
+                                <h3>${student.full_name || getTranslation(lang, "teacher_course_detail.unknown_student")}</h3>
+                                <p>${student.email || "—"}</p>
+                            </div>
                         </div>
-
                         <div class="teacher-student-progress">
                             <strong>${Math.round(Number(student.progress_percent || 0))}%</strong>
                             <span>${getTranslation(lang, "teacher_course_detail.progress_label")}</span>

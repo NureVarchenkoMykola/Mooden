@@ -1,6 +1,11 @@
+let allAnnouncements = [];
+let announcementsLang = "uk";
+
 document.addEventListener("DOMContentLoaded", () => {
     loadAnnouncements();
     document.getElementById("markAllReadBtn")?.addEventListener("click", markAllRead);
+    document.getElementById("announcementSearch")?.addEventListener("input", applyAnnouncementFilters);
+    document.getElementById("announcementFilter")?.addEventListener("change", applyAnnouncementFilters);
 });
 
 function getToken() {
@@ -32,11 +37,48 @@ async function loadAnnouncements() {
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(data.message || "ANNOUNCEMENTS_ERROR");
 
-        renderAnnouncements(data.announcements || [], data.user?.lang || lang);
+        allAnnouncements = data.announcements || [];
+        announcementsLang = data.user?.lang || lang;
+
+        updateAnnouncementStats();
+        applyAnnouncementFilters();
     } catch (err) {
         console.error("[Dev Mode] Announcements load failed:", err);
         list.innerHTML = `<p class="announcements-empty">${getTranslation(lang, "errors.UNKNOWN_ERROR")}</p>`;
     }
+}
+
+function updateAnnouncementStats() {
+    const total = allAnnouncements.length;
+    const unread = allAnnouncements.filter(item => !item.is_read).length;
+    const read = allAnnouncements.filter(item => item.is_read).length;
+
+    document.getElementById("totalAnnouncements").textContent = total;
+    document.getElementById("unreadAnnouncements").textContent = unread;
+    document.getElementById("readAnnouncements").textContent = read;
+}
+
+function applyAnnouncementFilters() {
+    const query = (document.getElementById("announcementSearch")?.value || "").toLowerCase().trim();
+    const filter = document.getElementById("announcementFilter")?.value || "all";
+
+    const filtered = allAnnouncements.filter(item => {
+        const matchesStatus =
+            filter === "all" ||
+            (filter === "read" && item.is_read) ||
+            (filter === "unread" && !item.is_read);
+
+        const text = [
+            item.title,
+            item.content,
+            item.course_name,
+            item.author_name
+        ].filter(Boolean).join(" ").toLowerCase();
+
+        return matchesStatus && (!query || text.includes(query));
+    });
+
+    renderAnnouncements(filtered, announcementsLang);
 }
 
 function renderAnnouncements(items, lang) {

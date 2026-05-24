@@ -1,7 +1,12 @@
+let allNotifications = [];
+let notificationsLang = "uk";
+
 document.addEventListener("DOMContentLoaded", () => {
     loadNotifications();
 
     document.getElementById("markAllReadBtn")?.addEventListener("click", markAllRead);
+    document.getElementById("notificationSearch")?.addEventListener("input", applyNotificationFilters);
+    document.getElementById("notificationFilter")?.addEventListener("change", applyNotificationFilters);
 });
 
 function getToken() {
@@ -36,11 +41,43 @@ async function loadNotifications() {
             throw new Error(data.message || "NOTIFICATIONS_ERROR");
         }
 
-        renderNotifications(data.notifications || [], data.user?.lang || lang);
+        allNotifications = data.notifications || [];
+        notificationsLang = data.user?.lang || lang;
+
+        updateNotificationStats();
+        applyNotificationFilters();
     } catch (err) {
         console.error("[Dev Mode] Notifications load failed:", err);
         list.innerHTML = `<p class="notifications-empty">${getTranslation(lang, "errors.UNKNOWN_ERROR")}</p>`;
     }
+}
+
+function updateNotificationStats() {
+    const total = allNotifications.length;
+    const unread = allNotifications.filter(item => !item.is_read).length;
+    const read = allNotifications.filter(item => item.is_read).length;
+
+    document.getElementById("totalNotifications").textContent = total;
+    document.getElementById("unreadNotifications").textContent = unread;
+    document.getElementById("readNotifications").textContent = read;
+}
+
+function applyNotificationFilters() {
+    const query = (document.getElementById("notificationSearch")?.value || "").toLowerCase().trim();
+    const filter = document.getElementById("notificationFilter")?.value || "all";
+
+    const filtered = allNotifications.filter(item => {
+        const matchesStatus =
+            filter === "all" ||
+            (filter === "read" && item.is_read) ||
+            (filter === "unread" && !item.is_read);
+
+        const text = String(item.message || "").toLowerCase();
+
+        return matchesStatus && (!query || text.includes(query));
+    });
+
+    renderNotifications(filtered, notificationsLang);
 }
 
 function renderNotifications(notifications, lang) {

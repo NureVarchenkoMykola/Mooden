@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         coursesList.innerHTML = filteredCourses.map(course => {
             const progress = Math.round(Number(course.group_avg_progress || 0));
-            const accent = course.color_accent || "#E8A44A";
+            const accent = course.color_accent || "var(--accent-gold)";
 
             return `
                 <article class="teacher-course-card" style="--course-accent: ${accent}">

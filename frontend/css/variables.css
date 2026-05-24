@@ -3,6 +3,7 @@
     --bg-main: #0B1220;        /* Лівий бік (найтемніший, White Ebony) */
     --bg-right: #111C2E;        /* Правий бік (трохи світліший, Big Stone второй) */
     --bg-input: #172035;       /* Поле вводу (Big Stone) */
+    --bg-modal: #1a1f2b;
 
     /* TEXT */
     --text-main: #EBE5D5;      /* Основний білий заголовок (WhiteRock) */

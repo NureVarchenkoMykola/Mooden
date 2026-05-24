@@ -22,6 +22,86 @@
     margin-bottom: 1.5rem;
 }
 
+.notifications-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.notification-stat-card {
+    background: var(--bg-right);
+    border: 1px solid var(--border-main);
+    border-radius: 1.2rem;
+    padding: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.notification-stat-card > span {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.9rem;
+    background: var(--bg-input);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    flex-shrink: 0;
+}
+
+.notification-stat-card strong {
+    display: block;
+    color: var(--text-main);
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.notification-stat-card p {
+    margin-top: 0.35rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.notifications-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.notification-search,
+.notification-select {
+    background: var(--bg-input);
+    border: 1px solid var(--border-main);
+    color: var(--text-main);
+    border-radius: 0.85rem;
+    padding: 0.85rem 1rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.notification-search {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-select {
+    min-width: 12rem;
+    cursor: pointer;
+}
+
+.notification-search:focus,
+.notification-select:focus {
+    border-color: var(--text-gold);
+    box-shadow: 0 0 0 2px rgba(232, 164, 74, 0.12);
+}
+
+.notification-search::placeholder {
+    color: var(--text-muted);
+}
+
 .notifications-list {
     display: flex;
     flex-direction: column;
@@ -70,7 +150,7 @@
 
 .notification-status {
     color: var(--text-gold);
-    font-size: 0.85rem;
+    font-size: 0.9rem;
 }
 
 .notification-top time,
@@ -112,4 +192,22 @@
         flex-direction: column;
         gap: 0;
     }
+
+    .notifications-controls {
+        flex-direction: column;
+    }
+
+    .notification-select {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+
+@media (max-width: 768px) {
+    .announcement-stat-card {
+        gap: 0.5rem;
+    }
+
+
 }
