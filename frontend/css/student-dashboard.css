@@ -324,3 +324,24 @@
         padding: 1.5rem;
     }
 }
+.sidebar-user .user-sub {
+    color: var(--text-muted) !important;
+}
+
+.sidebar-user .user-card:hover .user-sub,
+.sidebar-user .user-card-link:hover .user-sub {
+    color: var(--text-muted) !important;
+}
+
+.sidebar-user .user-card-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.sidebar-user .user-card-link .user-name {
+    color: var(--text-main);
+}
+
+.sidebar-user .user-card-link:hover .user-name {
+    color: var(--text-gold);
+}

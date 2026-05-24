@@ -71,7 +71,7 @@ exports.getSidebarData = async (req, res) => {
                         ON g.task_id = s.task_id 
                         AND g.student_id = s.student_id
                     WHERE tc.teacher_id = $1
-                    AND g.id IS NULL
+                    AND g.task_id IS NULL
                 ) as badge_grading,
                 (
                     SELECT COUNT(*)

@@ -30,44 +30,46 @@
             <div class="logo">Mooden</div>
             <nav class="nav-menu">
                 <p class="nav-label" data-i18n="common.nav_label_main">НАВІГАЦІЯ</p>
-                <a href="#" class="nav-link active">
+                <a href="./teacher-dashboard.html" class="nav-link active">
                     <span data-i18n="common.nav_dashboard">📊 Дашборд</span>
                 </a>
-                <a href="#" class="nav-link">
+
+                <a href="./teacher-courses.html" class="nav-link">
                     <span data-i18n="common.nav_courses">📖 Мої курси</span>
                 </a>
-                <a href="#" class="nav-link">
-                    <span data-i18n="common.nav_grading">📝 Перевірка</span> 
+
+                <a href="./teacher-submissions.html" class="nav-link">
+                    <span data-i18n="common.nav_grading">📝 Перевірка</span>
                     <span class="badge-count" id="gradingBadge">0</span>
                 </a>
-                <a href="#" class="nav-link">
+
+                <a href="./teacher-schedule.html" class="nav-link">
                     <span data-i18n="common.nav_schedule">📅 Розклад</span>
                 </a>
-                <a href="#" class="nav-link">
-                    <span data-i18n="common.nav_constructor">🔧 Конструктор</span>
-                </a>
+
             </nav>
             <nav class="nav-menu">
                 <p class="nav-label" data-i18n="common.nav_label_community">СПІЛЬНОТА</p>
-                <a href="#" class="nav-link">
+                <a href="./announcements.html" class="nav-link">
                     <span data-i18n="common.nav_announcements">📢 Оголошення</span>
                     <span class="badge-count" id="announcementsBadge">0</span>
                 </a>
-                <a href="#" class="nav-link">
-                    <span data-i18n="common.nav_notifications">🔔 Сповіщення</span> 
+                <a href="./notifications.html" class="nav-link">
+                <span data-i18n="common.nav_notifications">🔔 Сповіщення</span>
                     <span class="badge-count" id="notifBadge">0</span>
                 </a>
             </nav>
         </div>
 
-        <div class="sidebar-user">
-            <div class="user-card">
+                <div class="sidebar-user">
+            <a href="./teacher-profile.html" class="user-card user-card-link">
                 <div class="user-avatar" id="avatarInitial">?</div>
+
                 <div class="user-meta">
                     <p class="user-name" id="profileName">...</p>
-                    <p class="user-sub" id="profileRole" data-i18n="dashboard.user_loading">Завантаження...</p>
+                    <p class="user-sub" id="profileGroup">Завантаження...</p>
                 </div>
-            </div>
+            </a>
 
             <div class="theme-switch-container">
                 <button id="themeToggle" class="theme-toggle-btn">
@@ -80,13 +82,17 @@
                 <div class="lang-slider">
                     <input type="radio" name="lang" id="lang-uk" value="uk">
                     <label for="lang-uk">UA</label>
+
                     <input type="radio" name="lang" id="lang-en" value="en">
                     <label for="lang-en">EN</label>
+
                     <div class="slider-bg"></div>
                 </div>
             </div>
 
-            <button id="logoutBtn" class="logout-btn" data-i18n="common.logout_btn">🚪 Вийти з акаунту</button>
+            <button id="logoutBtn" class="logout-btn" data-i18n="common.logout_btn">
+                🚪 Вийти з акаунту
+            </button>
         </div>
     </aside>
 
@@ -135,8 +141,7 @@
             <section class="dashboard-card main-list">
                 <div class="card-header">
                     <h2 data-i18n="dashboard.title_courses">Мої курси</h2>
-                    <a href="#" class="link-more" data-i18n="dashboard.link_all">Всі курси →</a>
-                </div>
+                        <a href="./teacher-courses.html" class="link-more" data-i18n="dashboard.link_all">Всі курси →</a>                </div>
                 <div id="coursesContainer" class="list-container"></div>
             </section>
             
@@ -144,7 +149,7 @@
                 <section class="dashboard-card">
                     <div class="card-header">
                         <h3 data-i18n="dashboard.title_schedule">Розклад сьогодні</h3>
-                        <a href="#" class="link-more" data-i18n="dashboard.link_calendar">Календар</a>
+                        <a href="./teacher-schedule.html" class="link-more" data-i18n="dashboard.link_calendar">Календар</a>
                     </div>
                     <div id="scheduleContainer" class="list-container"></div>
                 </section>
@@ -152,7 +157,7 @@
                 <section class="dashboard-card">
                     <div class="card-header">
                         <h3 data-i18n="dashboard.title_grading_list">Черга перевірки</h3>
-                        <a href="#" class="link-more" data-i18n="dashboard.link_grading">Перевірити →</a>
+                        <a href="./teacher-submissions.html" class="link-more" data-i18n="dashboard.link_grading">Перевірити →</a>
                     </div>
                     <div id="gradingContainer" class="list-container"></div>
                 </section>

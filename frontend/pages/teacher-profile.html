@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Mooden | Профіль викладача</title>
+    <meta name="page-role" content="teacher">
+
+    <script src="../js/config.js"></script>
+    <script src="../js/translations.js"></script>
+    <script src="../js/i18n-manager.js"></script>
+    <script src="../js/theme-manager.js"></script>
+    <script src="../js/toast.js"></script>
+    <script src="../js/auth-guard.js"></script>
+    <script src="../js/sidebar-manager.js"></script>
+
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/student-dashboard.css">
+    <link rel="stylesheet" href="../css/teacher-profile.css">
+</head>
+
+<body class="dashboard-layout container">
+
+<aside class="sidebar">
+    <div class="sidebar-top">
+        <div class="logo">Mooden</div>
+
+        <nav class="nav-menu">
+            <p class="nav-label" data-i18n="common.nav_label_main">НАВІГАЦІЯ</p>
+
+            <a href="./teacher-dashboard.html" class="nav-link">
+                <span data-i18n="common.nav_dashboard">📊 Дашборд</span>
+            </a>
+
+            <a href="./teacher-courses.html" class="nav-link">
+                <span data-i18n="common.nav_courses">📖 Мої курси</span>
+            </a>
+
+            <a href="./teacher-submissions.html" class="nav-link">
+                <span data-i18n="common.nav_grading">📝 Перевірка</span>
+                <span class="badge-count" id="tasksBadge">0</span>
+            </a>
+
+            <a href="./teacher-schedule.html" class="nav-link">
+                <span data-i18n="common.nav_schedule">📅 Розклад</span>
+            </a>
+
+            
+        </nav>
+
+        <nav class="nav-menu">
+            <p class="nav-label" data-i18n="common.nav_label_community">СПІЛЬНОТА</p>
+
+            <a href="./announcements.html" class="nav-link">
+                    <span data-i18n="common.nav_announcements">📢 Оголошення</span>
+                <span class="badge-count" id="announcementsBadge">0</span>
+            </a>
+
+            <a href="./notifications.html" class="nav-link">
+                <span data-i18n="common.nav_notifications">🔔 Сповіщення</span>
+                <span class="badge-count" id="notifBadge">0</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="sidebar-user">
+    <a href="./teacher-profile.html" class="user-card user-card-link">
+        <div class="user-avatar" id="avatarInitial">?</div>
+
+        <div class="user-meta">
+            <p class="user-name" id="profileName">...</p>
+            <p class="user-sub" id="profileGroup">Завантаження...</p>
+        </div>
+    </a>
+
+    <div class="theme-switch-container">
+        <button id="themeToggle" class="theme-toggle-btn">
+            <span class="theme-icon">🌙</span>
+            <span class="theme-text" data-i18n="common.theme_dark">Темна тема</span>
+        </button>
+    </div>
+
+    <div class="lang-switch-container">
+        <div class="lang-slider">
+            <input type="radio" name="lang" id="lang-uk" value="uk">
+            <label for="lang-uk">UA</label>
+
+            <input type="radio" name="lang" id="lang-en" value="en">
+            <label for="lang-en">EN</label>
+
+            <div class="slider-bg"></div>
+        </div>
+    </div>
+
+    <button id="logoutBtn" class="logout-btn" data-i18n="common.logout_btn">
+        🚪 Вийти з акаунту
+    </button>
+</div>
+</aside>
+
+<main class="main-content">
+    <div class="mobile-header">
+        <button id="menuToggle" class="menu-btn">☰</button>
+        <div class="logo-mobile">Mooden</div>
+    </div>
+
+    <section id="teacherProfileContent">
+        <div class="teacher-profile-loading">
+            <h2 data-i18n="profile.loading">Завантаження...</h2>
+            <p data-i18n="dashboard.status_loading">Отримуємо актуальну інформацію...</p>
+        </div>
+    </section>
+</main>
+
+<script src="../js/teacher-profile.js"></script>
+</body>
+</html>

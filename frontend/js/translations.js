@@ -11,6 +11,9 @@ const translations = {
             nav_label_community: "СПІЛЬНОТА",
             nav_announcements: "📢 Оголошення",
             nav_notifications: "🔔 Сповіщення",
+            nav_profile: "👤 Профіль",
+            nav_discussions: "💬 Обговорення",
+            nav_grading: "📝 Перевірка",
             logout_btn: "🚪 Вийти з акаунту",
             theme_dark: "Темна тема",
             theme_light: "Світла тема",
@@ -84,6 +87,227 @@ const translations = {
             empty_courses_teacher: "Ви ще не ведете жоден курс",
             pending_submissions: "Роботи чекають на перевірку",
             items: "шт."
+        },
+                teacher_courses: {
+            page_title: "Мої курси",
+            page_desc: "Тут відображаються курси, які ви викладаєте, кількість студентів, завдань та середній прогрес груп.",
+
+            stat_courses: "Курсів",
+            stat_students: "Студентів",
+            stat_tasks: "Завдань",
+            stat_progress: "Середній прогрес",
+
+            search_placeholder: "Пошук курсу...",
+
+            sort_default: "За замовчуванням",
+            sort_progress_desc: "Прогрес: спадання",
+            sort_progress_asc: "Прогрес: зростання",
+            sort_students_desc: "Більше студентів",
+            sort_tasks_desc: "Більше завдань",
+
+            students_label: "студентів",
+            tasks_label: "завдань",
+            open_btn: "Відкрити",
+
+            untitled_course: "Курс без назви",
+            no_description: "Опис курсу поки не додано.",
+
+            empty_title: "Курсів не знайдено",
+            empty_text: "Спробуйте змінити пошук або перевірте, чи вам призначені курси.",
+            nav_grading: "📝 Перевірка",
+            nav_profile: "👤 Профіль",
+            unavailable_title: "Курси поки недоступні",
+            unavailable_text: "Не вдалося завантажити курси з backend."
+            
+        },
+        teacher_course_detail: {
+            course_label: "Курс викладача",
+
+            avg_progress: "Середній прогрес",
+            students_count: "Студентів",
+            tasks_count: "Завдань",
+            materials_count: "Матеріалів",
+
+            tasks_title: "Завдання курсу",
+            students_title: "Студенти курсу",
+            materials_title: "Матеріали курсу",
+
+            progress_label: "прогрес",
+
+            no_tasks: "Завдання для цього курсу поки не додані.",
+            no_students: "Студентів на цьому курсі поки немає.",
+            no_materials: "Матеріали для цього курсу поки не додані.",
+
+            unknown_student: "Невідомий студент",
+
+            not_found_title: "Курс не знайдено",
+            not_found_text: "Поверніться на сторінку курсів і відкрийте курс ще раз.",
+
+            unavailable_title: "Деталі курсу поки недоступні",
+            unavailable_text: "Не вдалося завантажити деталі курсу з backend."
+        },
+                teacher_submissions: {
+            page_title: "Перевірка робіт",
+            page_desc: "Тут відображаються роботи студентів, які очікують оцінювання або вже були оцінені.",
+
+            stat_total: "Усього робіт",
+            stat_pending: "Очікують",
+            stat_graded: "Оцінені",
+
+            search_placeholder: "Пошук за студентом, курсом або завданням...",
+
+            filter_all: "Усі",
+            filter_pending: "Очікують",
+            filter_graded: "Оцінені",
+
+            status_pending: "Очікує перевірки",
+            status_graded: "Оцінено",
+
+            student: "Студент",
+            submitted_at: "Здано",
+            work_content: "Вміст роботи",
+            file: "Файл",
+            open_file: "Відкрити файл",
+            no_file: "Файл не додано",
+            no_content: "Текст роботи не додано",
+
+            feedback: "Коментар",
+            feedback_placeholder: "Напишіть коментар для студента...",
+            grade_btn: "Оцінити",
+            update_grade: "Оновити оцінку",
+            saving: "Збереження...",
+            grade_saved: "Оцінку збережено.",
+            grade_error: "Не вдалося зберегти оцінку.",
+            invalid_grade: "Оцінка має бути числом від 0 до 100.",
+
+            empty_title: "Робіт не знайдено",
+            empty_text: "Спробуйте змінити фільтр або пошуковий запит.",
+
+            unavailable_title: "Роботи поки недоступні",
+            unavailable_text: "Не вдалося завантажити роботи з backend."
+        },
+        teacher_schedule: {
+            page_title: "Розклад",
+            page_desc: "Тут відображаються заняття, які ви проводите, групи, аудиторії та статус відмітки відвідування.",
+
+            week_label: "Тиждень",
+
+            stat_lessons: "Занять",
+            stat_offline: "Офлайн",
+            stat_online: "Онлайн",
+            stat_open: "Відмітка відкрита",
+
+            lessons_count: "заняття",
+            no_room: "Аудиторію не вказано",
+
+            today_title: "Сьогодні",
+            loading_today: "Завантаження...",
+            no_group: "Групу не вказано",
+            attendance_open: "Відкрита",
+            attendance_closed: "Закрита",
+
+            format_online: "Онлайн",
+            format_offline: "Офлайн",
+            format_hybrid: "Змішано",
+
+            attendance_open: "Відмітка відкрита",
+            attendance_closed: "Відмітка закрита",
+
+            empty_title: "Занять не знайдено",
+            empty_text: "На цьому тижні у вас немає занять.",
+
+            unavailable_title: "Розклад поки недоступний",
+            unavailable_text: "Не вдалося завантажити розклад з backend."
+        },
+        teacher_profile: {
+            role_label: "Профіль викладача",
+            unknown_teacher: "Невідомий викладач",
+            since: "з",
+
+            stat_courses: "Активних курсів",
+            stat_students: "Студентів",
+            stat_pending: "На перевірці",
+            stat_graded: "Оцінено робіт",
+
+            info_title: "Особиста інформація",
+            full_name: "ПІБ",
+            title: "Посада",
+            department: "Кафедра",
+            rating: "Рейтинг",
+            registration_year: "Рік реєстрації",
+
+            courses_title: "Курси викладача",
+            progress_label: "прогрес",
+            no_courses: "Курси викладача поки не знайдені.",
+
+            unavailable_title: "Профіль поки недоступний",
+            unavailable_text: "Не вдалося завантажити профіль викладача з backend."
+        },
+                notifications_page: {
+            page_title: "Сповіщення",
+            page_desc: "Тут зібрані ваші системні повідомлення, оцінки, нагадування та інші важливі події.",
+
+            mark_all: "Позначити всі як прочитані",
+            mark_read: "Позначити як прочитане",
+            saving: "Збереження...",
+
+            stat_total: "Усього",
+            stat_unread: "Непрочитані",
+            stat_read: "Прочитані",
+
+            search_placeholder: "Пошук сповіщень...",
+
+            filter_all: "Усі",
+            filter_unread: "Непрочитані",
+            filter_read: "Прочитані",
+
+            status_unread: "Нове",
+            status_read: "Прочитано",
+
+            marked_read: "Сповіщення позначено як прочитане.",
+            all_marked_read: "Усі сповіщення позначено як прочитані.",
+            mark_error: "Не вдалося оновити сповіщення.",
+
+            empty_title: "Сповіщень не знайдено",
+            empty_text: "Спробуйте змінити фільтр або пошуковий запит.",
+
+            unavailable_title: "Сповіщення поки недоступні",
+            unavailable_text: "Не вдалося завантажити сповіщення з backend."
+        },
+                announcements_page: {
+            page_title: "Оголошення",
+            page_desc: "Тут зібрані загальні та курсові оголошення, які стосуються вашого навчання або викладання.",
+
+            mark_all: "Позначити всі як прочитані",
+            mark_read: "Позначити як прочитане",
+            saving: "Збереження...",
+
+            stat_total: "Усього",
+            stat_unread: "Непрочитані",
+            stat_read: "Прочитані",
+
+            search_placeholder: "Пошук оголошень...",
+
+            filter_all: "Усі",
+            filter_unread: "Непрочитані",
+            filter_read: "Прочитані",
+
+            status_unread: "Нове",
+            status_read: "Прочитано",
+
+            general_announcement: "Загальне оголошення",
+            untitled: "Оголошення без назви",
+            no_content: "Текст оголошення відсутній.",
+
+            marked_read: "Оголошення позначено як прочитане.",
+            all_marked_read: "Усі оголошення позначено як прочитані.",
+            mark_error: "Не вдалося оновити оголошення.",
+
+            empty_title: "Оголошень не знайдено",
+            empty_text: "Спробуйте змінити фільтр або пошуковий запит.",
+
+            unavailable_title: "Оголошення поки недоступні",
+            unavailable_text: "Не вдалося завантажити оголошення з backend."
         },
         courses: {
             page_title: "Мої курси",
@@ -405,6 +629,9 @@ const translations = {
             nav_label_community: "COMMUNITY",
             nav_announcements: "📢 Announcements",
             nav_notifications: "🔔 Notifications",
+            nav_profile: "👤 Profile",
+            nav_discussions: "💬 Discussions",
+            nav_grading: "📝 Grading",
             logout_btn: "🚪 Log Out",
             theme_dark: "Dark Mode",
             theme_light: "Light Mode",
@@ -478,6 +705,225 @@ const translations = {
             empty_courses_teacher: "You are not teaching any courses yet",
             pending_submissions: "Submissions waiting for review",
             items: "pcs."
+        },
+                teacher_courses: {
+            page_title: "My Courses",
+            page_desc: "Here you can view the courses you teach, the number of students, tasks and the average group progress.",
+
+            stat_courses: "Courses",
+            stat_students: "Students",
+            stat_tasks: "Tasks",
+            stat_progress: "Average progress",
+
+            search_placeholder: "Search course...",
+
+            sort_default: "Default order",
+            sort_progress_desc: "Progress: descending",
+            sort_progress_asc: "Progress: ascending",
+            sort_students_desc: "More students",
+            sort_tasks_desc: "More tasks",
+
+            students_label: "students",
+            tasks_label: "tasks",
+            open_btn: "Open",
+
+            untitled_course: "Untitled course",
+            no_description: "The course description has not been added yet.",
+
+            empty_title: "No courses found",
+            empty_text: "Try changing the search query or check whether courses are assigned to you.",
+            
+            unavailable_title: "Courses are not available yet",
+            unavailable_text: "Failed to load courses from backend."
+        },
+        teacher_course_detail: {
+            course_label: "Teacher course",
+
+            avg_progress: "Average progress",
+            students_count: "Students",
+            tasks_count: "Tasks",
+            materials_count: "Materials",
+
+            tasks_title: "Course tasks",
+            students_title: "Course students",
+            materials_title: "Course materials",
+
+            progress_label: "progress",
+
+            no_tasks: "Tasks for this course have not been added yet.",
+            no_students: "There are no students in this course yet.",
+            no_materials: "Materials for this course have not been added yet.",
+
+            unknown_student: "Unknown student",
+
+            not_found_title: "Course not found",
+            not_found_text: "Please return to the courses page and open the course again.",
+
+            unavailable_title: "Course details are not available yet",
+            unavailable_text: "Failed to load course details from backend."
+        },
+                teacher_submissions: {
+            page_title: "Submissions",
+            page_desc: "Here you can view student submissions that are waiting for grading or have already been graded.",
+
+            stat_total: "Total submissions",
+            stat_pending: "Pending",
+            stat_graded: "Graded",
+
+            search_placeholder: "Search by student, course or task...",
+
+            filter_all: "All",
+            filter_pending: "Pending",
+            filter_graded: "Graded",
+
+            status_pending: "Pending review",
+            status_graded: "Graded",
+
+            student: "Student",
+            submitted_at: "Submitted",
+            work_content: "Work content",
+            file: "File",
+            open_file: "Open file",
+            no_file: "No file attached",
+            no_content: "No text content submitted",
+
+            feedback: "Feedback",
+            feedback_placeholder: "Write feedback for the student...",
+            grade_btn: "Grade",
+            update_grade: "Update grade",
+            saving: "Saving...",
+            grade_saved: "Grade has been saved.",
+            grade_error: "Failed to save grade.",
+            invalid_grade: "Grade must be a number from 0 to 100.",
+
+            empty_title: "No submissions found",
+            empty_text: "Try changing the filter or search query.",
+
+            unavailable_title: "Submissions are not available yet",
+            unavailable_text: "Failed to load submissions from backend."
+        },
+        teacher_schedule: {
+            page_title: "Schedule",
+            page_desc: "Here you can view the lessons you teach, groups, rooms and attendance marking status.",
+
+            week_label: "Week",
+
+            stat_lessons: "Lessons",
+            stat_offline: "Offline",
+            stat_online: "Online",
+            stat_open: "Attendance open",
+
+            lessons_count: "lessons",
+            no_room: "Room is not specified",
+
+            today_title: "Today",
+            loading_today: "Loading...",
+            no_group: "Group is not specified",
+            attendance_open: "Open",
+            attendance_closed: "Closed",
+
+            format_online: "Online",
+            format_offline: "Offline",
+            format_hybrid: "Hybrid",
+
+            attendance_open: "Attendance open",
+            attendance_closed: "Attendance closed",
+
+            empty_title: "No lessons found",
+            empty_text: "You have no lessons this week.",
+
+            unavailable_title: "Schedule is not available yet",
+            unavailable_text: "Failed to load schedule from backend."
+        },
+        teacher_profile: {
+            role_label: "Teacher profile",
+            unknown_teacher: "Unknown teacher",
+            since: "since",
+
+            stat_courses: "Active courses",
+            stat_students: "Students",
+            stat_pending: "Pending grading",
+            stat_graded: "Graded works",
+
+            info_title: "Personal information",
+            full_name: "Full name",
+            title: "Title",
+            department: "Department",
+            rating: "Rating",
+            registration_year: "Registration year",
+
+            courses_title: "Teacher courses",
+            progress_label: "progress",
+            no_courses: "Teacher courses have not been found yet.",
+
+            unavailable_title: "Profile is not available yet",
+            unavailable_text: "Failed to load teacher profile from backend."
+        },
+                notifications_page: {
+            page_title: "Notifications",
+            page_desc: "Here you can view your system messages, grades, reminders and other important events.",
+
+            mark_all: "Mark all as read",
+            mark_read: "Mark as read",
+            saving: "Saving...",
+
+            stat_total: "Total",
+            stat_unread: "Unread",
+            stat_read: "Read",
+
+            search_placeholder: "Search notifications...",
+
+            filter_all: "All",
+            filter_unread: "Unread",
+            filter_read: "Read",
+
+            status_unread: "New",
+            status_read: "Read",
+
+            marked_read: "Notification has been marked as read.",
+            all_marked_read: "All notifications have been marked as read.",
+            mark_error: "Failed to update notifications.",
+
+            empty_title: "No notifications found",
+            empty_text: "Try changing the filter or search query.",
+
+            unavailable_title: "Notifications are not available yet",
+            unavailable_text: "Failed to load notifications from backend."
+        },
+                announcements_page: {
+            page_title: "Announcements",
+            page_desc: "Here you can view general and course announcements related to your studying or teaching.",
+
+            mark_all: "Mark all as read",
+            mark_read: "Mark as read",
+            saving: "Saving...",
+
+            stat_total: "Total",
+            stat_unread: "Unread",
+            stat_read: "Read",
+
+            search_placeholder: "Search announcements...",
+
+            filter_all: "All",
+            filter_unread: "Unread",
+            filter_read: "Read",
+
+            status_unread: "New",
+            status_read: "Read",
+
+            general_announcement: "General announcement",
+            untitled: "Untitled announcement",
+            no_content: "Announcement content is missing.",
+
+            marked_read: "Announcement has been marked as read.",
+            all_marked_read: "All announcements have been marked as read.",
+            mark_error: "Failed to update announcements.",
+
+            empty_title: "No announcements found",
+            empty_text: "Try changing the filter or search query.",
+
+            unavailable_title: "Announcements are not available yet",
+            unavailable_text: "Failed to load announcements from backend."
         },
         courses: {
             page_title: "My Courses",

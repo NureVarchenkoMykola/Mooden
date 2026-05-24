@@ -53,8 +53,7 @@ function renderDashboard(data) {
     const coursesContainer = document.getElementById('coursesContainer');
     if (data.courses && data.courses.length > 0) {
         coursesContainer.innerHTML = data.courses.map(course => `
-            <a href="course-manage.html?id=${course.id}" class="course-item" style="--accent-color: ${course.color_accent}">
-                <div class="course-info">
+            <a href="./teacher-course-detail.html?id=${course.id}" class="course-item" style="--accent-color: ${course.color_accent}">                <div class="course-info">
                     <p class="course-title"><strong>${course.title}</strong></p>
                     <div class="progress-wrapper">
                         <div class="progress-bar">
