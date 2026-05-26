@@ -11,4 +11,7 @@ router.get('/submissions', auth, teacherController.getSubmissionsForGrading);
 router.post('/submissions/:id/grade', auth, teacherController.gradeSubmission);
 router.get('/schedule', auth, teacherController.getSchedule);
 
+router.get('/attendance', auth, teacherController.getAttendance);
+router.patch('/schedule/:id/attendance-status', auth, teacherController.updateAttendanceStatus);
+
 module.exports = router;

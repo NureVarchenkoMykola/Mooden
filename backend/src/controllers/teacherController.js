@@ -552,3 +552,314 @@ exports.getSchedule = async (req, res) => {
         res.status(500).json({ message: 'SERVER_ERROR_SCHEDULE' });
     }
 };
+
+exports.getAttendance = async (req, res) => {
+    const teacherId = req.user.id;
+
+    const {
+        from,
+        to,
+        courseId,
+        groupId,
+        scheduleId,
+        studentId
+    } = req.query;
+
+    function parseOptionalId(value, fieldName) {
+        if (value === undefined || value === null || value === '') {
+            return null;
+        }
+
+        const parsed = Number(value);
+
+        if (!Number.isInteger(parsed) || parsed <= 0) {
+            throw new Error(`INVALID_${fieldName.toUpperCase()}`);
+        }
+
+        return parsed;
+    }
+
+    try {
+        const userResult = await db.query(
+            'SELECT lang FROM public.users WHERE id = $1',
+            [teacherId]
+        );
+
+        const lang = userResult.rows[0]?.lang || 'uk';
+
+        const parsedCourseId = parseOptionalId(courseId, 'course_id');
+        const parsedGroupId = parseOptionalId(groupId, 'group_id');
+        const parsedScheduleId = parseOptionalId(scheduleId, 'schedule_id');
+        const parsedStudentId = parseOptionalId(studentId, 'student_id');
+
+        const params = [teacherId];
+        const conditions = ['s.teacher_id = $1'];
+
+        if (from) {
+            params.push(from);
+            conditions.push(`s.lesson_date >= $${params.length}`);
+        }
+
+        if (to) {
+            params.push(to);
+            conditions.push(`s.lesson_date <= $${params.length}`);
+        }
+
+        if (parsedCourseId) {
+            params.push(parsedCourseId);
+            conditions.push(`s.course_id = $${params.length}`);
+        }
+
+        if (parsedGroupId) {
+            params.push(parsedGroupId);
+            conditions.push(`s.group_id = $${params.length}`);
+        }
+
+        if (parsedScheduleId) {
+            params.push(parsedScheduleId);
+            conditions.push(`s.id = $${params.length}`);
+        }
+
+        if (parsedStudentId) {
+            params.push(parsedStudentId);
+            conditions.push(`u.id = $${params.length}`);
+        }
+
+        const attendanceResult = await db.query(`
+            SELECT
+                s.id AS schedule_id,
+                s.lesson_date,
+                s.time_start,
+                s.time_end,
+                s.lesson_type,
+                s.lesson_format,
+                s.room,
+                s.is_open_for_attendance,
+
+                (
+                    s.lesson_date < CURRENT_DATE
+                    OR (
+                        s.lesson_date = CURRENT_DATE
+                        AND s.time_end <= CURRENT_TIME
+                    )
+                ) AS is_completed,
+
+                c.id AS course_id,
+                c.title_${lang} AS course_title,
+                c.color_accent,
+
+                lg.id AS lesson_group_id,
+                lg.name_${lang} AS lesson_group_name,
+
+                u.id AS student_id,
+                u.full_name AS student_name,
+                u.email AS student_email,
+
+                sg.id AS student_group_id,
+                sg.name_${lang} AS student_group_name,
+
+                a.marked_at,
+
+                CASE 
+                    WHEN a.student_id IS NULL THEN false
+                    ELSE true
+                END AS is_present
+
+            FROM public.schedule s
+            JOIN public.courses c 
+                ON s.course_id = c.id
+            LEFT JOIN public.groups lg 
+                ON s.group_id = lg.id
+
+            JOIN public.student_courses sc 
+                ON sc.course_id = s.course_id
+            JOIN public.users u 
+                ON u.id = sc.student_id
+            JOIN public.students st 
+                ON st.user_id = u.id
+                AND (
+                    s.group_id IS NULL
+                    OR st.group_id = s.group_id
+                )
+            LEFT JOIN public.groups sg 
+                ON st.group_id = sg.id
+
+            LEFT JOIN public.attendance a 
+                ON a.schedule_id = s.id
+                AND a.student_id = u.id
+
+            WHERE ${conditions.join(' AND ')}
+
+            ORDER BY 
+                s.lesson_date DESC,
+                s.time_start DESC,
+                c.title_${lang} ASC,
+                u.full_name ASC
+        `, params);
+
+        const rows = attendanceResult.rows;
+
+        const lessonsMap = new Map();
+
+        rows.forEach(row => {
+            const key = String(row.schedule_id);
+
+            if (!lessonsMap.has(key)) {
+                lessonsMap.set(key, {
+                    schedule_id: row.schedule_id,
+                    lesson_date: row.lesson_date,
+                    time_start: row.time_start,
+                    time_end: row.time_end,
+                    lesson_type: row.lesson_type,
+                    lesson_format: row.lesson_format,
+                    room: row.room,
+                    is_open_for_attendance: row.is_open_for_attendance,
+                    is_completed: row.is_completed,
+                    course_id: row.course_id,
+                    course_title: row.course_title,
+                    color_accent: row.color_accent,
+                    group_id: row.lesson_group_id,
+                    group_name: row.lesson_group_name,
+                    total_students: 0,
+                    present_count: 0,
+                    absent_count: 0,
+                    attendance_percent: 0
+                });
+            }
+
+            const lesson = lessonsMap.get(key);
+
+            lesson.total_students += 1;
+
+            if (row.is_present) {
+                lesson.present_count += 1;
+            } else {
+                lesson.absent_count += 1;
+            }
+
+            lesson.attendance_percent = lesson.total_students > 0
+                ? Math.round((lesson.present_count / lesson.total_students) * 100)
+                : 0;
+        });
+
+        const lessons = Array.from(lessonsMap.values());
+
+        const completedRows = rows.filter(row => row.is_completed);
+        const totalRecords = completedRows.length;
+        const presentRecords = completedRows.filter(row => row.is_present).length;
+        const absentRecords = totalRecords - presentRecords;
+
+        const coursesResult = await db.query(`
+            SELECT 
+                c.id,
+                c.title_${lang} AS title,
+                c.color_accent
+            FROM public.courses c
+            JOIN public.teacher_courses tc 
+                ON c.id = tc.course_id
+            WHERE tc.teacher_id = $1
+            ORDER BY c.title_${lang} ASC
+        `, [teacherId]);
+
+        const groupsResult = await db.query(`
+            SELECT DISTINCT
+                g.id,
+                g.name_${lang} AS name
+            FROM public.schedule s
+            JOIN public.groups g 
+                ON s.group_id = g.id
+            WHERE s.teacher_id = $1
+            ORDER BY g.name_${lang} ASC
+        `, [teacherId]);
+
+        const studentsResult = await db.query(`
+            SELECT DISTINCT
+                u.id,
+                u.full_name,
+                u.email,
+                g.name_${lang} AS group_name
+            FROM public.teacher_courses tc
+            JOIN public.student_courses sc 
+                ON sc.course_id = tc.course_id
+            JOIN public.users u 
+                ON u.id = sc.student_id
+            JOIN public.students st 
+                ON st.user_id = u.id
+            LEFT JOIN public.groups g 
+                ON st.group_id = g.id
+            WHERE tc.teacher_id = $1
+            ORDER BY u.full_name ASC
+        `, [teacherId]);
+
+        res.json({
+            user: { lang },
+            stats: {
+                totalRecords,
+                presentRecords,
+                absentRecords,
+                attendancePercent: totalRecords > 0
+                    ? Math.round((presentRecords / totalRecords) * 100)
+                    : 0
+            },
+            lessons,
+            records: rows,
+            filters: {
+                courses: coursesResult.rows,
+                groups: groupsResult.rows,
+                students: studentsResult.rows
+            }
+        });
+
+    } catch (err) {
+        if (err.message.startsWith('INVALID_')) {
+            return res.status(400).json({ message: err.message });
+        }
+
+        console.error("[Dev Mode] Teacher Attendance Error:", err.message);
+        res.status(500).json({ message: 'SERVER_ERROR_ATTENDANCE' });
+    }
+};
+
+exports.updateAttendanceStatus = async (req, res) => {
+    const teacherId = req.user.id;
+    const scheduleId = Number(req.params.id);
+    const { isOpen } = req.body;
+
+    if (!Number.isInteger(scheduleId) || scheduleId <= 0) {
+        return res.status(400).json({ message: 'INVALID_SCHEDULE_ID' });
+    }
+
+    if (typeof isOpen !== 'boolean') {
+        return res.status(400).json({ message: 'INVALID_ATTENDANCE_STATUS' });
+    }
+
+    try {
+        const result = await db.query(`
+            UPDATE public.schedule
+            SET is_open_for_attendance = $1
+            WHERE id = $2
+            AND teacher_id = $3
+            RETURNING 
+                id,
+                course_id,
+                group_id,
+                lesson_date,
+                time_start,
+                time_end,
+                is_open_for_attendance
+        `, [isOpen, scheduleId, teacherId]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'SCHEDULE_NOT_FOUND' });
+        }
+
+        res.json({
+            success: true,
+            schedule: result.rows[0]
+        });
+
+    } catch (err) {
+        console.error("[Dev Mode] Update Attendance Status Error:", err.message);
+        res.status(500).json({ message: 'ATTENDANCE_STATUS_UPDATE_ERROR' });
+    }
+};
