@@ -1,0 +1,166 @@
+.teacher-task-hero {
+    position: relative;
+    overflow: hidden;
+    background:
+        linear-gradient(135deg, color-mix(in srgb, var(--course-accent, var(--accent-gold)) 12%, transparent), transparent 45%),
+        var(--bg-right);
+    border: 1px solid var(--border-main);
+    border-radius: 1.4rem;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.teacher-task-back {
+    display: inline-flex;
+    margin-bottom: 1rem;
+    color: var(--text-gold);
+    font-size: 0.9rem;
+}
+
+.teacher-task-hero-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.teacher-task-hero h1 {
+    font-size: 2.4rem;
+}
+
+.teacher-task-hero p {
+    max-width: 60rem;
+    color: var(--text-muted);
+}
+
+.teacher-task-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin-top: 1rem;
+}
+
+.teacher-task-tags span {
+    padding: 0.4rem 0.8rem;
+    border-radius: 1rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border-main);
+    color: var(--text-main);
+    font-size: 0.8rem;
+}
+
+.teacher-task-edit-main-btn,
+.teacher-task-save-btn {
+    padding: 0.65rem 1rem;
+    border-radius: 0.8rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.teacher-task-edit-main-btn {
+    background: var(--bg-input);
+    border: 1px solid var(--border-main);
+    color: var(--text-main);
+}
+
+.teacher-task-save-btn {
+    background: var(--accent-gold);
+    color: var(--text-button);
+}
+
+.teacher-task-edit-form {
+    margin-bottom: 1.5rem;
+    background: var(--bg-right);
+    border: 1px solid var(--border-main);
+    border-radius: 1.2rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.teacher-task-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.teacher-task-edit-form label span {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: var(--text-main);
+    font-size: 0.9rem;
+}
+
+.teacher-task-edit-form textarea {
+    width: 100%;
+    resize: vertical;
+    min-height: 7rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border-main);
+    border-radius: 0.7rem;
+    padding: 0.8rem 1rem;
+    color: var(--text-main);
+    font-family: var(--font-main);
+}
+
+.teacher-task-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding-top: 1.6rem;
+}
+
+.teacher-task-checkbox-label span {
+    margin: 0;
+}
+
+.teacher-task-submissions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.teacher-task-submission-card {
+    background: var(--bg-input);
+    border: 1px solid var(--border-main);
+    border-radius: 1rem;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.teacher-task-submission-card h3 {
+    color: var(--text-main);
+    margin-bottom: 0.3rem;
+}
+
+.teacher-task-submission-card p {
+    font-size: 0.85rem;
+}
+
+.teacher-task-submission-card strong {
+    color: var(--text-main);
+}
+
+.teacher-task-submission-status {
+    display: flex;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .teacher-task-hero-top,
+    .teacher-task-submission-card {
+        flex-direction: column;
+    }
+
+    .teacher-task-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .teacher-task-hero h1 {
+        font-size: 2rem;
+    }
+}

@@ -42,6 +42,7 @@ exports.getDashboardData = async (req, res) => {
             LEFT JOIN public.submissions s 
                 ON s.task_id = t.id AND s.student_id = $1
             WHERE sc.student_id = $1
+            AND t.is_hidden = false
             AND s.id IS NULL
             AND t.deadline >= CURRENT_DATE
             ORDER BY t.deadline ASC
@@ -177,6 +178,7 @@ exports.getProfileData = async (req, res) => {
             LEFT JOIN public.submissions s 
                 ON s.task_id = t.id AND s.student_id = $1
             WHERE sc.student_id = $1
+            AND t.is_hidden = false
             AND s.id IS NULL
             AND t.deadline >= CURRENT_DATE
             ORDER BY t.deadline ASC
@@ -346,6 +348,7 @@ exports.getAllTasks = async (req, res) => {
             LEFT JOIN public.grades g ON t.id = g.task_id AND g.student_id = $1
             LEFT JOIN public.submissions s ON t.id = s.task_id AND s.student_id = $1
             WHERE sc.student_id = $1
+            AND t.is_hidden = false
             ORDER BY t.deadline ASC
         `, [userId]);
 
@@ -475,7 +478,7 @@ exports.getTaskDetail = async (req, res) => {
             JOIN public.student_courses sc ON c.id = sc.course_id
             LEFT JOIN public.grades g ON t.id = g.task_id AND g.student_id = $1
             LEFT JOIN public.submissions s ON t.id = s.task_id AND s.student_id = $1
-            WHERE t.id = $2 AND sc.student_id = $1
+            WHERE t.id = $2 AND sc.student_id = $1 AND t.is_hidden = false
         `, [userId, taskId]);
 
         if (result.rows.length === 0) {
@@ -557,6 +560,7 @@ exports.getCourseDetail = async (req, res) => {
             LEFT JOIN public.grades g ON t.id = g.task_id AND g.student_id = $2
             LEFT JOIN public.submissions s ON t.id = s.task_id AND s.student_id = $2
             WHERE t.course_id = $1
+            AND t.is_hidden = false
             ORDER BY t.deadline ASC
         `, [courseId, userId]);
 
@@ -655,6 +659,7 @@ async function updateCourseProgressForTask(taskId, studentId) {
                 ON s.task_id = t.id
                 AND s.student_id = $2
             WHERE t.course_id = $1
+            AND t.is_hidden = false
         ) progress
         WHERE sc.course_id = $1
         AND sc.student_id = $2
@@ -706,7 +711,7 @@ exports.submitTask = async (req, res) => {
             SELECT t.id
             FROM public.tasks t
             JOIN public.student_courses sc ON t.course_id = sc.course_id
-            WHERE t.id = $1 AND sc.student_id = $2
+            WHERE t.id = $1 AND sc.student_id = $2 AND t.is_hidden = false
         `, [taskId, userId]);
 
         if (taskAccess.rows.length === 0) {

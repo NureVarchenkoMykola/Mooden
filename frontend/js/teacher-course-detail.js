@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const content = document.getElementById("teacherCourseDetailContent");
     const params = new URLSearchParams(window.location.search);
     const courseId = params.get("id");
+    let isTasksEditMode = false;
 
     if (!content) {
         console.error("Не знайдено #teacherCourseDetailContent");
@@ -35,11 +36,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    async function fetchJson(url, token) {
+    async function fetchJson(url, token, options = {}) {
         const response = await fetch(url, {
+            ...options,
             headers: {
                 Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                ...(options.headers || {})
             }
         });
 
@@ -86,7 +89,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             `;
 
-            const data = await fetchJson(`${API_BASE_URL}/teacher/courses/${courseId}/detail`, token);
+            const includeHiddenParam = isTasksEditMode ? "?includeHidden=true" : "";
+            const data = await fetchJson(`${API_BASE_URL}/teacher/courses/${courseId}/detail${includeHiddenParam}`, token);
 
             renderCourseDetail({
                 course: data.course,
@@ -163,6 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const lang = getCurrentLang();
         const course = data.course;
         const tasks = data.tasks;
+        const visibleTasksCount = tasks.filter(task => task.is_hidden !== true).length;
         const students = data.students;
         const materials = data.materials;
 
@@ -218,7 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="teacher-course-stat">
                     <span>📝</span>
                     <div>
-                        <strong>${tasks.length}</strong>
+                        <strong>${visibleTasksCount}</strong>
                         <p>${getTranslation(lang, "teacher_course_detail.tasks_count")}</p>
                     </div>
                 </div>
@@ -234,14 +239,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
             <section class="teacher-course-layout">
                 <div class="teacher-course-main">
-                    <div class="teacher-section-card">
+                    <div class="teacher-section-card teacher-tasks-card">
                         <div class="teacher-section-header">
                             <h2>${getTranslation(lang, "teacher_course_detail.tasks_title")}</h2>
+
+                            <div class="teacher-task-management-actions">
+                                ${
+                                    isTasksEditMode
+                                        ? `
+                                            <button type="button" class="teacher-task-create-btn" id="createTaskToggleBtn">
+                                                ${getTranslation(lang, "teacher_course_detail.create_task")}
+                                            </button>
+                                            <button type="button" class="teacher-task-edit-btn" id="taskEditToggleBtn">
+                                                ${getTranslation(lang, "teacher_course_detail.done")}
+                                            </button>
+                                        `
+                                        : `
+                                            <button type="button" class="teacher-task-edit-btn" id="taskEditToggleBtn">
+                                                ${getTranslation(lang, "teacher_course_detail.edit_tasks")}
+                                            </button>
+                                        `
+                                }
+                            </div>
                         </div>
+
+                        ${isTasksEditMode ? renderCreateTaskForm() : ""}
 
                         ${renderTasks(tasks)}
                     </div>
-
                     <div class="teacher-section-card">
                         <div class="teacher-section-header">
                             <h2>${getTranslation(lang, "teacher_course_detail.students_title")}</h2>
@@ -262,6 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </aside>
             </section>
         `;
+        bindTaskManagementEvents();
     }
 
     function renderTasks(tasks) {
@@ -277,38 +303,118 @@ document.addEventListener("DOMContentLoaded", () => {
 
         return `
             <div class="teacher-tasks-list">
-                ${tasks.map(task => `
-                    <article class="teacher-task-card">
-                        <div>
-                            <h3>${task.title || getTranslation(lang, "tasks.unknown_task")}</h3>
+                ${tasks.map(task => {
+                    const isHidden = task.is_hidden === true;
 
-                            <p>
-                                ${getTranslation(lang, "tasks.deadline")}:
-                                <strong>${formatDate(task.deadline)}</strong>
-                            </p>
-
-                            <p>
-                                ${getTranslation(lang, "teacher_course_detail.checked_submissions")}:
-                                <strong>${Number(task.graded_count || 0)}</strong>
-                                /
-                                <strong>${Number(task.submissions_count || 0)}</strong>
-                            </p>
-                        </div>
-
-                        <div class="teacher-task-right">
+                    return `
+                        <article class="teacher-task-card ${isHidden ? "is-hidden-task" : ""}" data-task-url="./teacher-task-detail.html?id=${task.id}">
                             ${
-                                task.is_exam
-                                    ? `<span class="teacher-task-badge">${getTranslation(lang, "tasks.exam")}</span>`
+                                isTasksEditMode
+                                    ? `
+                                        <button
+                                            type="button"
+                                            class="teacher-task-visibility-btn ${isHidden ? "restore" : "hide"}"
+                                            data-task-id="${task.id}"
+                                            data-hidden="${isHidden}"
+                                            title="${
+                                                isHidden
+                                                    ? getTranslation(lang, "teacher_course_detail.show_task")
+                                                    : getTranslation(lang, "teacher_course_detail.hide_task")
+                                            }"
+                                        >
+                                            ${isHidden ? "↺" : "×"}
+                                        </button>
+                                    `
                                     : ""
                             }
 
-                            <span class="teacher-task-status ${getTaskReviewStatus(task)}">
-                                ${getTaskReviewStatusText(task)}
-                            </span>
-                        </div>
-                    </article>
-                `).join("")}
+                            <div>
+                                <h3>${task.title || getTranslation(lang, "tasks.unknown_task")}</h3>
+
+                                <p class="teacher-task-description">
+                                    ${task.description || getTranslation(lang, "teacher_course_detail.no_task_description")}
+                                </p>
+
+                                <p>
+                                    ${getTranslation(lang, "tasks.deadline")}:
+                                    <strong>${formatDate(task.deadline)}</strong>
+                                </p>
+
+                                <p>
+                                    ${getTranslation(lang, "teacher_course_detail.checked_submissions")}:
+                                    <strong>${Number(task.graded_count || 0)}</strong>
+                                    /
+                                    <strong>${Number(task.submissions_count || 0)}</strong>
+                                </p>
+                            </div>
+
+                            <div class="teacher-task-right">
+                                ${
+                                    isHidden
+                                        ? `<span class="teacher-task-status hidden-task">
+                                                ${getTranslation(lang, "teacher_course_detail.hidden_status")}
+                                            </span>`
+                                        : ""
+                                }
+
+                                ${
+                                    task.is_exam
+                                        ? `<span class="teacher-task-badge">${getTranslation(lang, "tasks.exam")}</span>`
+                                        : ""
+                                }
+
+                                <span class="teacher-task-status ${getTaskReviewStatus(task)}">
+                                    ${getTaskReviewStatusText(task)}
+                                </span>
+                            </div>
+                        </article>
+                    `;
+                }).join("")}
             </div>
+        `;
+    }
+
+    function renderCreateTaskForm() {
+        const lang = getCurrentLang();
+
+        return `
+            <form id="createTaskForm" class="teacher-task-create-form hidden">
+                <div class="teacher-task-form-grid">
+                    <label>
+                        <span>${getTranslation(lang, "teacher_course_detail.title_uk")}</span>
+                        <input type="text" name="titleUk" required>
+                    </label>
+
+                    <label>
+                        <span>${getTranslation(lang, "teacher_course_detail.title_en")}</span>
+                        <input type="text" name="titleEn">
+                    </label>
+
+                    <label>
+                        <span>${getTranslation(lang, "tasks.deadline")}</span>
+                        <input type="datetime-local" name="deadline" required>
+                    </label>
+
+                    <label class="teacher-task-checkbox-label">
+                        <input type="checkbox" name="isExam">
+                        <span>${getTranslation(lang, "teacher_course_detail.exam_task")}</span>
+                    </label>
+                </div>
+
+                <label>
+                    <span>${getTranslation(lang, "teacher_course_detail.description_uk")}</span>
+                    <textarea name="descriptionUk" rows="4"></textarea>
+                </label>
+
+                <label>
+                    <span>${getTranslation(lang, "teacher_course_detail.description_en")}</span>
+                    <textarea name="descriptionEn" rows="4"></textarea>
+                </label>
+
+                <button type="submit" class="teacher-task-save-btn">
+                    ${getTranslation(lang, "teacher_course_detail.create_task_btn")}
+                </button>
+            </form>
         `;
     }
 
@@ -374,6 +480,114 @@ document.addEventListener("DOMContentLoaded", () => {
                 `).join("")}
             </div>
         `;
+    }
+
+    function bindTaskManagementEvents() {
+        const editBtn = document.getElementById("taskEditToggleBtn");
+        const createToggleBtn = document.getElementById("createTaskToggleBtn");
+        const createForm = document.getElementById("createTaskForm");
+
+        if (editBtn) {
+            editBtn.addEventListener("click", async () => {
+                isTasksEditMode = !isTasksEditMode;
+                await loadCourseDetail();
+            });
+        }
+
+        if (createToggleBtn && createForm) {
+            createToggleBtn.addEventListener("click", () => {
+                createForm.classList.toggle("hidden");
+            });
+        }
+
+        if (createForm) {
+            createForm.addEventListener("submit", handleCreateTask);
+        }
+
+        document.querySelectorAll(".teacher-task-visibility-btn").forEach(button => {
+            button.addEventListener("click", async () => {
+                const taskId = button.dataset.taskId;
+                const currentlyHidden = button.dataset.hidden === "true";
+
+                await updateTaskVisibility(taskId, !currentlyHidden);
+            });
+        });
+
+        document.querySelectorAll(".teacher-task-card").forEach(card => {
+            card.addEventListener("click", event => {
+                if (event.target.closest(".teacher-task-visibility-btn")) {
+                    return;
+                }
+
+                const url = card.dataset.taskUrl;
+
+                if (url) {
+                    window.location.href = url;
+                }
+            });
+        });
+    }
+
+    async function handleCreateTask(event) {
+        event.preventDefault();
+        const lang = getCurrentLang();
+
+        const token = getToken();
+        const form = event.currentTarget;
+        const formData = new FormData(form);
+
+        const payload = {
+            titleUk: String(formData.get("titleUk") || "").trim(),
+            titleEn: String(formData.get("titleEn") || "").trim(),
+            descriptionUk: String(formData.get("descriptionUk") || "").trim(),
+            descriptionEn: String(formData.get("descriptionEn") || "").trim(),
+            deadline: formData.get("deadline"),
+            isExam: formData.get("isExam") === "on"
+        };
+
+        try {
+            await fetchJson(`${API_BASE_URL}/teacher/courses/${courseId}/tasks`, token, {
+                method: "POST",
+                body: JSON.stringify(payload)
+            });
+
+            showToast(getTranslation(lang, "teacher_course_detail.task_created_success"), "success");
+
+            form.reset();
+            await loadCourseDetail();
+
+        } catch (error) {
+            console.error("[Teacher Course Detail] Create task error:", error);
+            showToast(getTranslation(lang, "teacher_course_detail.task_create_error"), "error");
+        }
+    }
+
+    async function updateTaskVisibility(taskId, isHidden) {
+        const token = getToken();
+        const lang = getCurrentLang();
+
+        try {
+            await fetchJson(`${API_BASE_URL}/teacher/courses/${courseId}/tasks/${taskId}/visibility`, token, {
+                method: "PATCH",
+                body: JSON.stringify({ isHidden })
+            });
+
+            showToast(
+                getTranslation(
+                    lang,
+                    isHidden
+                        ? "teacher_course_detail.task_hidden_success"
+                        : "teacher_course_detail.task_restored_success"
+                ),
+                "success"
+            );
+
+            await loadCourseDetail();
+
+        } catch (error) {
+            console.error("[Teacher Course Detail] Update task visibility error:", error);
+            showToast(getTranslation(lang, "teacher_course_detail.task_visibility_error"), "error");
+        }
     }
 
     if (typeof applyStaticTranslations === "function") {

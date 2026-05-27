@@ -174,7 +174,7 @@ exports.getProfileData = async (req, res) => {
             FROM public.courses c
             JOIN public.teacher_courses tc ON c.id = tc.course_id
             LEFT JOIN public.student_courses sc ON c.id = sc.course_id
-            LEFT JOIN public.tasks t ON c.id = t.course_id
+            LEFT JOIN public.tasks t ON c.id = t.course_id AND t.is_hidden = false
             WHERE tc.teacher_id = $1
             GROUP BY c.id, c.title_${lang}, c.color_accent
             ORDER BY c.title_${lang} ASC
@@ -230,7 +230,7 @@ exports.getAllCourses = async (req, res) => {
             FROM public.courses c
             JOIN public.teacher_courses tc ON c.id = tc.course_id
             LEFT JOIN public.student_courses sc ON c.id = sc.course_id
-            LEFT JOIN public.tasks t ON c.id = t.course_id
+            LEFT JOIN public.tasks t ON c.id = t.course_id AND t.is_hidden = false
             WHERE tc.teacher_id = $1
             GROUP BY c.id, c.title_${lang}, c.description_${lang}, c.color_accent
             ORDER BY c.title_${lang} ASC
@@ -250,6 +250,7 @@ exports.getAllCourses = async (req, res) => {
 exports.getCourseDetail = async (req, res) => {
     const userId = req.user.id;
     const courseId = req.params.id;
+    const includeHidden = req.query.includeHidden === 'true';
 
     try {
         const userResult = await db.query(
@@ -285,6 +286,7 @@ exports.getCourseDetail = async (req, res) => {
                 t.description_${lang} AS description,
                 t.deadline,
                 t.is_exam,
+                t.is_hidden,
                 COUNT(DISTINCT s.id) as submissions_count,
                 COUNT(DISTINCT CASE 
                     WHEN gr.student_id IS NOT NULL THEN s.student_id
@@ -293,9 +295,16 @@ exports.getCourseDetail = async (req, res) => {
             LEFT JOIN public.submissions s ON t.id = s.task_id
             LEFT JOIN public.grades gr ON gr.task_id = s.task_id AND gr.student_id = s.student_id
             WHERE t.course_id = $1
-            GROUP BY t.id, t.title_${lang}, t.description_${lang}, t.deadline, t.is_exam
-            ORDER BY t.deadline ASC
-        `, [courseId]);
+            AND ($2 = true OR t.is_hidden = false)
+            GROUP BY 
+                t.id,
+                t.title_${lang},
+                t.description_${lang},
+                t.deadline,
+                t.is_exam,
+                t.is_hidden
+            ORDER BY t.is_hidden ASC, t.deadline ASC
+        `, [courseId, includeHidden]);
 
         const students = await db.query(`
             SELECT 
@@ -470,12 +479,13 @@ exports.gradeSubmission = async (req, res) => {
                 SELECT COUNT(*) as count
                 FROM public.tasks
                 WHERE course_id = $1
+                AND is_hidden = false
             ) total_tasks,
             (
                 SELECT COUNT(*) as count
                 FROM public.grades g
                 JOIN public.tasks t ON g.task_id = t.id
-                WHERE g.student_id = $2 AND t.course_id = $1
+                WHERE g.student_id = $2 AND t.course_id = $1 AND t.is_hidden = false
             ) graded_tasks
             WHERE sc.student_id = $2 AND sc.course_id = $1
         `, [submission.course_id, submission.student_id]);
@@ -861,5 +871,340 @@ exports.updateAttendanceStatus = async (req, res) => {
     } catch (err) {
         console.error("[Dev Mode] Update Attendance Status Error:", err.message);
         res.status(500).json({ message: 'ATTENDANCE_STATUS_UPDATE_ERROR' });
+    }
+};
+
+exports.createCourseTask = async (req, res) => {
+    const teacherId = req.user.id;
+    const courseId = Number(req.params.id);
+
+    const {
+        titleUk,
+        titleEn,
+        descriptionUk,
+        descriptionEn,
+        deadline,
+        isExam
+    } = req.body;
+
+    if (!Number.isInteger(courseId) || courseId <= 0) {
+        return res.status(400).json({ message: 'INVALID_COURSE_ID' });
+    }
+
+    if (!titleUk || !String(titleUk).trim()) {
+        return res.status(400).json({ message: 'TASK_TITLE_REQUIRED' });
+    }
+
+    if (!deadline || Number.isNaN(new Date(deadline).getTime())) {
+        return res.status(400).json({ message: 'TASK_DEADLINE_REQUIRED' });
+    }
+
+    try {
+        const access = await db.query(`
+            SELECT course_id
+            FROM public.teacher_courses
+            WHERE teacher_id = $1 AND course_id = $2
+        `, [teacherId, courseId]);
+
+        if (access.rows.length === 0) {
+            return res.status(404).json({ message: 'COURSE_NOT_FOUND' });
+        }
+
+        const result = await db.query(`
+            INSERT INTO public.tasks (
+                course_id,
+                title_uk,
+                title_en,
+                description_uk,
+                description_en,
+                deadline,
+                is_exam,
+                is_hidden
+            )
+            VALUES ($1, $2, $3, $4, $5, $6, $7, false)
+            RETURNING 
+                id,
+                course_id,
+                title_uk,
+                title_en,
+                description_uk,
+                description_en,
+                deadline,
+                is_exam,
+                is_hidden
+        `, [
+            courseId,
+            titleUk.trim(),
+            titleEn?.trim() || titleUk.trim(),
+            descriptionUk?.trim() || null,
+            descriptionEn?.trim() || descriptionUk?.trim() || null,
+            deadline,
+            Boolean(isExam)
+        ]);
+
+        res.status(201).json({
+            success: true,
+            task: result.rows[0]
+        });
+
+    } catch (err) {
+        console.error('[Dev Mode] Create Course Task Error:', err.message);
+        res.status(500).json({ message: 'TASK_CREATE_ERROR' });
+    }
+};
+
+exports.updateCourseTaskVisibility = async (req, res) => {
+    const teacherId = req.user.id;
+    const courseId = Number(req.params.courseId);
+    const taskId = Number(req.params.taskId);
+    const { isHidden } = req.body;
+
+    if (!Number.isInteger(courseId) || courseId <= 0) {
+        return res.status(400).json({ message: 'INVALID_COURSE_ID' });
+    }
+
+    if (!Number.isInteger(taskId) || taskId <= 0) {
+        return res.status(400).json({ message: 'INVALID_TASK_ID' });
+    }
+
+    if (typeof isHidden !== 'boolean') {
+        return res.status(400).json({ message: 'INVALID_TASK_VISIBILITY' });
+    }
+
+    try {
+        const result = await db.query(`
+            UPDATE public.tasks t
+            SET is_hidden = $1
+            FROM public.teacher_courses tc
+            WHERE t.id = $2
+            AND t.course_id = $3
+            AND tc.course_id = t.course_id
+            AND tc.teacher_id = $4
+            RETURNING 
+                t.id,
+                t.course_id,
+                t.title_uk,
+                t.title_en,
+                t.is_hidden
+        `, [isHidden, taskId, courseId, teacherId]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'TASK_NOT_FOUND' });
+        }
+
+                await db.query(`
+            UPDATE public.student_courses sc
+            SET progress_percent = COALESCE(progress.value, 0)
+            FROM (
+                SELECT 
+                    sc_inner.student_id,
+                    ROUND(
+                        COUNT(DISTINCT s.task_id)::numeric 
+                        / NULLIF(COUNT(DISTINCT t.id), 0)::numeric 
+                        * 100
+                    ) AS value
+                FROM public.student_courses sc_inner
+                LEFT JOIN public.tasks t
+                    ON t.course_id = sc_inner.course_id
+                    AND t.is_hidden = false
+                LEFT JOIN public.submissions s
+                    ON s.task_id = t.id
+                    AND s.student_id = sc_inner.student_id
+                WHERE sc_inner.course_id = $1
+                GROUP BY sc_inner.student_id
+            ) progress
+            WHERE sc.course_id = $1
+            AND sc.student_id = progress.student_id
+        `, [courseId]);
+
+        res.json({
+            success: true,
+            task: result.rows[0]
+        });
+
+    } catch (err) {
+        console.error('[Dev Mode] Update Course Task Visibility Error:', err.message);
+        res.status(500).json({ message: 'TASK_VISIBILITY_UPDATE_ERROR' });
+    }
+};
+
+exports.getTaskDetail = async (req, res) => {
+    const teacherId = req.user.id;
+    const taskId = Number(req.params.id);
+
+    if (!Number.isInteger(taskId) || taskId <= 0) {
+        return res.status(400).json({ message: 'INVALID_TASK_ID' });
+    }
+
+    try {
+        const userResult = await db.query(
+            'SELECT lang FROM public.users WHERE id = $1',
+            [teacherId]
+        );
+
+        const lang = userResult.rows[0]?.lang || 'uk';
+
+        const taskResult = await db.query(`
+            SELECT
+                t.id,
+                t.course_id,
+                t.title_uk,
+                t.title_en,
+                t.description_uk,
+                t.description_en,
+                t.title_${lang} AS title,
+                t.description_${lang} AS description,
+                t.deadline,
+                t.is_exam,
+                t.is_hidden,
+
+                c.title_${lang} AS course_title,
+                c.color_accent,
+
+                COUNT(DISTINCT s.id) AS submissions_count,
+                COUNT(DISTINCT CASE 
+                    WHEN gr.student_id IS NOT NULL THEN s.student_id 
+                END) AS graded_count
+            FROM public.tasks t
+            JOIN public.courses c ON t.course_id = c.id
+            JOIN public.teacher_courses tc ON tc.course_id = c.id
+            LEFT JOIN public.submissions s ON s.task_id = t.id
+            LEFT JOIN public.grades gr 
+                ON gr.task_id = t.id 
+                AND gr.student_id = s.student_id
+            WHERE t.id = $1
+            AND tc.teacher_id = $2
+            GROUP BY 
+                t.id,
+                t.course_id,
+                t.title_uk,
+                t.title_en,
+                t.description_uk,
+                t.description_en,
+                t.title_${lang},
+                t.description_${lang},
+                t.deadline,
+                t.is_exam,
+                t.is_hidden,
+                c.title_${lang},
+                c.color_accent
+        `, [taskId, teacherId]);
+
+        if (taskResult.rows.length === 0) {
+            return res.status(404).json({ message: 'TASK_NOT_FOUND' });
+        }
+
+        const submissionsResult = await db.query(`
+            SELECT
+                s.id AS submission_id,
+                s.student_id,
+                s.content,
+                s.file_url,
+                s.submitted_at,
+
+                u.full_name AS student_name,
+                u.email AS student_email,
+
+                gr.grade_value,
+                gr.feedback,
+                gr.created_at AS graded_at,
+
+                CASE 
+                    WHEN gr.task_id IS NOT NULL THEN 'graded'
+                    ELSE 'pending'
+                END AS status
+            FROM public.submissions s
+            JOIN public.users u ON u.id = s.student_id
+            LEFT JOIN public.grades gr
+                ON gr.task_id = s.task_id
+                AND gr.student_id = s.student_id
+            WHERE s.task_id = $1
+            ORDER BY s.submitted_at DESC
+        `, [taskId]);
+
+        res.json({
+            user: { lang },
+            task: taskResult.rows[0],
+            submissions: submissionsResult.rows
+        });
+
+    } catch (err) {
+        console.error('[Dev Mode] Teacher Task Detail Error:', err.message);
+        res.status(500).json({ message: 'SERVER_ERROR_TASK_DETAIL' });
+    }
+};
+
+exports.updateTaskDetail = async (req, res) => {
+    const teacherId = req.user.id;
+    const taskId = Number(req.params.id);
+
+    const {
+        titleUk,
+        titleEn,
+        descriptionUk,
+        descriptionEn,
+        deadline,
+        isExam
+    } = req.body;
+
+    if (!Number.isInteger(taskId) || taskId <= 0) {
+        return res.status(400).json({ message: 'INVALID_TASK_ID' });
+    }
+
+    if (!titleUk || !String(titleUk).trim()) {
+        return res.status(400).json({ message: 'TASK_TITLE_REQUIRED' });
+    }
+
+    if (!deadline || Number.isNaN(new Date(deadline).getTime())) {
+        return res.status(400).json({ message: 'TASK_DEADLINE_REQUIRED' });
+    }
+
+    try {
+        const result = await db.query(`
+            UPDATE public.tasks t
+            SET 
+                title_uk = $1,
+                title_en = $2,
+                description_uk = $3,
+                description_en = $4,
+                deadline = $5,
+                is_exam = $6
+            FROM public.teacher_courses tc
+            WHERE t.id = $7
+            AND tc.course_id = t.course_id
+            AND tc.teacher_id = $8
+            RETURNING 
+                t.id,
+                t.course_id,
+                t.title_uk,
+                t.title_en,
+                t.description_uk,
+                t.description_en,
+                t.deadline,
+                t.is_exam,
+                t.is_hidden
+        `, [
+            titleUk.trim(),
+            titleEn?.trim() || titleUk.trim(),
+            descriptionUk?.trim() || null,
+            descriptionEn?.trim() || descriptionUk?.trim() || null,
+            deadline,
+            Boolean(isExam),
+            taskId,
+            teacherId
+        ]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'TASK_NOT_FOUND' });
+        }
+
+        res.json({
+            success: true,
+            task: result.rows[0]
+        });
+
+    } catch (err) {
+        console.error('[Dev Mode] Update Task Detail Error:', err.message);
+        res.status(500).json({ message: 'TASK_UPDATE_ERROR' });
     }
 };

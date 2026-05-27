@@ -147,7 +147,55 @@ const translations = {
             not_found_text: "Поверніться на сторінку курсів і відкрийте курс ще раз.",
 
             unavailable_title: "Деталі курсу недоступні",
-            unavailable_text: "Не вдалося завантажити деталі курсу."
+            unavailable_text: "Не вдалося завантажити деталі курсу.",
+
+            edit_tasks: "Редагувати",
+            done: "Готово",
+            create_task: "+ Створити",
+            create_task_btn: "Створити завдання",
+
+            title_uk: "Назва українською",
+            title_en: "Назва англійською",
+            description_uk: "Опис українською",
+            description_en: "Опис англійською",
+            exam_task: "Екзаменаційне завдання",
+
+            no_task_description: "Опис завдання відсутній.",
+            hide_task: "Сховати завдання",
+            show_task: "Показати завдання",
+            hidden_status: "Сховано",
+
+            task_created_success: "Завдання створено",
+            task_create_error: "Не вдалося створити завдання",
+            task_hidden_success: "Завдання сховано",
+            task_restored_success: "Завдання повернуто",
+            task_visibility_error: "Не вдалося змінити видимість завдання"
+        },
+        teacher_task_detail: {
+            back_to_course: "← Назад до курсу",
+            course_label: "Курс",
+            edit: "Редагувати",
+            cancel: "Скасувати",
+            save: "Зберегти зміни",
+
+            hidden: "🙈 Сховано",
+            visible: "👁️ Видиме",
+            exam: "📝 Екзаменаційне",
+            submissions_count: "робіт",
+            graded_count: "перевірено",
+
+            submissions_title: "Роботи студентів",
+            no_submissions: "Поки що немає зданих робіт.",
+            submitted_at: "Здано",
+            graded: "Оцінено",
+            pending: "Очікує перевірки",
+
+            load_error_title: "Не вдалося завантажити завдання",
+            load_error_text: "Спробуйте оновити сторінку.",
+            not_found_title: "Завдання не знайдено",
+            not_found_text: "Некоректний ідентифікатор завдання.",
+            update_success: "Завдання оновлено",
+            update_error: "Не вдалося оновити завдання"
         },
         teacher_submissions: {
             page_title: "Перевірка робіт",
@@ -717,7 +765,55 @@ const translations = {
             not_found_text: "Please return to the courses page and open the course again.",
 
             unavailable_title: "Course details are not available",
-            unavailable_text: "Failed to load course details."
+            unavailable_text: "Failed to load course details.",
+
+            edit_tasks: "Edit",
+            done: "Done",
+            create_task: "+ Create",
+            create_task_btn: "Create task",
+
+            title_uk: "Title in Ukrainian",
+            title_en: "Title in English",
+            description_uk: "Description in Ukrainian",
+            description_en: "Description in English",
+            exam_task: "Exam task",
+
+            no_task_description: "Task description is missing.",
+            hide_task: "Hide task",
+            show_task: "Show task",
+            hidden_status: "Hidden",
+
+            task_created_success: "Task has been created",
+            task_create_error: "Failed to create task",
+            task_hidden_success: "Task has been hidden",
+            task_restored_success: "Task has been restored",
+            task_visibility_error: "Failed to update task visibility"
+        },
+        teacher_task_detail: {
+            back_to_course: "← Back to course",
+            course_label: "Course",
+            edit: "Edit",
+            cancel: "Cancel",
+            save: "Save changes",
+
+            hidden: "🙈 Hidden",
+            visible: "👁️ Visible",
+            exam: "📝 Exam task",
+            submissions_count: "submissions",
+            graded_count: "graded",
+
+            submissions_title: "Student submissions",
+            no_submissions: "There are no submissions yet.",
+            submitted_at: "Submitted",
+            graded: "Graded",
+            pending: "Pending review",
+
+            load_error_title: "Failed to load task",
+            load_error_text: "Try refreshing the page.",
+            not_found_title: "Task not found",
+            not_found_text: "Invalid task identifier.",
+            update_success: "Task has been updated",
+            update_error: "Failed to update task"
         },
         teacher_submissions: {
             page_title: "Submissions",
