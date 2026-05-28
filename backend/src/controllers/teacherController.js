@@ -250,7 +250,8 @@ exports.getAllCourses = async (req, res) => {
 exports.getCourseDetail = async (req, res) => {
     const userId = req.user.id;
     const courseId = req.params.id;
-    const includeHidden = req.query.includeHidden === 'true';
+    const includeHiddenTasks = req.query.includeHidden === 'true' || req.query.includeHiddenTasks === 'true';
+    const includeHiddenMaterials = req.query.includeHiddenMaterials === 'true';
 
     try {
         const userResult = await db.query(
@@ -304,7 +305,7 @@ exports.getCourseDetail = async (req, res) => {
                 t.is_exam,
                 t.is_hidden
             ORDER BY t.is_hidden ASC, t.deadline ASC
-        `, [courseId, includeHidden]);
+        `, [courseId, includeHiddenTasks]);
 
         const students = await db.query(`
             SELECT 
@@ -327,11 +328,13 @@ exports.getCourseDetail = async (req, res) => {
                 title_${lang} AS title,
                 file_url,
                 material_type,
-                created_at
+                created_at,
+                is_hidden
             FROM public.course_materials
             WHERE course_id = $1
-            ORDER BY created_at DESC
-        `, [courseId]);
+            AND ($2 = true OR is_hidden = false)
+            ORDER BY is_hidden ASC, created_at DESC
+        `, [courseId, includeHiddenMaterials]);
 
         res.json({
             user: { lang },
@@ -1025,6 +1028,131 @@ exports.updateCourseTaskVisibility = async (req, res) => {
     } catch (err) {
         console.error('[Dev Mode] Update Course Task Visibility Error:', err.message);
         res.status(500).json({ message: 'TASK_VISIBILITY_UPDATE_ERROR' });
+    }
+};
+
+exports.createCourseMaterial = async (req, res) => {
+    const teacherId = req.user.id;
+    const courseId = Number(req.params.id);
+
+    const {
+        titleUk,
+        titleEn,
+        fileUrl,
+        materialType
+    } = req.body;
+
+    if (!Number.isInteger(courseId) || courseId <= 0) {
+        return res.status(400).json({ message: 'INVALID_COURSE_ID' });
+    }
+
+    if (!titleUk || !String(titleUk).trim()) {
+        return res.status(400).json({ message: 'MATERIAL_TITLE_REQUIRED' });
+    }
+
+    if (!fileUrl || !String(fileUrl).trim()) {
+        return res.status(400).json({ message: 'MATERIAL_URL_REQUIRED' });
+    }
+
+    try {
+        const access = await db.query(`
+            SELECT course_id
+            FROM public.teacher_courses
+            WHERE teacher_id = $1 AND course_id = $2
+        `, [teacherId, courseId]);
+
+        if (access.rows.length === 0) {
+            return res.status(404).json({ message: 'COURSE_NOT_FOUND' });
+        }
+
+        const result = await db.query(`
+            INSERT INTO public.course_materials (
+                course_id,
+                title_uk,
+                title_en,
+                file_url,
+                material_type,
+                is_hidden,
+                created_at
+            )
+            VALUES ($1, $2, $3, $4, $5, false, CURRENT_TIMESTAMP)
+            RETURNING
+                id,
+                course_id,
+                title_uk,
+                title_en,
+                file_url,
+                material_type,
+                is_hidden,
+                created_at
+        `, [
+            courseId,
+            titleUk.trim(),
+            titleEn?.trim() || titleUk.trim(),
+            fileUrl.trim(),
+            materialType?.trim() || 'link'
+        ]);
+
+        res.status(201).json({
+            success: true,
+            material: result.rows[0]
+        });
+
+    } catch (err) {
+        console.error('[Dev Mode] Create Course Material Error:', err.message);
+        res.status(500).json({ message: 'MATERIAL_CREATE_ERROR' });
+    }
+};
+
+exports.updateCourseMaterialVisibility = async (req, res) => {
+    const teacherId = req.user.id;
+    const courseId = Number(req.params.courseId);
+    const materialId = Number(req.params.materialId);
+    const { isHidden } = req.body;
+
+    if (!Number.isInteger(courseId) || courseId <= 0) {
+        return res.status(400).json({ message: 'INVALID_COURSE_ID' });
+    }
+
+    if (!Number.isInteger(materialId) || materialId <= 0) {
+        return res.status(400).json({ message: 'INVALID_MATERIAL_ID' });
+    }
+
+    if (typeof isHidden !== 'boolean') {
+        return res.status(400).json({ message: 'INVALID_MATERIAL_VISIBILITY' });
+    }
+
+    try {
+        const result = await db.query(`
+            UPDATE public.course_materials m
+            SET is_hidden = $1
+            FROM public.teacher_courses tc
+            WHERE m.id = $2
+            AND m.course_id = $3
+            AND tc.course_id = m.course_id
+            AND tc.teacher_id = $4
+            RETURNING
+                m.id,
+                m.course_id,
+                m.title_uk,
+                m.title_en,
+                m.file_url,
+                m.material_type,
+                m.is_hidden
+        `, [isHidden, materialId, courseId, teacherId]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'MATERIAL_NOT_FOUND' });
+        }
+
+        res.json({
+            success: true,
+            material: result.rows[0]
+        });
+
+    } catch (err) {
+        console.error('[Dev Mode] Update Course Material Visibility Error:', err.message);
+        res.status(500).json({ message: 'MATERIAL_VISIBILITY_UPDATE_ERROR' });
     }
 };
 

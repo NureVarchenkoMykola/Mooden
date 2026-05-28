@@ -169,7 +169,25 @@ const translations = {
             task_create_error: "Не вдалося створити завдання",
             task_hidden_success: "Завдання сховано",
             task_restored_success: "Завдання повернуто",
-            task_visibility_error: "Не вдалося змінити видимість завдання"
+            task_visibility_error: "Не вдалося змінити видимість завдання",
+
+            edit_materials: "Редагувати",
+            create_material: "+ Додати",
+            create_material_btn: "Додати матеріал",
+
+            material_title_uk: "Назва матеріалу українською",
+            material_title_en: "Назва матеріалу англійською",
+            material_url: "Посилання на матеріал",
+            material_type: "Тип матеріалу",
+
+            hide_material: "Сховати матеріал",
+            show_material: "Показати матеріал",
+
+            material_created_success: "Матеріал додано",
+            material_create_error: "Не вдалося додати матеріал",
+            material_hidden_success: "Матеріал сховано",
+            material_restored_success: "Матеріал повернуто",
+            material_visibility_error: "Не вдалося змінити видимість матеріалу"
         },
         teacher_task_detail: {
             back_to_course: "← Назад до курсу",
@@ -787,7 +805,25 @@ const translations = {
             task_create_error: "Failed to create task",
             task_hidden_success: "Task has been hidden",
             task_restored_success: "Task has been restored",
-            task_visibility_error: "Failed to update task visibility"
+            task_visibility_error: "Failed to update task visibility",
+
+            edit_materials: "Edit",
+            create_material: "+ Add",
+            create_material_btn: "Add material",
+
+            material_title_uk: "Material title in Ukrainian",
+            material_title_en: "Material title in English",
+            material_url: "Material link",
+            material_type: "Material type",
+
+            hide_material: "Hide material",
+            show_material: "Show material",
+
+            material_created_success: "Material has been added",
+            material_create_error: "Failed to add material",
+            material_hidden_success: "Material has been hidden",
+            material_restored_success: "Material has been restored",
+            material_visibility_error: "Failed to update material visibility"
         },
         teacher_task_detail: {
             back_to_course: "← Back to course",

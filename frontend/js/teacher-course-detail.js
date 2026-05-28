@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
     const courseId = params.get("id");
     let isTasksEditMode = false;
+    let isMaterialsEditMode = false;
 
     if (!content) {
         console.error("Не знайдено #teacherCourseDetailContent");
@@ -89,8 +90,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             `;
 
-            const includeHiddenParam = isTasksEditMode ? "?includeHidden=true" : "";
-            const data = await fetchJson(`${API_BASE_URL}/teacher/courses/${courseId}/detail${includeHiddenParam}`, token);
+            const queryParams = new URLSearchParams();
+
+            if (isTasksEditMode) {
+                queryParams.set("includeHiddenTasks", "true");
+            }
+
+            if (isMaterialsEditMode) {
+                queryParams.set("includeHiddenMaterials", "true");
+            }
+
+            const queryString = queryParams.toString()
+                ? `?${queryParams.toString()}`
+                : "";
+
+            const data = await fetchJson(
+                `${API_BASE_URL}/teacher/courses/${courseId}/detail${queryString}`,
+                token
+            );
 
             renderCourseDetail({
                 course: data.course,
@@ -170,6 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const visibleTasksCount = tasks.filter(task => task.is_hidden !== true).length;
         const students = data.students;
         const materials = data.materials;
+        const visibleMaterialsCount = materials.filter(material => material.is_hidden !== true).length;
 
         if (!course) {
             showEmpty(
@@ -231,7 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="teacher-course-stat">
                     <span>📎</span>
                     <div>
-                        <strong>${materials.length}</strong>
+                        <strong>${visibleMaterialsCount}</strong>
                         <p>${getTranslation(lang, "teacher_course_detail.materials_count")}</p>
                     </div>
                 </div>
@@ -277,10 +295,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
                 <aside class="teacher-course-side">
-                    <div class="teacher-section-card">
+                    <div class="teacher-section-card teacher-materials-card">
                         <div class="teacher-section-header">
                             <h2>${getTranslation(lang, "teacher_course_detail.materials_title")}</h2>
+
+                            <div class="teacher-material-management-actions">
+                                ${
+                                    isMaterialsEditMode
+                                        ? `
+                                            <button type="button" class="teacher-material-create-btn" id="createMaterialToggleBtn">
+                                                ${getTranslation(lang, "teacher_course_detail.create_material")}
+                                            </button>
+                                            <button type="button" class="teacher-material-edit-btn" id="materialEditToggleBtn">
+                                                ${getTranslation(lang, "teacher_course_detail.done")}
+                                            </button>
+                                        `
+                                        : `
+                                            <button type="button" class="teacher-material-edit-btn" id="materialEditToggleBtn">
+                                                ${getTranslation(lang, "teacher_course_detail.edit_materials")}
+                                            </button>
+                                        `
+                                }
+                            </div>
                         </div>
+
+                        ${isMaterialsEditMode ? renderCreateMaterialForm() : ""}
 
                         ${renderMaterials(materials)}
                     </div>
@@ -418,6 +457,45 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     }
 
+    function renderCreateMaterialForm() {
+        const lang = getCurrentLang();
+
+        return `
+            <form id="createMaterialForm" class="teacher-material-create-form hidden">
+                <label>
+                    <span>${getTranslation(lang, "teacher_course_detail.material_title_uk")}</span>
+                    <input type="text" name="titleUk" required>
+                </label>
+
+                <label>
+                    <span>${getTranslation(lang, "teacher_course_detail.material_title_en")}</span>
+                    <input type="text" name="titleEn">
+                </label>
+
+                <label>
+                    <span>${getTranslation(lang, "teacher_course_detail.material_url")}</span>
+                    <input type="url" name="fileUrl" required>
+                </label>
+
+                <label>
+                    <span>${getTranslation(lang, "teacher_course_detail.material_type")}</span>
+                    <select name="materialType">
+                        <option value="lecture">${getTranslation(lang, "course_detail.material_lecture")}</option>
+                        <option value="manual">${getTranslation(lang, "course_detail.material_manual")}</option>
+                        <option value="video">${getTranslation(lang, "course_detail.material_video")}</option>
+                        <option value="link">${getTranslation(lang, "course_detail.material_link")}</option>
+                        <option value="book">${getTranslation(lang, "course_detail.material_book")}</option>
+                        <option value="other">${getTranslation(lang, "course_detail.material_other")}</option>
+                    </select>
+                </label>
+
+                <button type="submit" class="teacher-material-save-btn">
+                    ${getTranslation(lang, "teacher_course_detail.create_material_btn")}
+                </button>
+            </form>
+        `;
+    }
+
     function renderStudents(students) {
         const lang = getCurrentLang();
 
@@ -466,18 +544,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
         return `
             <div class="teacher-materials-list">
-                ${materials.map(material => `
-                    <a class="teacher-material-card" href="${material.file_url}" target="_blank" rel="noopener noreferrer">
-                        <span class="teacher-material-icon">${getMaterialIcon(material.material_type)}</span>
+                ${materials.map(material => {
+                    const isHidden = material.is_hidden === true;
 
-                        <div>
-                            <h3>${material.title}</h3>
-                            <p>${getMaterialTypeText(material.material_type)}</p>
-                        </div>
+                    return `
+                        <article class="teacher-material-card ${isHidden ? "is-hidden-material" : ""}">
+                            ${
+                                isMaterialsEditMode
+                                    ? `
+                                        <button
+                                            type="button"
+                                            class="teacher-material-visibility-btn ${isHidden ? "restore" : "hide"}"
+                                            data-material-id="${material.id}"
+                                            data-hidden="${isHidden}"
+                                            title="${
+                                                isHidden
+                                                    ? getTranslation(lang, "teacher_course_detail.show_material")
+                                                    : getTranslation(lang, "teacher_course_detail.hide_material")
+                                            }"
+                                        >
+                                            ${isHidden ? "↺" : "×"}
+                                        </button>
+                                    `
+                                    : ""
+                            }
 
-                        <span class="teacher-material-open">↗</span>
-                    </a>
-                `).join("")}
+                            <a class="teacher-material-card-link" href="${material.file_url}" target="_blank" rel="noopener noreferrer">
+                                <span class="teacher-material-icon">${getMaterialIcon(material.material_type)}</span>
+
+                                <div>
+                                    <h3>${material.title}</h3>
+                                    <p>${getMaterialTypeText(material.material_type)}</p>
+                                </div>
+
+                                <span class="teacher-material-open">↗</span>
+                            </a>
+
+                            ${
+                                isHidden
+                                    ? `
+                                        <span class="teacher-material-hidden-label">
+                                            ${getTranslation(lang, "teacher_course_detail.hidden_status")}
+                                        </span>
+                                    `
+                                    : ""
+                            }
+                        </article>
+                    `;
+                }).join("")}
             </div>
         `;
     }
@@ -526,6 +640,39 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         });
+
+        const materialEditBtn = document.getElementById("materialEditToggleBtn");
+        const createMaterialToggleBtn = document.getElementById("createMaterialToggleBtn");
+        const createMaterialForm = document.getElementById("createMaterialForm");
+
+        if (materialEditBtn) {
+            materialEditBtn.addEventListener("click", async () => {
+                isMaterialsEditMode = !isMaterialsEditMode;
+                await loadCourseDetail();
+            });
+        }
+
+        if (createMaterialToggleBtn && createMaterialForm) {
+            createMaterialToggleBtn.addEventListener("click", () => {
+                createMaterialForm.classList.toggle("hidden");
+            });
+        }
+
+        if (createMaterialForm) {
+            createMaterialForm.addEventListener("submit", handleCreateMaterial);
+        }
+
+        document.querySelectorAll(".teacher-material-visibility-btn").forEach(button => {
+            button.addEventListener("click", async event => {
+                event.preventDefault();
+                event.stopPropagation();
+
+                const materialId = button.dataset.materialId;
+                const currentlyHidden = button.dataset.hidden === "true";
+
+                await updateMaterialVisibility(materialId, !currentlyHidden);
+            });
+        });
     }
 
     async function handleCreateTask(event) {
@@ -562,6 +709,38 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    async function handleCreateMaterial(event) {
+        event.preventDefault();
+
+        const lang = getCurrentLang();
+        const token = getToken();
+        const form = event.currentTarget;
+        const formData = new FormData(form);
+
+        const payload = {
+            titleUk: String(formData.get("titleUk") || "").trim(),
+            titleEn: String(formData.get("titleEn") || "").trim(),
+            fileUrl: String(formData.get("fileUrl") || "").trim(),
+            materialType: String(formData.get("materialType") || "link").trim()
+        };
+
+        try {
+            await fetchJson(`${API_BASE_URL}/teacher/courses/${courseId}/materials`, token, {
+                method: "POST",
+                body: JSON.stringify(payload)
+            });
+
+            showToast(getTranslation(lang, "teacher_course_detail.material_created_success"), "success");
+
+            form.reset();
+            await loadCourseDetail();
+
+        } catch (error) {
+            console.error("[Teacher Course Detail] Create material error:", error);
+            showToast(getTranslation(lang, "teacher_course_detail.material_create_error"), "error");
+        }
+    }
+
     async function updateTaskVisibility(taskId, isHidden) {
         const token = getToken();
         const lang = getCurrentLang();
@@ -587,6 +766,35 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             console.error("[Teacher Course Detail] Update task visibility error:", error);
             showToast(getTranslation(lang, "teacher_course_detail.task_visibility_error"), "error");
+        }
+    }
+
+    
+    async function updateMaterialVisibility(materialId, isHidden) {
+        const token = getToken();
+        const lang = getCurrentLang();
+
+        try {
+            await fetchJson(`${API_BASE_URL}/teacher/courses/${courseId}/materials/${materialId}/visibility`, token, {
+                method: "PATCH",
+                body: JSON.stringify({ isHidden })
+            });
+
+            showToast(
+                getTranslation(
+                    lang,
+                    isHidden
+                        ? "teacher_course_detail.material_hidden_success"
+                        : "teacher_course_detail.material_restored_success"
+                ),
+                "success"
+            );
+
+            await loadCourseDetail();
+
+        } catch (error) {
+            console.error("[Teacher Course Detail] Update material visibility error:", error);
+            showToast(getTranslation(lang, "teacher_course_detail.material_visibility_error"), "error");
         }
     }
 
