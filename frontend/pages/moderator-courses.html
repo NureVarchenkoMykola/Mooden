@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Mooden | Курси</title>
+    <meta name="page-role" content="moderator">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <script src="../js/config.js"></script>
+    <script src="../js/translations.js"></script>
+    <script src="../js/i18n-manager.js"></script>
+    <script src="../js/theme-manager.js"></script>
+    <script src="../js/toast.js"></script>
+    <script src="../js/auth-guard.js"></script>
+    <script src="../js/sidebar-manager.js"></script>
+
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/student-dashboard.css">
+    <link rel="stylesheet" href="../css/moderator-courses.css">
+</head>
+
+<body class="dashboard-layout container">
+
+<aside class="sidebar">
+    <div class="sidebar-top">
+        <div class="logo">Mooden</div>
+
+        <nav class="nav-menu">
+            <p class="nav-label" data-i18n="common.nav_label_main">НАВІГАЦІЯ</p>
+
+            <a href="./moderator-dashboard.html" class="nav-link">
+                <span data-i18n="moderator_nav.dashboard">🛡️ Панель</span>
+            </a>
+
+            <a href="./moderator-users.html" class="nav-link">
+                <span data-i18n="moderator_nav.users">👥 Користувачі</span>
+            </a>
+
+            <a href="./moderator-courses.html" class="nav-link active">
+                <span data-i18n="moderator_nav.courses">📚 Курси</span>
+            </a>
+
+            <a href="./moderator-activity.html" class="nav-link">
+                <span data-i18n="moderator_nav.activity">📌 Активність</span>
+            </a>
+        </nav>
+
+        <nav class="nav-menu">
+            <p class="nav-label" data-i18n="common.nav_label_community">СПІЛЬНОТА</p>
+
+            <a href="./announcements.html" class="nav-link">
+                <span data-i18n="common.nav_announcements">📢 Оголошення</span>
+                <span class="badge-count" id="announcementsBadge">0</span>
+            </a>
+
+            <a href="./notifications.html" class="nav-link">
+                <span data-i18n="common.nav_notifications">🔔 Сповіщення</span>
+                <span class="badge-count" id="notifBadge">0</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="sidebar-user">
+        <a href="./moderator-profile.html" class="user-card user-card-link" id="profileBottomLink">
+            <div class="user-avatar" id="avatarInitial">?</div>
+
+            <div class="user-meta">
+                <p class="user-name" id="profileName">...</p>
+                <p class="user-sub" id="profileGroup" data-i18n="dashboard.user_loading">Завантаження...</p>
+            </div>
+        </a>
+
+        <div class="theme-switch-container">
+            <button id="themeToggle" class="theme-toggle-btn">
+                <span class="theme-icon">🌙</span>
+                <span class="theme-text" data-i18n="common.theme_dark">Темна тема</span>
+            </button>
+        </div>
+
+        <div class="lang-switch-container">
+            <div class="lang-slider">
+                <input type="radio" name="lang" id="lang-uk" value="uk">
+                <label for="lang-uk">UA</label>
+
+                <input type="radio" name="lang" id="lang-en" value="en">
+                <label for="lang-en">EN</label>
+
+                <div class="slider-bg"></div>
+            </div>
+        </div>
+
+        <button id="logoutBtn" class="logout-btn" data-i18n="common.logout_btn">
+            🚪 Вийти з акаунту
+        </button>
+    </div>
+</aside>
+
+<main class="main-content">
+    <div class="mobile-header">
+        <button id="menuToggle" class="menu-btn">☰</button>
+        <div class="logo-mobile">Mooden</div>
+    </div>
+
+    <section class="moderator-courses-page">
+        <header class="moderator-courses-header">
+            <div>
+                <span class="moderator-page-badge" data-i18n="moderator_courses.badge">MODERATOR</span>
+
+                <h1 data-i18n="moderator_courses.title">Курси</h1>
+
+                <p data-i18n="moderator_courses.desc">
+                    На цій сторінці модератор може переглядати курси платформи,
+                    редагувати їхні основні дані, зараховувати студентів і призначати викладачів.
+                </p>
+            </div>
+        </header>
+
+        <section class="moderator-courses-stats">
+            <div class="moderator-stat-card">
+                <span>📚</span>
+                <div>
+                    <strong id="totalCourses">0</strong>
+                    <p data-i18n="moderator_courses.stat_courses">Курсів</p>
+                </div>
+            </div>
+
+            <div class="moderator-stat-card">
+                <span>🎓</span>
+                <div>
+                    <strong id="totalStudentsOnCourses">0</strong>
+                    <p data-i18n="moderator_courses.stat_students">Зарахувань студентів</p>
+                </div>
+            </div>
+
+            <div class="moderator-stat-card">
+                <span>👨‍🏫</span>
+                <div>
+                    <strong id="totalTeachersOnCourses">0</strong>
+                    <p data-i18n="moderator_courses.stat_teachers">Призначень викладачів</p>
+                </div>
+            </div>
+
+            <div class="moderator-stat-card">
+                <span>📝</span>
+                <div>
+                    <strong id="totalTasks">0</strong>
+                    <p data-i18n="moderator_courses.stat_tasks">Завдань</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="moderator-courses-controls">
+            <input
+                id="courseSearch"
+                class="moderator-course-search"
+                type="text"
+                placeholder="Пошук курсу..."
+                data-i18n-placeholder="moderator_courses.search_placeholder"
+            >
+
+            <select id="courseSort" class="moderator-course-select">
+                <option value="title" data-i18n="moderator_courses.sort_title">За назвою</option>
+                <option value="students" data-i18n="moderator_courses.sort_students">За кількістю студентів</option>
+                <option value="teachers" data-i18n="moderator_courses.sort_teachers">За кількістю викладачів</option>
+                <option value="tasks" data-i18n="moderator_courses.sort_tasks">За кількістю завдань</option>
+            </select>
+        </section>
+
+        <section id="coursesList" class="moderator-courses-grid">
+            <div class="moderator-courses-loading">
+                <h2 data-i18n="moderator_courses.loading_title">Завантаження...</h2>
+                <p data-i18n="moderator_courses.loading_text">Отримуємо список курсів.</p>
+            </div>
+        </section>
+    </section>
+</main>
+
+<div class="moderator-modal-overlay" id="courseModalOverlay">
+    <div class="moderator-modal">
+        <div class="moderator-modal-header">
+            <div>
+                <h2 data-i18n="moderator_courses.edit_title">Редагувати курс</h2>
+                <p data-i18n="moderator_courses.edit_desc">Оновіть основну інформацію про курс.</p>
+            </div>
+
+            <button class="modal-close-btn" id="closeCourseModalBtn" type="button">×</button>
+        </div>
+
+        <form id="courseForm" class="moderator-course-form">
+            <input type="hidden" id="courseIdInput">
+
+            <label>
+                <span data-i18n="moderator_courses.title_uk">Назва українською</span>
+                <input id="courseTitleUkInput" type="text" required>
+            </label>
+
+            <label>
+                <span data-i18n="moderator_courses.title_en">Назва англійською</span>
+                <input id="courseTitleEnInput" type="text">
+            </label>
+
+            <label>
+                <span data-i18n="moderator_courses.desc_uk">Опис українською</span>
+                <textarea id="courseDescriptionUkInput" rows="4"></textarea>
+            </label>
+
+            <label>
+                <span data-i18n="moderator_courses.desc_en">Опис англійською</span>
+                <textarea id="courseDescriptionEnInput" rows="4"></textarea>
+            </label>
+
+            <label>
+                <span data-i18n="moderator_courses.color">Колір курсу</span>
+                <input id="courseColorInput" type="color" value="#E8A44A">
+            </label>
+
+            <div class="modal-actions">
+                <button type="button" class="moderator-secondary-btn" id="cancelCourseModalBtn" data-i18n="moderator_courses.cancel">
+                    Скасувати
+                </button>
+
+                <button type="submit" class="moderator-primary-btn" data-i18n="moderator_courses.save">
+                    Зберегти
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="moderator-modal-overlay" id="membersModalOverlay">
+    <div class="moderator-modal moderator-members-modal">
+        <div class="moderator-modal-header">
+            <div>
+                <h2 id="membersModalTitle" data-i18n="moderator_courses.members_title">Учасники курсу</h2>
+                <p data-i18n="moderator_courses.members_desc">Керуйте студентами та викладачами, пов’язаними з курсом.</p>
+            </div>
+
+            <button class="modal-close-btn" id="closeMembersModalBtn" type="button">×</button>
+        </div>
+
+        <input type="hidden" id="membersCourseIdInput">
+
+        <section class="members-section">
+            <div class="members-section-header">
+                <h3 data-i18n="moderator_courses.course_students">Студенти курсу</h3>
+
+                <div class="member-add-row">
+                    <select id="studentSelect"></select>
+
+                    <button id="addStudentBtn" class="moderator-primary-btn" type="button" data-i18n="moderator_courses.add_student">
+                        Зарахувати
+                    </button>
+                </div>
+            </div>
+
+            <div id="courseStudentsList" class="members-list">
+                <p class="empty-msg" data-i18n="moderator_courses.loading_title">Завантаження...</p>
+            </div>
+        </section>
+
+        <section class="members-section">
+            <div class="members-section-header">
+                <h3 data-i18n="moderator_courses.course_teachers">Викладачі курсу</h3>
+
+                <div class="member-add-row">
+                    <select id="teacherSelect"></select>
+
+                    <button id="addTeacherBtn" class="moderator-primary-btn" type="button" data-i18n="moderator_courses.add_teacher">
+                        Призначити
+                    </button>
+                </div>
+            </div>
+
+            <div id="courseTeachersList" class="members-list">
+                <p class="empty-msg" data-i18n="moderator_courses.loading_title">Завантаження...</p>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script src="../js/moderator-courses.js"></script>
+</body>
+</html>

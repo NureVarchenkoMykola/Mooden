@@ -116,6 +116,51 @@ exports.getSidebarData = async (req, res) => {
                 }
             });
         }
+        else if (role === 'moderator') {
+            const result = await db.query(`
+                SELECT 
+                    u.full_name,
+                    u.lang,
+                    (
+                        SELECT COUNT(*)
+                        FROM public.announcements a
+                        WHERE NOT EXISTS (
+                            SELECT 1
+                            FROM public.read_announcements ra
+                            WHERE ra.announcement_id = a.id
+                            AND ra.user_id = $1
+                        )
+                    ) as badge_announcements,
+                    (
+                        SELECT COUNT(*)
+                        FROM public.notifications
+                        WHERE user_id = $1
+                        AND is_read = false
+                    ) as badge_notif
+                FROM public.users u
+                WHERE u.id = $1
+            `, [userId]);
+
+            if (result.rows.length === 0) {
+                return res.status(404).json({ message: 'USER_NOT_FOUND' });
+            }
+
+            const row = result.rows[0];
+
+            return res.json({
+                full_name: row.full_name,
+                lang: row.lang || 'uk',
+                sub_info: row.lang === 'en' ? 'System moderator' : 'Модератор системи',
+                badges: {
+                    tasks: 0,
+                    announcements: parseInt(row.badge_announcements) || 0,
+                    notifications: parseInt(row.badge_notif) || 0
+                }
+            });
+        }
+
+        return res.status(403).json({ message: 'ROLE_ERROR' });
+
     } catch (err) {
         console.error("[Dev Mode] Sidebar Controller Error:", err.message);
         res.status(500).json({ message: 'SIDEBAR_ERROR' });

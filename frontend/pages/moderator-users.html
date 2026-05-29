@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Mooden | Користувачі</title>
+    <meta name="page-role" content="moderator">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <script src="../js/config.js"></script>
+    <script src="../js/translations.js"></script>
+    <script src="../js/i18n-manager.js"></script>
+    <script src="../js/theme-manager.js"></script>
+    <script src="../js/toast.js"></script>
+    <script src="../js/auth-guard.js"></script>
+    <script src="../js/sidebar-manager.js"></script>
+
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/student-dashboard.css">
+    <link rel="stylesheet" href="../css/moderator-users.css">
+</head>
+
+<body class="dashboard-layout container">
+
+<aside class="sidebar">
+    <div class="sidebar-top">
+        <div class="logo">Mooden</div>
+
+        <nav class="nav-menu">
+            <p class="nav-label" data-i18n="common.nav_label_main">НАВІГАЦІЯ</p>
+
+            <a href="./moderator-dashboard.html" class="nav-link">
+                <span data-i18n="moderator_nav.dashboard">🛡️ Панель</span>
+            </a>
+
+            <a href="./moderator-users.html" class="nav-link active">
+                <span data-i18n="moderator_nav.users">👥 Користувачі</span>
+            </a>
+
+            <a href="./moderator-courses.html" class="nav-link">
+                <span data-i18n="moderator_nav.courses">📚 Курси</span>
+            </a>
+
+            <a href="./moderator-activity.html" class="nav-link">
+                <span data-i18n="moderator_nav.activity">📌 Активність</span>
+            </a>
+        </nav>
+
+        <nav class="nav-menu">
+            <p class="nav-label" data-i18n="common.nav_label_community">СПІЛЬНОТА</p>
+
+            <a href="./announcements.html" class="nav-link">
+                <span data-i18n="common.nav_announcements">📢 Оголошення</span>
+                <span class="badge-count" id="announcementsBadge">0</span>
+            </a>
+
+            <a href="./notifications.html" class="nav-link">
+                <span data-i18n="common.nav_notifications">🔔 Сповіщення</span>
+                <span class="badge-count" id="notifBadge">0</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="sidebar-user">
+        <a href="./moderator-profile.html" class="user-card user-card-link" id="profileBottomLink">
+            <div class="user-avatar" id="avatarInitial">?</div>
+
+            <div class="user-meta">
+                <p class="user-name" id="profileName">...</p>
+                <p class="user-sub" id="profileGroup" data-i18n="dashboard.user_loading">Завантаження...</p>
+            </div>
+        </a>
+
+        <div class="theme-switch-container">
+            <button id="themeToggle" class="theme-toggle-btn">
+                <span class="theme-icon">🌙</span>
+                <span class="theme-text" data-i18n="common.theme_dark">Темна тема</span>
+            </button>
+        </div>
+
+        <div class="lang-switch-container">
+            <div class="lang-slider">
+                <input type="radio" name="lang" id="lang-uk" value="uk">
+                <label for="lang-uk">UA</label>
+
+                <input type="radio" name="lang" id="lang-en" value="en">
+                <label for="lang-en">EN</label>
+
+                <div class="slider-bg"></div>
+            </div>
+        </div>
+
+        <button id="logoutBtn" class="logout-btn" data-i18n="common.logout_btn">
+            🚪 Вийти з акаунту
+        </button>
+    </div>
+</aside>
+
+<main class="main-content">
+    <div class="mobile-header">
+        <button id="menuToggle" class="menu-btn">☰</button>
+        <div class="logo-mobile">Mooden</div>
+    </div>
+
+    <section class="moderator-users-page">
+        <header class="moderator-users-header">
+            <div>
+                <span class="moderator-page-badge" data-i18n="moderator_users.badge">MODERATOR</span>
+
+                <h1 data-i18n="moderator_users.title">Користувачі</h1>
+
+                <p data-i18n="moderator_users.desc">
+                    На цій сторінці модератор може переглядати користувачів системи,
+                    фільтрувати їх за ролями, редагувати дані, змінювати роль, блокувати
+                    або розблоковувати облікові записи.
+                </p>
+            </div>
+
+            <button id="openAddUserModalBtn" class="moderator-primary-btn" type="button" data-i18n="moderator_users.add_user">
+                + Додати користувача
+            </button>
+        </header>
+
+        <section class="moderator-users-stats">
+            <div class="moderator-stat-card">
+                <span>👥</span>
+                <div>
+                    <strong id="totalUsers">0</strong>
+                    <p data-i18n="moderator_users.stat_total">Усього</p>
+                </div>
+            </div>
+
+            <div class="moderator-stat-card">
+                <span>🎓</span>
+                <div>
+                    <strong id="studentsCount">0</strong>
+                    <p data-i18n="moderator_users.stat_students">Студентів</p>
+                </div>
+            </div>
+
+            <div class="moderator-stat-card">
+                <span>👨‍🏫</span>
+                <div>
+                    <strong id="teachersCount">0</strong>
+                    <p data-i18n="moderator_users.stat_teachers">Викладачів</p>
+                </div>
+            </div>
+
+            <div class="moderator-stat-card">
+                <span>🚫</span>
+                <div>
+                    <strong id="blockedCount">0</strong>
+                    <p data-i18n="moderator_users.stat_blocked">Заблоковано</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="moderator-users-controls">
+            <input
+                id="userSearch"
+                class="moderator-user-search"
+                type="text"
+                placeholder="Пошук за ім’ям або email..."
+                data-i18n-placeholder="moderator_users.search_placeholder"
+            >
+
+            <select id="roleFilter" class="moderator-user-select">
+                <option value="all" data-i18n="moderator_users.all_roles">Усі ролі</option>
+                <option value="student" data-i18n="moderator_users.students">Студенти</option>
+                <option value="teacher" data-i18n="moderator_users.teachers">Викладачі</option>
+                <option value="moderator" data-i18n="moderator_users.moderators">Модератори</option>
+            </select>
+
+            <select id="statusFilter" class="moderator-user-select">
+                <option value="all" data-i18n="moderator_users.all_statuses">Усі статуси</option>
+                <option value="active" data-i18n="moderator_users.active_users">Активні</option>
+                <option value="blocked" data-i18n="moderator_users.blocked_users">Заблоковані</option>
+            </select>
+        </section>
+
+        <section id="usersList" class="moderator-users-list">
+            <div class="moderator-users-loading">
+                <h2 data-i18n="moderator_users.loading_title">Завантаження...</h2>
+                <p data-i18n="moderator_users.loading_text">Отримуємо список користувачів.</p>
+            </div>
+        </section>
+    </section>
+</main>
+
+<div class="moderator-modal-overlay" id="userModalOverlay">
+    <div class="moderator-modal">
+        <div class="moderator-modal-header">
+            <div>
+                <h2 id="userModalTitle" data-i18n="moderator_users.add_modal_title">Додати користувача</h2>
+                <p id="userModalDesc" data-i18n="moderator_users.add_modal_desc">Заповніть дані користувача.</p>
+            </div>
+
+            <button class="modal-close-btn" id="closeUserModalBtn" type="button">×</button>
+        </div>
+
+        <form id="userForm" class="moderator-user-form">
+            <input type="hidden" id="userIdInput">
+
+            <label>
+                <span data-i18n="moderator_users.full_name">ПІБ</span>
+                <input
+                    id="fullNameInput"
+                    type="text"
+                    placeholder="Наприклад, Іваненко Іван Іванович"
+                    data-i18n-placeholder="moderator_users.full_name_placeholder"
+                    required
+                >
+            </label>
+
+            <label>
+                <span>Email</span>
+                <input id="emailInput" type="email" placeholder="user@example.com" required>
+            </label>
+
+            <label>
+                <span data-i18n="moderator_users.role">Роль</span>
+                <select id="roleInput" required>
+                    <option value="student" data-i18n="moderator_users.role_student">Студент</option>
+                    <option value="teacher" data-i18n="moderator_users.role_teacher">Викладач</option>
+                    <option value="moderator" data-i18n="moderator_users.role_moderator">Модератор</option>
+                </select>
+            </label>
+
+            <label>
+                <span data-i18n="moderator_users.lang">Мова</span>
+                <select id="langInput">
+                    <option value="uk">Українська</option>
+                    <option value="en">English</option>
+                </select>
+            </label>
+
+            <label id="passwordField">
+                <span data-i18n="moderator_users.password">Пароль</span>
+                <input
+                    id="passwordInput"
+                    type="password"
+                    placeholder="Пароль для нового користувача"
+                    data-i18n-placeholder="moderator_users.password_placeholder"
+                >
+            </label>
+
+            <div class="modal-actions">
+                <button type="button" class="moderator-secondary-btn" id="cancelUserModalBtn" data-i18n="moderator_users.cancel">
+                    Скасувати
+                </button>
+
+                <button type="submit" class="moderator-primary-btn" data-i18n="moderator_users.save">
+                    Зберегти
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="../js/moderator-users.js"></script>
+</body>
+</html>

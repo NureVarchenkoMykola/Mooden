@@ -7,6 +7,7 @@ const authRoutes = require('./routes/authRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 const teacherRoutes = require('./routes/teacherRoutes');
 const userRoutes = require('./routes/userRoutes');
+const moderatorRoutes = require('./routes/moderatorRoutes');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/api', authRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/teacher', teacherRoutes);
+app.use('/api/moderator', moderatorRoutes);
 app.use('/api/user', userRoutes);
 
 // Статистика (винести пізніше)

@@ -1,0 +1,512 @@
+moderator-users-page {
+    width: 100%;
+}
+
+.moderator-users-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+}
+
+.moderator-users-header h1 {
+    margin: 0 0 0.5rem;
+    font-family: var(--font-heading);
+    color: var(--text-main);
+    font-size: 2.8rem;
+    line-height: 1.05;
+}
+
+.moderator-users-header p {
+    margin: 0.5rem 0 0;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 850px;
+}
+
+.moderator-page-badge {
+    display: inline-flex;
+    margin-bottom: 0.8rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(232, 164, 74, 0.14);
+    color: var(--text-gold);
+    border: 1px solid rgba(232, 164, 74, 0.25);
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.moderator-primary-btn,
+.moderator-secondary-btn {
+    border-radius: 0.85rem;
+    padding: 0.85rem 1rem;
+    font-family: inherit;
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.2s ease;
+    border: 1px solid var(--border-main);
+}
+
+.moderator-primary-btn {
+    background: rgba(232, 164, 74, 0.14);
+    border-color: var(--accent-gold);
+    color: var(--text-gold);
+}
+
+.moderator-primary-btn:hover {
+    background: rgba(232, 164, 74, 0.22);
+    transform: translateY(-1px);
+}
+
+.moderator-secondary-btn {
+    background: var(--bg-input);
+    color: var(--text-main);
+}
+
+.moderator-secondary-btn:hover {
+    border-color: var(--accent-gold);
+    color: var(--text-gold);
+}
+
+/* Статистика */
+.moderator-users-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin: 2.5rem 0;
+}
+
+.moderator-stat-card {
+    background: var(--bg-right);
+    border: 1px solid var(--border-main);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: 0.2s ease;
+}
+
+.moderator-stat-card:hover {
+    border-color: var(--accent-gold);
+    transform: translateY(-2px);
+}
+
+.moderator-stat-card > span {
+    font-size: 1.5rem;
+    background: var(--bg-input);
+    width: 3rem;
+    height: 3rem;
+    min-width: 3rem;
+    min-height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.6rem;
+}
+
+.moderator-stat-card strong {
+    display: block;
+    font-size: 1.8rem;
+    font-family: var(--font-heading);
+    color: var(--text-main);
+    line-height: 1;
+}
+
+.moderator-stat-card p {
+    margin: 0.25rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+/* Пошук і фільтри */
+.moderator-users-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 220px 220px;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.moderator-user-search,
+.moderator-user-select {
+    width: 100%;
+    border: 1px solid var(--border-main);
+    background: var(--bg-input);
+    color: var(--text-main);
+    border-radius: 0.9rem;
+    padding: 0.9rem 1rem;
+    font-family: inherit;
+    outline: none;
+}
+
+.moderator-user-search::placeholder {
+    color: var(--text-muted);
+}
+
+.moderator-user-search:focus,
+.moderator-user-select:focus {
+    border-color: var(--accent-gold);
+}
+
+/* Список користувачів */
+.moderator-users-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.moderator-user-card {
+    background: var(--bg-right);
+    border: 1px solid var(--border-main);
+    border-left: 5px solid var(--accent-gold);
+    border-radius: 1rem;
+    padding: 1.2rem;
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr) 280px;
+    gap: 1rem;
+    align-items: center;
+    transition: 0.2s ease;
+}
+
+.moderator-user-card:hover {
+    border-color: var(--accent-gold);
+    transform: translateY(-2px);
+}
+
+.moderator-user-card.role-student {
+    border-left-color: #3498db;
+}
+
+.moderator-user-card.role-teacher {
+    border-left-color: #9b59b6;
+}
+
+.moderator-user-card.role-moderator {
+    border-left-color: var(--accent-gold);
+}
+
+.moderator-user-card.is-blocked {
+    opacity: 0.72;
+    border-left-color: #e74c3c;
+}
+
+.moderator-user-card.is-active {
+    border-left-color: #2ecc71;
+}
+
+.moderator-user-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 1rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border-main);
+    color: var(--text-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.moderator-user-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+}
+
+.moderator-user-info h2 {
+    margin: 0 0 0.35rem;
+    color: var(--text-main);
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+}
+
+.moderator-user-info p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.user-status-badge {
+    display: inline-flex;
+    padding: 0.25rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 900;
+}
+
+.user-status-badge.active {
+    background: rgba(46, 204, 113, 0.14);
+    color: #2ecc71;
+}
+
+.user-status-badge.blocked {
+    background: rgba(231, 76, 60, 0.14);
+    color: #e74c3c;
+}
+
+.moderator-user-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 0.75rem;
+}
+
+.moderator-user-meta span {
+    background: var(--bg-input);
+    border: 1px solid var(--border-main);
+    border-radius: 999px;
+    padding: 0.25rem 0.6rem;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.moderator-user-actions label span {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.role-select {
+    width: 100%;
+    border: 1px solid var(--border-main);
+    background: var(--bg-input);
+    color: var(--text-main);
+    border-radius: 0.8rem;
+    padding: 0.75rem 0.8rem;
+    outline: none;
+    font-family: inherit;
+}
+
+.role-select:focus {
+    border-color: var(--accent-gold);
+}
+
+.user-action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.55rem;
+    margin-top: 0.75rem;
+}
+
+.edit-user-btn,
+.block-user-btn {
+    border: 1px solid var(--border-main);
+    background: var(--bg-input);
+    color: var(--text-main);
+    border-radius: 0.75rem;
+    padding: 0.65rem 0.75rem;
+    font-family: inherit;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.edit-user-btn:hover {
+    border-color: var(--accent-gold);
+    color: var(--text-gold);
+}
+
+.block-user-btn.block {
+    color: #e74c3c;
+    border-color: rgba(231, 76, 60, 0.35);
+    background: rgba(231, 76, 60, 0.08);
+}
+
+.block-user-btn.block:hover {
+    background: rgba(231, 76, 60, 0.14);
+}
+
+.block-user-btn.unblock {
+    color: #2ecc71;
+    border-color: rgba(46, 204, 113, 0.35);
+    background: rgba(46, 204, 113, 0.08);
+}
+
+.block-user-btn.unblock:hover {
+    background: rgba(46, 204, 113, 0.14);
+}
+
+.edit-user-btn:disabled,
+.block-user-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Empty / loading */
+.moderator-users-loading,
+.moderator-users-empty {
+    background: var(--bg-right);
+    border: 1px solid var(--border-main);
+    border-radius: 1.2rem;
+    padding: 3rem 1.5rem;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.moderator-users-loading h2,
+.moderator-users-empty h2 {
+    margin: 0 0 0.6rem;
+    color: var(--text-main);
+    font-family: var(--font-heading);
+    font-size: 1.9rem;
+}
+
+/* Modal */
+.moderator-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(5, 8, 14, 0.72);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.moderator-modal-overlay.active {
+    display: flex;
+}
+
+.moderator-modal {
+    width: min(620px, 100%);
+    background: var(--bg-right);
+    border: 1px solid var(--border-main);
+    border-radius: 1.2rem;
+    padding: 1.4rem;
+    box-shadow: 0 18px 70px rgba(0, 0, 0, 0.35);
+}
+
+.moderator-modal-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1.2rem;
+}
+
+.moderator-modal-header h2 {
+    margin: 0 0 0.35rem;
+    color: var(--text-main);
+    font-family: var(--font-heading);
+    font-size: 2rem;
+}
+
+.moderator-modal-header p {
+    margin: 0;
+    color: var(--text-muted);
+}
+
+.modal-close-btn {
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 0.7rem;
+    border: 1px solid var(--border-main);
+    background: var(--bg-input);
+    color: var(--text-main);
+    font-size: 1.4rem;
+    cursor: pointer;
+}
+
+.modal-close-btn:hover {
+    border-color: var(--accent-gold);
+    color: var(--text-gold);
+}
+
+.moderator-user-form {
+    display: grid;
+    gap: 1rem;
+}
+
+.moderator-user-form label span {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.moderator-user-form input,
+.moderator-user-form select {
+    width: 100%;
+    border: 1px solid var(--border-main);
+    background: var(--bg-input);
+    color: var(--text-main);
+    border-radius: 0.85rem;
+    padding: 0.9rem 1rem;
+    font-family: inherit;
+    outline: none;
+}
+
+.moderator-user-form input:focus,
+.moderator-user-form select:focus {
+    border-color: var(--accent-gold);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.8rem;
+    margin-top: 0.5rem;
+}
+
+.sidebar-user .user-sub {
+    color: var(--text-muted) !important;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .moderator-users-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .moderator-user-card {
+        grid-template-columns: 64px minmax(0, 1fr);
+    }
+
+    .moderator-user-actions {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 900px) {
+    .moderator-users-header {
+        flex-direction: column;
+    }
+
+    .moderator-users-controls {
+        grid-template-columns: 1fr;
+    }
+
+    .user-action-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+    }
+}
+
+@media (max-width: 760px) {
+    .moderator-users-header h1 {
+        font-size: 2.2rem;
+    }
+
+    .moderator-users-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .moderator-user-card {
+        grid-template-columns: 1fr;
+    }
+
+    .moderator-user-avatar {
+        width: 56px;
+        height: 56px;
+    }
+}

@@ -2,11 +2,12 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Mooden | Кабінет модератора</title>
+    <title>Mooden | Панель модератора</title>
     <meta name="page-role" content="moderator">
-    
-    <link rel="stylesheet" href="../css/variables.css">
-    <link rel="stylesheet" href="../css/global.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 
     <script src="../js/config.js"></script>
     <script src="../js/translations.js"></script>
@@ -14,25 +15,248 @@
     <script src="../js/theme-manager.js"></script>
     <script src="../js/toast.js"></script>
     <script src="../js/auth-guard.js"></script>
-</head>
-<body>
-    <div class="container">
-        <header style="display: flex; justify-content: space-between; padding: 20px 0; align-items: center;">
-            <div class="logo">Mooden <span class="text-gold">Moderator</span></div>
-            <button id="logoutBtn" class="btn-secondary">Вийти</button>
-        </header>
+    <script src="../js/sidebar-manager.js"></script>
 
-        <main class="dashboard-content">
-            <span class="badge" style="background: var(--gold-dark); color: white;">МОДЕРАТОР</span>
-            <h1>Панель <span class="text-gold">керування</span></h1>
-            
-            <div class="card" style="margin-top: 30px; padding: 20px; border: 1px solid var(--border-color); border-radius: 12px;">
-                <h3>Статус системи: <span id="userStatus" class="text-gold">...</span></h3>
-                <p>Тут ви зможете керувати системою.</p>
-            </div>
-        </main>
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/student-dashboard.css">
+    <link rel="stylesheet" href="../css/moderator-dashboard.css">
+</head>
+
+<body class="dashboard-layout container">
+
+<aside class="sidebar">
+    <div class="sidebar-top">
+        <div class="logo">Mooden</div>
+
+        <nav class="nav-menu">
+            <p class="nav-label" data-i18n="common.nav_label_main">НАВІГАЦІЯ</p>
+
+            <a href="./moderator-dashboard.html" class="nav-link active">
+                <span data-i18n="moderator_nav.dashboard">🛡️ Панель</span>
+            </a>
+
+            <a href="./moderator-users.html" class="nav-link">
+                <span data-i18n="moderator_nav.users">👥 Користувачі</span>
+            </a>
+
+            <a href="./moderator-courses.html" class="nav-link">
+                <span data-i18n="moderator_nav.courses">📚 Курси</span>
+            </a>
+
+            <a href="./moderator-activity.html" class="nav-link">
+                <span data-i18n="moderator_nav.activity">📌 Активність</span>
+            </a>
+        </nav>
+
+        <nav class="nav-menu">
+            <p class="nav-label" data-i18n="common.nav_label_community">СПІЛЬНОТА</p>
+
+            <a href="./announcements.html" class="nav-link">
+                <span data-i18n="common.nav_announcements">📢 Оголошення</span>
+                <span class="badge-count" id="announcementsBadge">0</span>
+            </a>
+
+            <a href="./notifications.html" class="nav-link">
+                <span data-i18n="common.nav_notifications">🔔 Сповіщення</span>
+                <span class="badge-count" id="notifBadge">0</span>
+            </a>
+        </nav>
     </div>
 
-    <script src="../js/teacher-dashboard.js"></script>
+    <div class="sidebar-user">
+        <a href="./moderator-profile.html" class="user-card user-card-link" id="profileBottomLink">
+            <div class="user-avatar" id="avatarInitial">?</div>
+
+            <div class="user-meta">
+                <p class="user-name" id="profileName">...</p>
+                <p class="user-sub" id="profileGroup" data-i18n="dashboard.user_loading">Завантаження...</p>
+            </div>
+        </a>
+
+        <div class="theme-switch-container">
+            <button id="themeToggle" class="theme-toggle-btn">
+                <span class="theme-icon">🌙</span>
+                <span class="theme-text" data-i18n="common.theme_dark">Темна тема</span>
+            </button>
+        </div>
+
+        <div class="lang-switch-container">
+            <div class="lang-slider">
+                <input type="radio" name="lang" id="lang-uk" value="uk">
+                <label for="lang-uk">UA</label>
+
+                <input type="radio" name="lang" id="lang-en" value="en">
+                <label for="lang-en">EN</label>
+
+                <div class="slider-bg"></div>
+            </div>
+        </div>
+
+        <button id="logoutBtn" class="logout-btn" data-i18n="common.logout_btn">
+            🚪 Вийти з акаунту
+        </button>
+    </div>
+</aside>
+
+<main class="main-content">
+    <div class="mobile-header">
+        <button id="menuToggle" class="menu-btn">☰</button>
+        <div class="logo-mobile">Mooden</div>
+    </div>
+
+    <section class="moderator-dashboard-page">
+        <header class="page-header">
+            <div>
+                <span class="moderator-badge" data-i18n="moderator_dashboard.badge">MODERATOR</span>
+
+                <h1 data-i18n="moderator_dashboard.title">Панель модератора</h1>
+
+                <p class="header-desc" data-i18n="moderator_dashboard.desc">
+                    Загальний огляд стану освітньої платформи Mooden: користувачі, курси,
+                    завдання, активність і системні події.
+                </p>
+            </div>
+        </header>
+
+        <section class="stats-row moderator-stats-row">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div>
+                    <div class="stat-value" id="totalUsers">0</div>
+                    <div class="stat-label" data-i18n="moderator_dashboard.stat_users">Користувачів</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div>
+                    <div class="stat-value" id="totalCourses">0</div>
+                    <div class="stat-label" data-i18n="moderator_dashboard.stat_courses">Курсів</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📝</div>
+                <div>
+                    <div class="stat-value" id="totalTasks">0</div>
+                    <div class="stat-label" data-i18n="moderator_dashboard.stat_tasks">Завдань</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📤</div>
+                <div>
+                    <div class="stat-value" id="totalSubmissions">0</div>
+                    <div class="stat-label" data-i18n="moderator_dashboard.stat_submissions">Зданих робіт</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="moderator-extra-stats">
+            <div class="mini-stat-card">
+                <span>🎓</span>
+                <div>
+                    <strong id="totalStudents">0</strong>
+                    <p data-i18n="moderator_dashboard.stat_students">Студентів</p>
+                </div>
+            </div>
+
+            <div class="mini-stat-card">
+                <span>👨‍🏫</span>
+                <div>
+                    <strong id="totalTeachers">0</strong>
+                    <p data-i18n="moderator_dashboard.stat_teachers">Викладачів</p>
+                </div>
+            </div>
+
+            <div class="mini-stat-card">
+                <span>📢</span>
+                <div>
+                    <strong id="totalAnnouncements">0</strong>
+                    <p data-i18n="moderator_dashboard.stat_announcements">Оголошень</p>
+                </div>
+            </div>
+
+            <div class="mini-stat-card">
+                <span>✅</span>
+                <div>
+                    <strong id="openAttendance">0</strong>
+                    <p data-i18n="moderator_dashboard.stat_attendance">Відкритих відміток</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="dashboard-card moderator-actions-card">
+            <div class="card-header">
+                <h2 data-i18n="moderator_dashboard.quick_actions">Швидкі дії</h2>
+            </div>
+
+            <div class="moderator-actions-grid">
+                <a href="./moderator-users.html" class="moderator-action">
+                    <span>👥</span>
+                    <div>
+                        <h3 data-i18n="moderator_dashboard.users_title">Користувачі</h3>
+                        <p data-i18n="moderator_dashboard.users_text">Перегляд користувачів і зміна ролей.</p>
+                    </div>
+                </a>
+
+                <a href="./moderator-courses.html" class="moderator-action">
+                    <span>📚</span>
+                    <div>
+                        <h3 data-i18n="moderator_dashboard.courses_title">Курси</h3>
+                        <p data-i18n="moderator_dashboard.courses_text">Перегляд курсів, студентів і завдань.</p>
+                    </div>
+                </a>
+
+                <a href="./moderator-activity.html" class="moderator-action">
+                    <span>📌</span>
+                    <div>
+                        <h3 data-i18n="moderator_dashboard.activity_title">Активність</h3>
+                        <p data-i18n="moderator_dashboard.activity_text">Останні дії користувачів у системі.</p>
+                    </div>
+                </a>
+
+                <a href="./announcements.html" class="moderator-action">
+                    <span>📢</span>
+                    <div>
+                        <h3 data-i18n="moderator_dashboard.announcements_title">Оголошення</h3>
+                        <p data-i18n="moderator_dashboard.announcements_text">Перегляд доступних оголошень платформи.</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <section class="content-grid moderator-content-grid">
+            <div>
+                <section class="dashboard-card">
+                    <div class="card-header">
+                        <h2 data-i18n="moderator_dashboard.recent_activity">Остання активність</h2>
+                        <a href="./moderator-activity.html" class="link-more" data-i18n="moderator_dashboard.view_all">Переглянути всі</a>
+                    </div>
+
+                    <div id="moderatorActivityList" class="list-container">
+                        <p class="empty-msg" data-i18n="moderator_dashboard.loading">Завантаження...</p>
+                    </div>
+                </section>
+            </div>
+
+            <div>
+                <section class="dashboard-card">
+                    <div class="card-header">
+                        <h3 data-i18n="moderator_dashboard.recent_announcements">Останні оголошення</h3>
+                        <a href="./announcements.html" class="link-more" data-i18n="moderator_dashboard.all">Усі</a>
+                    </div>
+
+                    <div id="moderatorAnnouncementsList" class="list-container">
+                        <p class="empty-msg" data-i18n="moderator_dashboard.loading">Завантаження...</p>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </section>
+</main>
+
+<script src="../js/moderator-dashboard.js"></script>
 </body>
 </html>

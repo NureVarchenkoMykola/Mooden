@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Mooden | Активність</title>
+    <meta name="page-role" content="moderator">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <script src="../js/config.js"></script>
+    <script src="../js/translations.js"></script>
+    <script src="../js/i18n-manager.js"></script>
+    <script src="../js/theme-manager.js"></script>
+    <script src="../js/toast.js"></script>
+    <script src="../js/auth-guard.js"></script>
+    <script src="../js/sidebar-manager.js"></script>
+
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/student-dashboard.css">
+    <link rel="stylesheet" href="../css/moderator-activity.css">
+</head>
+
+<body class="dashboard-layout container">
+
+<aside class="sidebar">
+    <div class="sidebar-top">
+        <div class="logo">Mooden</div>
+
+        <nav class="nav-menu">
+            <p class="nav-label" data-i18n="common.nav_label_main">НАВІГАЦІЯ</p>
+
+            <a href="./moderator-dashboard.html" class="nav-link">
+                <span data-i18n="moderator_nav.dashboard">🛡️ Панель</span>
+            </a>
+
+            <a href="./moderator-users.html" class="nav-link">
+                <span data-i18n="moderator_nav.users">👥 Користувачі</span>
+            </a>
+
+            <a href="./moderator-courses.html" class="nav-link">
+                <span data-i18n="moderator_nav.courses">📚 Курси</span>
+            </a>
+
+            <a href="./moderator-activity.html" class="nav-link active">
+                <span data-i18n="moderator_nav.activity">📌 Активність</span>
+            </a>
+        </nav>
+
+        <nav class="nav-menu">
+            <p class="nav-label" data-i18n="common.nav_label_community">СПІЛЬНОТА</p>
+
+            <a href="./announcements.html" class="nav-link">
+                <span data-i18n="common.nav_announcements">📢 Оголошення</span>
+                <span class="badge-count" id="announcementsBadge">0</span>
+            </a>
+
+            <a href="./notifications.html" class="nav-link">
+                <span data-i18n="common.nav_notifications">🔔 Сповіщення</span>
+                <span class="badge-count" id="notifBadge">0</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="sidebar-user">
+        <a href="./moderator-profile.html" class="user-card user-card-link" id="profileBottomLink">
+            <div class="user-avatar" id="avatarInitial">?</div>
+
+            <div class="user-meta">
+                <p class="user-name" id="profileName">...</p>
+                <p class="user-sub" id="profileGroup" data-i18n="dashboard.user_loading">Завантаження...</p>
+            </div>
+        </a>
+
+        <div class="theme-switch-container">
+            <button id="themeToggle" class="theme-toggle-btn">
+                <span class="theme-icon">🌙</span>
+                <span class="theme-text" data-i18n="common.theme_dark">Темна тема</span>
+            </button>
+        </div>
+
+        <div class="lang-switch-container">
+            <div class="lang-slider">
+                <input type="radio" name="lang" id="lang-uk" value="uk">
+                <label for="lang-uk">UA</label>
+
+                <input type="radio" name="lang" id="lang-en" value="en">
+                <label for="lang-en">EN</label>
+
+                <div class="slider-bg"></div>
+            </div>
+        </div>
+
+        <button id="logoutBtn" class="logout-btn" data-i18n="common.logout_btn">
+            🚪 Вийти з акаунту
+        </button>
+    </div>
+</aside>
+
+<main class="main-content">
+    <div class="mobile-header">
+        <button id="menuToggle" class="menu-btn">☰</button>
+        <div class="logo-mobile">Mooden</div>
+    </div>
+
+    <section class="moderator-activity-page">
+        <header class="moderator-activity-header">
+            <div>
+                <span class="moderator-page-badge" data-i18n="moderator_activity.badge">MODERATOR</span>
+
+                <h1 data-i18n="moderator_activity.title">Активність</h1>
+
+                <p data-i18n="moderator_activity.desc">
+                    На цій сторінці модератор може переглядати останні дії користувачів
+                    у системі: здачу робіт, оголошення, події курсів та інші зміни.
+                </p>
+            </div>
+
+            <button id="refreshActivityBtn" class="moderator-primary-btn" type="button" data-i18n="moderator_activity.refresh">
+                Оновити
+            </button>
+        </header>
+
+        <section class="moderator-activity-stats">
+            <div class="moderator-stat-card">
+                <span>📌</span>
+                <div>
+                    <strong id="totalActivity">0</strong>
+                    <p data-i18n="moderator_activity.stat_total">Усього подій</p>
+                </div>
+            </div>
+
+            <div class="moderator-stat-card">
+                <span>📤</span>
+                <div>
+                    <strong id="submissionsCount">0</strong>
+                    <p data-i18n="moderator_activity.stat_submissions">Здані роботи</p>
+                </div>
+            </div>
+
+            <div class="moderator-stat-card">
+                <span>📢</span>
+                <div>
+                    <strong id="announcementsCount">0</strong>
+                    <p data-i18n="moderator_activity.stat_announcements">Оголошення</p>
+                </div>
+            </div>
+
+            <div class="moderator-stat-card">
+                <span>✅</span>
+                <div>
+                    <strong id="attendanceCount">0</strong>
+                    <p data-i18n="moderator_activity.stat_attendance">Відвідуваність</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="moderator-activity-controls">
+            <input
+                id="activitySearch"
+                class="moderator-activity-search"
+                type="text"
+                placeholder="Пошук за студентом, курсом або назвою..."
+                data-i18n-placeholder="moderator_activity.search_placeholder"
+            >
+
+            <select id="activityTypeFilter" class="moderator-activity-select">
+                <option value="all" data-i18n="moderator_activity.filter_all">Усі типи</option>
+                <option value="submission" data-i18n="moderator_activity.filter_submission">Здані роботи</option>
+                <option value="announcement" data-i18n="moderator_activity.filter_announcement">Оголошення</option>
+                <option value="attendance" data-i18n="moderator_activity.filter_attendance">Відвідуваність</option>
+                <option value="notification" data-i18n="moderator_activity.filter_notification">Сповіщення</option>
+                <option value="system" data-i18n="moderator_activity.filter_system">Системні події</option>
+            </select>
+
+            <select id="activitySort" class="moderator-activity-select">
+                <option value="newest" data-i18n="moderator_activity.sort_newest">Спочатку нові</option>
+                <option value="oldest" data-i18n="moderator_activity.sort_oldest">Спочатку старі</option>
+            </select>
+        </section>
+
+        <section id="activityList" class="moderator-activity-list">
+            <div class="moderator-activity-loading">
+                <h2 data-i18n="moderator_activity.loading_title">Завантаження...</h2>
+                <p data-i18n="moderator_activity.loading_text">Отримуємо активність системи.</p>
+            </div>
+        </section>
+    </section>
+</main>
+
+<script src="../js/moderator-activity.js"></script>
+</body>
+</html>

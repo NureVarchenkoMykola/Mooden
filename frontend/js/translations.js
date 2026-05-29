@@ -635,6 +635,317 @@ const translations = {
             mark_all: "Позначити всі як прочитані",
             empty: "Оголошень поки немає"
         },
+        moderator_nav: {
+             dashboard: "🛡️ Панель",
+            users: "👥 Користувачі",
+            courses: "📚 Курси",
+            activity: "📌 Активність"
+        },
+        moderator_dashboard: {
+            badge: "MODERATOR",
+            title: "Панель модератора",
+            desc: "Загальний огляд стану освітньої платформи Mooden: користувачі, курси, завдання, активність і системні події.",
+
+            stat_users: "Користувачів",
+            stat_courses: "Курсів",
+            stat_tasks: "Завдань",
+            stat_submissions: "Зданих робіт",
+
+            stat_students: "Студентів",
+            stat_teachers: "Викладачів",
+            stat_announcements: "Оголошень",
+            stat_attendance: "Відкритих відміток",
+
+            quick_actions: "Швидкі дії",
+
+            users_title: "Користувачі",
+            users_text: "Перегляд користувачів і зміна ролей.",
+
+            courses_title: "Курси",
+            courses_text: "Перегляд курсів, студентів і завдань.",
+
+            activity_title: "Активність",
+            activity_text: "Останні дії користувачів у системі.",
+
+            announcements_title: "Оголошення",
+            announcements_text: "Перегляд доступних оголошень платформи.",
+
+            recent_activity: "Остання активність",
+            recent_announcements: "Останні оголошення",
+
+            view_all: "Переглянути всі",
+            all: "Усі",
+
+            loading: "Завантаження...",
+
+            no_activity: "Активності поки немає.",
+            no_announcements: "Оголошень поки немає.",
+
+            submission_default: "Здана робота",
+            student_default: "Студент",
+            course_default: "Курс",
+
+            general: "Загальне",
+            announcement_default: "Оголошення без назви",
+            author: "Автор",
+
+            activity_error: "Не вдалося завантажити активність.",
+            announcements_error: "Не вдалося завантажити оголошення.",
+            load_error: "Не вдалося завантажити панель модератора."
+        },
+
+        moderator_users: {
+            badge: "MODERATOR",
+            title: "Користувачі",
+            desc: "На цій сторінці модератор може переглядати користувачів системи, фільтрувати їх за ролями, редагувати дані, змінювати роль, блокувати або розблоковувати облікові записи.",
+
+            add_user: "+ Додати користувача",
+
+            stat_total: "Усього",
+            stat_students: "Студентів",
+            stat_teachers: "Викладачів",
+            stat_blocked: "Заблоковано",
+
+            search_placeholder: "Пошук за ім’ям або email...",
+
+            all_roles: "Усі ролі",
+            students: "Студенти",
+            teachers: "Викладачі",
+            moderators: "Модератори",
+
+            all_statuses: "Усі статуси",
+            active_users: "Активні",
+            blocked_users: "Заблоковані",
+
+            loading_title: "Завантаження...",
+            loading_text: "Отримуємо список користувачів.",
+
+            empty_title: "Користувачів не знайдено",
+            empty_text: "Спробуйте змінити фільтр або пошуковий запит.",
+
+            no_access_title: "Немає доступу",
+            no_access_text: "Потрібно авторизуватися.",
+
+            load_error_title: "Не вдалося завантажити користувачів",
+            load_error_text: "Перевірте backend або права доступу модератора.",
+
+            role: "Роль",
+
+            role_student: "Студент",
+            role_teacher: "Викладач",
+            role_moderator: "Модератор",
+
+            active: "Активний",
+            blocked: "Заблоковано",
+
+            unknown_user: "Невідомий користувач",
+            no_email: "Email не вказано",
+
+            edit: "Редагувати",
+            ban: "Забанити",
+            unban: "Розбанити",
+
+            confirm_ban: "Забанити цього користувача?",
+            confirm_unban: "Розбанити цього користувача?",
+
+            role_updated: "Роль користувача оновлено.",
+            role_update_error: "Backend ще не підтримує зміну ролі або сталася помилка.",
+
+            ban_success: "Користувача заблоковано.",
+            unban_success: "Користувача розблоковано.",
+            ban_error: "Backend ще не підтримує бан/розбан або сталася помилка.",
+
+            add_modal_title: "Додати користувача",
+            add_modal_desc: "Заповніть дані нового користувача.",
+
+            edit_modal_title: "Редагувати користувача",
+            edit_modal_desc: "Оновіть основні дані облікового запису.",
+
+            full_name: "ПІБ",
+            full_name_placeholder: "Наприклад, Іваненко Іван Іванович",
+
+            lang: "Мова",
+
+            password: "Пароль",
+            password_placeholder: "Пароль для нового користувача",
+
+            cancel: "Скасувати",
+            save: "Зберегти",
+
+            create_success: "Користувача створено.",
+            update_success: "Дані користувача оновлено.",
+            save_error: "Backend ще не підтримує створення/редагування користувачів або сталася помилка."
+        },
+
+        moderator_courses: {
+            badge: "MODERATOR",
+            title: "Курси",
+            desc: "На цій сторінці модератор може переглядати курси платформи, редагувати їхні основні дані, зараховувати студентів і призначати викладачів.",
+
+            stat_courses: "Курсів",
+            stat_students: "Зарахувань студентів",
+            stat_teachers: "Призначень викладачів",
+            stat_tasks: "Завдань",
+
+            search_placeholder: "Пошук курсу...",
+            sort_title: "За назвою",
+            sort_students: "За кількістю студентів",
+            sort_teachers: "За кількістю викладачів",
+            sort_tasks: "За кількістю завдань",
+
+            loading_title: "Завантаження...",
+            loading_text: "Отримуємо список курсів.",
+            empty_title: "Курсів не знайдено",
+            empty_text: "Спробуйте змінити пошук або сортування.",
+            no_access_title: "Немає доступу",
+            no_access_text: "Потрібно авторизуватися.",
+            load_error_title: "Не вдалося завантажити курси",
+            load_error_text: "Перевірте backend або права доступу модератора.",
+
+            active: "Активний",
+            hidden: "Прихований",
+            no_description: "Опис курсу не вказано.",
+
+            students: "студентів",
+            teachers: "викладачів",
+            tasks: "завдань",
+
+            edit: "Редагувати",
+            members: "Учасники",
+
+            edit_modal_title: "Редагувати курс",
+            edit_modal_desc: "Оновіть основну інформацію про курс.",
+            title_uk: "Назва українською",
+            title_en: "Назва англійською",
+            desc_uk: "Опис українською",
+            desc_en: "Опис англійською",
+            course_color: "Колір курсу",
+            cancel: "Скасувати",
+            save: "Зберегти",
+
+            members_title: "Учасники курсу",
+            members_desc: "Керуйте студентами та викладачами, пов’язаними з курсом.",
+            course_students: "Студенти курсу",
+            course_teachers: "Викладачі курсу",
+            add_student: "Зарахувати",
+            add_teacher: "Призначити",
+            remove_student: "Відрахувати",
+            remove_teacher: "Прибрати",
+
+            students_empty: "Студентів ще не зараховано.",
+            teachers_empty: "Викладачів ще не призначено.",
+            no_available_students: "Немає доступних студентів",
+            no_available_teachers: "Немає доступних викладачів",
+
+            update_success: "Курс оновлено.",
+            update_error: "Backend ще не підтримує редагування курсів або сталася помилка.",
+            members_error: "Backend ще не підтримує перегляд учасників курсу.",
+
+            choose_student: "Оберіть студента.",
+            choose_teacher: "Оберіть викладача.",
+            confirm_remove_student: "Відрахувати студента з курсу?",
+            confirm_remove_teacher: "Прибрати викладача з курсу?",
+
+            add_student_success: "Студента зараховано на курс.",
+            remove_student_success: "Студента відраховано з курсу.",
+            add_teacher_success: "Викладача призначено на курс.",
+            remove_teacher_success: "Викладача прибрано з курсу.",
+
+            add_student_error: "Backend ще не підтримує зарахування студентів або сталася помилка.",
+            remove_student_error: "Backend ще не підтримує відрахування студентів або сталася помилка.",
+            add_teacher_error: "Backend ще не підтримує призначення викладачів або сталася помилка.",
+            remove_teacher_error: "Backend ще не підтримує видалення викладачів або сталася помилка."
+        },
+
+        moderator_activity: {
+            badge: "MODERATOR",
+            title: "Активність",
+            desc: "На цій сторінці модератор може переглядати останні дії користувачів у системі: здачу робіт, оголошення, події курсів та інші зміни.",
+            refresh: "Оновити",
+
+            stat_total: "Усього подій",
+            stat_submissions: "Здані роботи",
+            stat_announcements: "Оголошення",
+            stat_attendance: "Відвідуваність",
+
+            search_placeholder: "Пошук за студентом, курсом або назвою...",
+            filter_all: "Усі типи",
+            filter_submissions: "Здані роботи",
+            filter_announcements: "Оголошення",
+            filter_attendance: "Відвідуваність",
+            filter_notifications: "Сповіщення",
+            filter_system: "Системні події",
+
+            sort_newest: "Спочатку нові",
+            sort_oldest: "Спочатку старі",
+
+            loading_title: "Завантаження...",
+            loading_text: "Отримуємо активність системи.",
+            empty_title: "Активності не знайдено",
+            empty_text: "Спробуйте змінити пошук або фільтр.",
+            no_access_title: "Немає доступу",
+            no_access_text: "Потрібно авторизуватися як модератор.",
+            load_error_title: "Не вдалося завантажити активність",
+            load_error_text: "Перевірте backend або права доступу модератора.",
+
+            type_submission: "Здана робота",
+            type_announcement: "Оголошення",
+            type_attendance: "Відвідуваність",
+            type_notification: "Сповіщення",
+            type_system: "Системна подія",
+            type_default: "Активність",
+
+            default_title: "Подія без назви",
+            submitted_work: "Здана робота",
+            student: "Студент",
+            course: "Курс",
+
+            desc_submission: "Здано роботу",
+            desc_announcement: "Створено або опубліковано оголошення",
+            desc_attendance: "Змінено стан відмітки відвідуваності.",
+            desc_notification: "Створено системне сповіщення.",
+            desc_default: "Зафіксовано подію в системі.",
+
+            refreshed: "Активність оновлено.",
+            load_error: "Не вдалося завантажити активність."
+        },
+        moderator_profile: {
+            role_badge: "Профіль модератора",
+            sub_info: "Модератор системи",
+            role_tag: "🛡️ moderator",
+
+            stat_users: "Користувачів",
+            stat_courses: "Курсів",
+            stat_announcements: "Оголошень",
+            stat_attendance: "Відкритих відміток",
+
+            info_title: "Особиста інформація",
+            full_name: "ПІБ",
+            role: "Роль",
+            role_value: "Модератор",
+            lang: "Мова інтерфейсу",
+
+            permissions_title: "Зона відповідальності",
+            permission_users_title: "Користувачі",
+            permission_users_text: "Перегляд користувачів, редагування даних, зміна ролей, блокування та розблокування облікових записів.",
+            permission_courses_title: "Курси",
+            permission_courses_text: "Перегляд курсів, редагування інформації, зарахування студентів і призначення викладачів.",
+            permission_activity_title: "Активність",
+            permission_activity_text: "Перегляд системних подій, зданих робіт, оголошень та інших змін у платформі.",
+            permission_communication_title: "Комунікація",
+            permission_communication_text: "Перегляд оголошень і сповіщень, пов’язаних з роботою освітньої платформи.",
+
+            edit_title: "✏️ Редагування профілю",
+            btn_update_profile: "Оновити профіль",
+
+            fallback_name: "Модератор",
+            no_email: "Email не вказано",
+            validation_error: "Заповніть ПІБ та email.",
+            update_success: "Профіль оновлено.",
+            update_error: "Не вдалося оновити профіль модератора.",
+            unavailable_title: "Профіль недоступний",
+            unavailable_text: "Не вдалося завантажити профіль модератора."
+        },
         errors: {
             INVALID_CREDENTIALS: "Невірний email або пароль.",
             SERVER_ERROR: "Помилка сервера. Спробуйте пізніше.",
@@ -1305,6 +1616,318 @@ const translations = {
             mark_all: "Mark all as read",
             empty: "No announcements yet"
         },
+        moderator_nav: {
+            dashboard: "🛡️ Panel",
+            users: "👥 Users",
+            courses: "📚 Courses",
+            activity: "📌 Activity"
+        },
+        moderator_dashboard: {
+            badge: "MODERATOR",
+            title: "Moderator panel",
+            desc: "General overview of the Mooden educational platform: users, courses, tasks, activity and system events.",
+
+            stat_users: "Users",
+            stat_courses: "Courses",
+            stat_tasks: "Tasks",
+            stat_submissions: "Submissions",
+
+            stat_students: "Students",
+            stat_teachers: "Teachers",
+            stat_announcements: "Announcements",
+            stat_attendance: "Open attendance marks",
+
+            quick_actions: "Quick actions",
+
+            users_title: "Users",
+            users_text: "View users and change roles.",
+
+            courses_title: "Courses",
+            courses_text: "View courses, students and tasks.",
+
+            activity_title: "Activity",
+            activity_text: "Recent user actions in the system.",
+
+            announcements_title: "Announcements",
+            announcements_text: "View available platform announcements.",
+
+            recent_activity: "Recent activity",
+            recent_announcements: "Recent announcements",
+
+            view_all: "View all",
+            all: "All",
+
+            loading: "Loading...",
+
+            no_activity: "No activity yet.",
+            no_announcements: "No announcements yet.",
+
+            submission_default: "Submission",
+            student_default: "Student",
+            course_default: "Course",
+
+            general: "General",
+            announcement_default: "Untitled announcement",
+            author: "Author",
+
+            activity_error: "Failed to load activity.",
+            announcements_error: "Failed to load announcements.",
+            load_error: "Failed to load moderator panel."
+        },
+
+        moderator_users: {
+            badge: "MODERATOR",
+            title: "Users",
+            desc: "On this page, the moderator can view system users, filter them by roles, edit data, change roles, block or unblock accounts.",
+
+            add_user: "+ Add user",
+
+            stat_total: "Total",
+            stat_students: "Students",
+            stat_teachers: "Teachers",
+            stat_blocked: "Blocked",
+
+            search_placeholder: "Search by name or email...",
+
+            all_roles: "All roles",
+            students: "Students",
+            teachers: "Teachers",
+            moderators: "Moderators",
+
+            all_statuses: "All statuses",
+            active_users: "Active",
+            blocked_users: "Blocked",
+
+            loading_title: "Loading...",
+            loading_text: "Fetching the user list.",
+
+            empty_title: "No users found",
+            empty_text: "Try changing the filter or search query.",
+
+            no_access_title: "No access",
+            no_access_text: "You need to sign in.",
+
+            load_error_title: "Failed to load users",
+            load_error_text: "Check backend or moderator access rights.",
+
+            role: "Role",
+
+            role_student: "Student",
+            role_teacher: "Teacher",
+            role_moderator: "Moderator",
+
+            active: "Active",
+            blocked: "Blocked",
+
+            unknown_user: "Unknown user",
+            no_email: "Email is not specified",
+
+            edit: "Edit",
+            ban: "Ban",
+            unban: "Unban",
+
+            confirm_ban: "Ban this user?",
+            confirm_unban: "Unban this user?",
+
+            role_updated: "User role updated.",
+            role_update_error: "Backend does not support role changes yet or an error occurred.",
+
+            ban_success: "User has been blocked.",
+            unban_success: "User has been unblocked.",
+            ban_error: "Backend does not support ban/unban yet or an error occurred.",
+
+            add_modal_title: "Add user",
+            add_modal_desc: "Fill in the new user data.",
+
+            edit_modal_title: "Edit user",
+            edit_modal_desc: "Update the main account data.",
+
+            full_name: "Full name",
+            full_name_placeholder: "For example, John Smith",
+
+            lang: "Language",
+
+            password: "Password",
+            password_placeholder: "Password for the new user",
+
+            cancel: "Cancel",
+            save: "Save",
+
+            create_success: "User created.",
+            update_success: "User data updated.",
+            save_error: "Backend does not support creating/editing users yet or an error occurred."
+        },
+
+        moderator_courses: {
+            badge: "MODERATOR",
+            title: "Courses",
+            desc: "On this page, the moderator can view platform courses, edit their main data, enroll students and assign teachers.",
+
+            stat_courses: "Courses",
+            stat_students: "Student enrollments",
+            stat_teachers: "Teacher assignments",
+            stat_tasks: "Tasks",
+
+            search_placeholder: "Search course...",
+            sort_title: "By title",
+            sort_students: "By students count",
+            sort_teachers: "By teachers count",
+            sort_tasks: "By tasks count",
+
+            loading_title: "Loading...",
+            loading_text: "Fetching the course list.",
+            empty_title: "No courses found",
+            empty_text: "Try changing search or sorting.",
+            no_access_title: "No access",
+            no_access_text: "You need to sign in.",
+            load_error_title: "Failed to load courses",
+            load_error_text: "Check backend or moderator access rights.",
+
+            active: "Active",
+            hidden: "Hidden",
+            no_description: "Course description is not specified.",
+
+            students: "students",
+            teachers: "teachers",
+            tasks: "tasks",
+
+            edit: "Edit",
+            members: "Members",
+
+            edit_modal_title: "Edit course",
+            edit_modal_desc: "Update the main course information.",
+            title_uk: "Ukrainian title",
+            title_en: "English title",
+            desc_uk: "Ukrainian description",
+            desc_en: "English description",
+            course_color: "Course color",
+            cancel: "Cancel",
+            save: "Save",
+
+            members_title: "Course members",
+            members_desc: "Manage students and teachers related to the course.",
+            course_students: "Course students",
+            course_teachers: "Course teachers",
+            add_student: "Enroll",
+            add_teacher: "Assign",
+            remove_student: "Remove",
+            remove_teacher: "Remove",
+
+            students_empty: "No students have been enrolled yet.",
+            teachers_empty: "No teachers have been assigned yet.",
+            no_available_students: "No available students",
+            no_available_teachers: "No available teachers",
+
+            update_success: "Course updated.",
+            update_error: "Backend does not support course editing yet or an error occurred.",
+            members_error: "Backend does not support viewing course members yet.",
+
+            choose_student: "Choose a student.",
+            choose_teacher: "Choose a teacher.",
+            confirm_remove_student: "Remove this student from the course?",
+            confirm_remove_teacher: "Remove this teacher from the course?",
+
+            add_student_success: "Student enrolled in the course.",
+            remove_student_success: "Student removed from the course.",
+            add_teacher_success: "Teacher assigned to the course.",
+            remove_teacher_success: "Teacher removed from the course.",
+
+            add_student_error: "Backend does not support enrolling students yet or an error occurred.",
+            remove_student_error: "Backend does not support removing students yet or an error occurred.",
+            add_teacher_error: "Backend does not support assigning teachers yet or an error occurred.",
+            remove_teacher_error: "Backend does not support removing teachers yet or an error occurred."
+        },
+
+        moderator_activity: {
+            badge: "MODERATOR",
+            title: "Activity",
+            desc: "On this page, the moderator can view recent user actions in the system: submissions, announcements, course events and other changes.",
+            refresh: "Refresh",
+
+            stat_total: "Total events",
+            stat_submissions: "Submissions",
+            stat_announcements: "Announcements",
+            stat_attendance: "Attendance",
+
+            search_placeholder: "Search by student, course or title...",
+            filter_all: "All types",
+            filter_submissions: "Submissions",
+            filter_announcements: "Announcements",
+            filter_attendance: "Attendance",
+            filter_notifications: "Notifications",
+            filter_system: "System events",
+
+            sort_newest: "Newest first",
+            sort_oldest: "Oldest first",
+
+            loading_title: "Loading...",
+            loading_text: "Fetching system activity.",
+            empty_title: "No activity found",
+            empty_text: "Try changing search or filter.",
+            no_access_title: "No access",
+            no_access_text: "You need to sign in as moderator.",
+            load_error_title: "Failed to load activity",
+            load_error_text: "Check backend or moderator access rights.",
+
+            type_submission: "Submission",
+            type_announcement: "Announcement",
+            type_attendance: "Attendance",
+            type_notification: "Notification",
+            type_system: "System event",
+            type_default: "Activity",
+
+            default_title: "Untitled event",
+            submitted_work: "Submission",
+            student: "Student",
+            course: "Course",
+
+            desc_submission: "Submitted work",
+            desc_announcement: "Announcement was created or published",
+            desc_attendance: "Attendance mark status was changed.",
+            desc_notification: "System notification was created.",
+            desc_default: "System event was recorded.",
+
+            refreshed: "Activity refreshed.",
+            load_error: "Failed to load activity."
+        },
+        moderator_profile: {
+            role_badge: "Moderator profile",
+            sub_info: "System moderator",
+            role_tag: "🛡️ moderator",
+
+            stat_users: "Users",
+            stat_courses: "Courses",
+            stat_announcements: "Announcements",
+            stat_attendance: "Open attendance marks",
+
+            info_title: "Personal information",
+            full_name: "Full name",
+            role: "Role",
+            role_value: "Moderator",
+            lang: "Interface language",
+
+            permissions_title: "Area of responsibility",
+            permission_users_title: "Users",
+            permission_users_text: "View users, edit data, change roles, block and unblock accounts.",
+            permission_courses_title: "Courses",
+            permission_courses_text: "View courses, edit information, enroll students and assign teachers.",
+            permission_activity_title: "Activity",
+            permission_activity_text: "View system events, submitted works, announcements and other platform changes.",
+            permission_communication_title: "Communication",
+            permission_communication_text: "View announcements and notifications related to the educational platform.",
+
+            edit_title: "✏️ Profile editing",
+            btn_update_profile: "Update profile",
+
+            fallback_name: "Moderator",
+            no_email: "Email is not specified",
+            validation_error: "Fill in full name and email.",
+            update_success: "Profile updated.",
+            update_error: "Failed to update moderator profile.",
+            unavailable_title: "Profile is unavailable",
+            unavailable_text: "Failed to load moderator profile."
+        },
+
         errors: {
             INVALID_CREDENTIALS: "Invalid email or password.",
             SERVER_ERROR: "Server error. Try again later.",

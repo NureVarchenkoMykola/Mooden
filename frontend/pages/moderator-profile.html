@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Mooden | Профіль модератора</title>
+    <meta name="page-role" content="moderator">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <script src="../js/config.js"></script>
+    <script src="../js/translations.js"></script>
+    <script src="../js/i18n-manager.js"></script>
+    <script src="../js/theme-manager.js"></script>
+    <script src="../js/toast.js"></script>
+    <script src="../js/auth-guard.js"></script>
+    <script src="../js/sidebar-manager.js"></script>
+
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/student-dashboard.css">
+    <link rel="stylesheet" href="../css/moderator-profile.css">
+</head>
+
+<body class="dashboard-layout container">
+
+<aside class="sidebar">
+    <div class="sidebar-top">
+        <div class="logo">Mooden</div>
+
+        <nav class="nav-menu">
+            <p class="nav-label" data-i18n="common.nav_label_main">НАВІГАЦІЯ</p>
+
+            <a href="./moderator-dashboard.html" class="nav-link">
+                <span data-i18n="moderator_nav.dashboard">🛡️ Панель</span>
+            </a>
+
+            <a href="./moderator-users.html" class="nav-link">
+                <span data-i18n="moderator_nav.users">👥 Користувачі</span>
+            </a>
+
+            <a href="./moderator-courses.html" class="nav-link">
+                <span data-i18n="moderator_nav.courses">📚 Курси</span>
+            </a>
+
+            <a href="./moderator-activity.html" class="nav-link">
+                <span data-i18n="moderator_nav.activity">📌 Активність</span>
+            </a>
+        </nav>
+
+        <nav class="nav-menu">
+            <p class="nav-label" data-i18n="common.nav_label_community">СПІЛЬНОТА</p>
+
+            <a href="./announcements.html" class="nav-link">
+                <span data-i18n="common.nav_announcements">📢 Оголошення</span>
+                <span class="badge-count" id="announcementsBadge">0</span>
+            </a>
+
+            <a href="./notifications.html" class="nav-link">
+                <span data-i18n="common.nav_notifications">🔔 Сповіщення</span>
+                <span class="badge-count" id="notifBadge">0</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="sidebar-user">
+        <a href="./moderator-profile.html" class="user-card user-card-link active" id="profileBottomLink">
+            <div class="user-avatar" id="avatarInitial">?</div>
+
+            <div class="user-meta">
+                <p class="user-name" id="profileName">...</p>
+                <p class="user-sub" id="profileGroup" data-i18n="dashboard.user_loading">Завантаження...</p>
+            </div>
+        </a>
+
+        <div class="theme-switch-container">
+            <button id="themeToggle" class="theme-toggle-btn">
+                <span class="theme-icon">🌙</span>
+                <span class="theme-text" data-i18n="common.theme_dark">Темна тема</span>
+            </button>
+        </div>
+
+        <div class="lang-switch-container">
+            <div class="lang-slider">
+                <input type="radio" name="lang" id="lang-uk" value="uk">
+                <label for="lang-uk">UA</label>
+
+                <input type="radio" name="lang" id="lang-en" value="en">
+                <label for="lang-en">EN</label>
+
+                <div class="slider-bg"></div>
+            </div>
+        </div>
+
+        <button id="logoutBtn" class="logout-btn" data-i18n="common.logout_btn">
+            🚪 Вийти з акаунту
+        </button>
+    </div>
+</aside>
+
+<main class="main-content">
+    <div class="mobile-header">
+        <button id="menuToggle" class="menu-btn">☰</button>
+        <div class="logo-mobile">Mooden</div>
+    </div>
+
+    <section id="moderatorProfileContent">
+        <div class="moderator-profile-loading">
+            <h2 data-i18n="profile.loading">Завантаження...</h2>
+            <p data-i18n="dashboard.status_loading">Отримуємо актуальну інформацію...</p>
+        </div>
+    </section>
+
+    <section class="moderator-profile-settings">
+        <div class="moderator-profile-card">
+            <div class="moderator-profile-card-header">
+                <h2 data-i18n="moderator_profile.edit_title">✏️ Редагування профілю</h2>
+            </div>
+
+            <form id="moderatorEditProfileForm" class="moderator-profile-settings-form">
+                <input type="hidden" id="moderatorUserId">
+
+                <div class="moderator-profile-input-group">
+                    <label data-i18n="moderator_profile.full_name">ПІБ</label>
+                    <input
+                        id="moderatorEditFullName"
+                        type="text"
+                        placeholder="ПІБ"
+                        data-i18n-placeholder="moderator_profile.full_name"
+                        required
+                    >
+                </div>
+
+                <div class="moderator-profile-input-group">
+                    <label>Email</label>
+                    <input
+                        id="moderatorEditEmail"
+                        type="email"
+                        placeholder="email@example.com"
+                        required
+                    >
+                </div>
+
+                <div class="moderator-profile-input-group">
+                    <label data-i18n="moderator_profile.lang">Мова інтерфейсу</label>
+                    <select id="moderatorEditLang">
+                        <option value="uk">Українська</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-gold" data-i18n="moderator_profile.btn_update_profile">
+                    Оновити профіль
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <section class="moderator-profile-settings">
+        <div class="moderator-profile-card">
+            <div class="moderator-profile-card-header">
+                <h2 data-i18n="profile.settings_security">🛡️ Безпека та доступ</h2>
+            </div>
+
+            <form id="moderatorChangePasswordForm" class="moderator-profile-settings-form">
+                <div class="moderator-profile-input-group">
+                    <label data-i18n="profile.label_old_password">Поточний пароль</label>
+
+                    <div class="input-wrapper">
+                        <input
+                            type="password"
+                            data-type="old-password"
+                            id="oldPassword"
+                            placeholder="••••••••"
+                            required
+                        >
+
+                        <button type="button" class="password-toggle">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 class="eye-closed">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 class="eye-open">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="moderator-profile-input-group">
+                    <label data-i18n="profile.label_new_password">Новий пароль</label>
+
+                    <div class="input-wrapper">
+                        <input
+                            type="password"
+                            data-type="new-password"
+                            id="newPassword"
+                            placeholder="••••••••"
+                            required
+                        >
+
+                        <button type="button" class="password-toggle">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 class="eye-closed">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 class="eye-open">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-gold" data-i18n="profile.btn_update_password">
+                    Оновити пароль
+                </button>
+            </form>
+        </div>
+    </section>
+</main>
+
+<script src="../js/toggle-password.js"></script>
+<script src="../js/password-manager.js"></script>
+<script src="../js/moderator-profile.js"></script>
+</body>
+</html>
