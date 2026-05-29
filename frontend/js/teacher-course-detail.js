@@ -295,35 +295,50 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
                 <aside class="teacher-course-side">
-                    <div class="teacher-section-card teacher-materials-card">
-                        <div class="teacher-section-header">
-                            <h2>${getTranslation(lang, "teacher_course_detail.materials_title")}</h2>
+                <div class="teacher-section-card teacher-materials-card">
+                    <div class="teacher-section-header">
+                        <h2>${getTranslation(lang, "teacher_course_detail.materials_title")}</h2>
 
-                            <div class="teacher-material-management-actions">
-                                ${
-                                    isMaterialsEditMode
-                                        ? `
-                                            <button type="button" class="teacher-material-create-btn" id="createMaterialToggleBtn">
-                                                ${getTranslation(lang, "teacher_course_detail.create_material")}
-                                            </button>
-                                            <button type="button" class="teacher-material-edit-btn" id="materialEditToggleBtn">
-                                                ${getTranslation(lang, "teacher_course_detail.done")}
-                                            </button>
-                                        `
-                                        : `
-                                            <button type="button" class="teacher-material-edit-btn" id="materialEditToggleBtn">
-                                                ${getTranslation(lang, "teacher_course_detail.edit_materials")}
-                                            </button>
-                                        `
-                                }
-                            </div>
+                        <div class="teacher-material-management-actions">
+                            ${
+                                isMaterialsEditMode
+                                    ? `
+                                        <button type="button" class="teacher-material-create-btn" id="createMaterialToggleBtn">
+                                            ${getTranslation(lang, "teacher_course_detail.create_material")}
+                                        </button>
+                                        <button type="button" class="teacher-material-edit-btn" id="materialEditToggleBtn">
+                                            ${getTranslation(lang, "teacher_course_detail.done")}
+                                        </button>
+                                    `
+                                    : `
+                                        <button type="button" class="teacher-material-edit-btn" id="materialEditToggleBtn">
+                                            ${getTranslation(lang, "teacher_course_detail.edit_materials")}
+                                        </button>
+                                    `
+                            }
                         </div>
-
-                        ${isMaterialsEditMode ? renderCreateMaterialForm() : ""}
-
-                        ${renderMaterials(materials)}
                     </div>
-                </aside>
+
+                    ${isMaterialsEditMode ? renderCreateMaterialForm() : ""}
+
+                    ${renderMaterials(materials)}
+                </div>
+
+                <div class="teacher-section-card teacher-attendance-side-card">
+                    <div class="teacher-section-header">
+                        <h2>${getTranslation(lang, "teacher_course_detail.attendance_title")}</h2>
+                    </div>
+
+                    <p class="teacher-attendance-side-text">
+                        ${getTranslation(lang, "teacher_course_detail.attendance_desc")}
+                    </p>
+
+                    <a class="teacher-attendance-side-link" href="./teacher-course-attendance.html?id=${course.id}">
+                        ${getTranslation(lang, "teacher_course_detail.attendance_open")}
+                    </a>
+                </div>
+            </aside>
+
             </section>
         `;
         bindTaskManagementEvents();

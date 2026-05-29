@@ -560,3 +560,33 @@
         flex-direction: column;
     }
 }
+.teacher-attendance-side-card {
+    margin-top: 1.5rem;
+}
+
+.teacher-attendance-side-text {
+    margin: 0 0 1rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.teacher-attendance-side-link {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--course-accent, var(--accent-gold));
+    background: color-mix(in srgb, var(--course-accent, var(--accent-gold)) 12%, transparent);
+    color: var(--text-gold);
+    border-radius: 0.85rem;
+    padding: 0.85rem 1rem;
+    font-weight: 900;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.teacher-attendance-side-link:hover {
+    transform: translateY(-1px);
+    background: color-mix(in srgb, var(--course-accent, var(--accent-gold)) 18%, transparent);
+}
