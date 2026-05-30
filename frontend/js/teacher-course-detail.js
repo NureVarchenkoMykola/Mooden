@@ -113,7 +113,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 course: data.course,
                 tasks: Array.isArray(data.tasks) ? data.tasks : [],
                 students: Array.isArray(data.students) ? data.students : [],
-                materials: Array.isArray(data.materials) ? data.materials : []
+                materials: Array.isArray(data.materials) ? data.materials : [],
+                attendancePreview: Array.isArray(data.attendancePreview) ? data.attendancePreview : []
             });
         } catch (error) {
             console.error("[Teacher Course Detail] Помилка:", error);
@@ -188,6 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const students = data.students;
         const materials = data.materials;
         const visibleMaterialsCount = materials.filter(material => material.is_hidden !== true).length;
+        const attendancePreview = data.attendancePreview;
 
         if (!course) {
             showEmpty(
@@ -219,6 +221,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="teacher-course-progress-fill" style="width: ${progress}%"></div>
                     </div>
                 </div>
+                <button class="course-back-link course-back-btn" type="button">
+                    ← ${getTranslation(lang, "common.go_back")}
+                </button>
             </header>
 
             <section class="teacher-course-stats">
@@ -327,15 +332,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="teacher-section-card teacher-attendance-side-card">
                     <div class="teacher-section-header">
                         <h2>${getTranslation(lang, "teacher_course_detail.attendance_title")}</h2>
+
+                        <a class="teacher-attendance-more-link" href="./teacher-course-attendance.html?id=${course.id}">
+                            ${getTranslation(lang, "teacher_course_detail.attendance_open")}
+                        </a>
                     </div>
 
-                    <p class="teacher-attendance-side-text">
-                        ${getTranslation(lang, "teacher_course_detail.attendance_desc")}
-                    </p>
-
-                    <a class="teacher-attendance-side-link" href="./teacher-course-attendance.html?id=${course.id}">
-                        ${getTranslation(lang, "teacher_course_detail.attendance_open")}
-                    </a>
+                    ${renderAttendancePreview(attendancePreview)}
                 </div>
             </aside>
 
@@ -611,10 +614,83 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     }
 
+    function renderAttendancePreview(items) {
+        const lang = getCurrentLang();
+
+        if (!items.length) {
+            return `
+                <p class="teacher-section-empty">
+                    ${getTranslation(lang, "teacher_course_detail.no_attendance_preview")}
+                </p>
+            `;
+        }
+
+        return `
+            <div class="teacher-attendance-preview-list">
+                ${items.map(item => {
+                    const total = Number(item.total_students || 0);
+                    const present = Number(item.present_count || 0);
+                    const percent = total > 0 ? Math.round((present / total) * 100) : 0;
+                    const isOpen = item.is_open_for_attendance === true;
+
+                    return `
+                        <article class="teacher-attendance-preview-card">
+                            <div class="teacher-attendance-preview-main">
+                                <p class="teacher-attendance-preview-title">
+                                    ${formatDate(item.lesson_date)}
+                                </p>
+
+                                <p class="teacher-attendance-preview-meta">
+                                    ${item.group_name || "—"} • ${item.room || "—"}
+                                </p>
+
+                                <div class="teacher-attendance-preview-time">
+                                    ${String(item.time_start || "").substring(0, 5)} - ${String(item.time_end || "").substring(0, 5)}
+                                </div>
+
+                                <span class="teacher-attendance-preview-status ${isOpen ? "open" : "closed"}">
+                                    ${
+                                        isOpen
+                                            ? getTranslation(lang, "teacher_course_detail.attendance_open_status")
+                                            : getTranslation(lang, "teacher_course_detail.attendance_closed_status")
+                                    }
+                                </span>
+                            </div>
+
+                            <div class="teacher-attendance-preview-side">
+                                <div class="lesson-badges teacher-attendance-preview-badges">
+                                    <span class="lesson-badge type-${item.lesson_type}">
+                                        ${getTranslation(lang, "schedule.type_" + item.lesson_type)}
+                                    </span>
+
+                                    <span class="lesson-badge format-${item.lesson_format}">
+                                        ${getTranslation(lang, "schedule.format_" + item.lesson_format)}
+                                    </span>
+                                </div>
+
+                                <div class="teacher-attendance-preview-stat">
+                                    <strong>${present}/${total}</strong>
+                                    <span>${percent}%</span>
+                                </div>
+                            </div>
+                        </article>
+                    `;
+                }).join("")}
+            </div>
+        `;
+    }
+
     function bindTaskManagementEvents() {
         const editBtn = document.getElementById("taskEditToggleBtn");
         const createToggleBtn = document.getElementById("createTaskToggleBtn");
         const createForm = document.getElementById("createTaskForm");
+        const backBtn = document.querySelector(".course-back-btn");
+
+        if (backBtn) {
+            backBtn.addEventListener("click", () => {
+                window.location.href = "./teacher-courses.html";
+            });
+        }
 
         if (editBtn) {
             editBtn.addEventListener("click", async () => {

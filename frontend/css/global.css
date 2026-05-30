@@ -94,7 +94,6 @@ a:hover {
     color: var(--color-offline);
 }
 
-/* інструмент для золотого тексту */
 .text-gold {
     color: var(--text-gold);
 }
@@ -186,7 +185,6 @@ input:focus {
     display: none;
 }
 
-/* убрать білий фон інпутів при автозаповненні */
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
 input:-webkit-autofill:focus, 
@@ -450,7 +448,6 @@ input:-webkit-autofill:active {
     filter: drop-shadow(0 0 5px rgba(0,0,0,0.2));
 }
 
-/* адаптив з виїжджаючим сайдбаром */
 @media (max-width: 768px) {
     html {
         font-size: 15px; 

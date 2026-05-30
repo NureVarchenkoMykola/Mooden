@@ -20,6 +20,10 @@ exports.login = async (req, res) => {
         if (!isMatch) {
             return res.status(401).json({ message: authErrorCode });
         }
+        
+        if (user.is_blocked === true) {
+            return res.status(403).json({ message: 'USER_BLOCKED' });
+        }
 
         const expiresIn = rememberMe ? '7d' : '24h';
         const token = jwt.sign(

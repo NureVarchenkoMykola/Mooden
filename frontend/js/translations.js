@@ -124,8 +124,10 @@ const translations = {
             course_label: "Курс викладача",
 
             attendance_title: "Відвідуваність",
-            attendance_desc: "Перегляньте заняття курсу та відкрийте або закрийте відмітку відвідуваності для студентів.",
             attendance_open: "Відкрити відвідуваність",
+            no_attendance_preview: "Найближчих занять для відмітки поки немає.",
+            attendance_open_status: "Відмітка відкрита",
+            attendance_closed_status: "Відмітка закрита",
 
             avg_progress: "Середній прогрес",
             students_count: "Студентів",
@@ -222,10 +224,14 @@ const translations = {
             unavailable_title: "Відвідуваність недоступна",
             unavailable_text: "Не вдалося завантажити відвідуваність з backend.",
             no_course_title: "Курс не знайдено",
-            no_course_text: "Поверніться на сторінку курсу і відкрийте відвідуваність ще раз."
+            no_course_text: "Поверніться на сторінку курсу і відкрийте відвідуваність ще раз.",
+            show_details_btn: "Детальніше",
+            hide_details_btn: "Сховати",
+            present_students_title: "Студенти, які відмітились",
+            no_present_students: "Поки що ніхто не відмітився.",
+            marked_at: "Відмічено"
         },
         teacher_task_detail: {
-            back_to_course: "← Назад до курсу",
             course_label: "Курс",
             edit: "Редагувати",
             cancel: "Скасувати",
@@ -727,7 +733,7 @@ const translations = {
             no_access_text: "Потрібно авторизуватися.",
 
             load_error_title: "Не вдалося завантажити користувачів",
-            load_error_text: "Перевірте backend або права доступу модератора.",
+            load_error_text: "Перевірте підключення або повторіть спробу пізніше.",
 
             role: "Роль",
 
@@ -745,15 +751,12 @@ const translations = {
             ban: "Забанити",
             unban: "Розбанити",
 
-            confirm_ban: "Забанити цього користувача?",
-            confirm_unban: "Розбанити цього користувача?",
-
             role_updated: "Роль користувача оновлено.",
-            role_update_error: "Backend ще не підтримує зміну ролі або сталася помилка.",
+            role_update_error: "Не вдалося змінити роль користувача.",
 
             ban_success: "Користувача заблоковано.",
             unban_success: "Користувача розблоковано.",
-            ban_error: "Backend ще не підтримує бан/розбан або сталася помилка.",
+            ban_error: "Не вдалося оновити статус користувача.",
 
             add_modal_title: "Додати користувача",
             add_modal_desc: "Заповніть дані нового користувача.",
@@ -774,7 +777,7 @@ const translations = {
 
             create_success: "Користувача створено.",
             update_success: "Дані користувача оновлено.",
-            save_error: "Backend ще не підтримує створення/редагування користувачів або сталася помилка."
+            save_error: "Не вдалося зберегти дані користувача."
         },
 
         moderator_courses: {
@@ -947,6 +950,7 @@ const translations = {
             unavailable_text: "Не вдалося завантажити профіль модератора."
         },
         errors: {
+            USER_BLOCKED: "Ваш акаунт заблоковано.",
             INVALID_CREDENTIALS: "Невірний email або пароль.",
             SERVER_ERROR: "Помилка сервера. Спробуйте пізніше.",
             UNAUTHORIZED: "Ви не авторизовані. Повертаємо на сторінку входу...",
@@ -1105,8 +1109,10 @@ const translations = {
         teacher_course_detail: {
             course_label: "Teacher course",
             attendance_title: "Attendance",
-            attendance_desc: "View course lessons and open or close attendance marking for students.",
             attendance_open: "Open attendance",
+            no_attendance_preview: "There are no upcoming attendance lessons yet.",
+            attendance_open_status: "Attendance open",
+            attendance_closed_status: "Attendance closed",
 
             avg_progress: "Average progress",
             students_count: "Students",
@@ -1206,7 +1212,6 @@ const translations = {
             no_course_text: "Return to the course page and open attendance again."
         },
         teacher_task_detail: {
-            back_to_course: "← Back to course",
             course_label: "Course",
             edit: "Edit",
             cancel: "Cancel",
@@ -1229,7 +1234,12 @@ const translations = {
             not_found_title: "Task not found",
             not_found_text: "Invalid task identifier.",
             update_success: "Task has been updated",
-            update_error: "Failed to update task"
+            update_error: "Failed to update task",
+            show_details_btn: "Details",
+            hide_details_btn: "Hide",
+            present_students_title: "Students who checked in",
+            no_present_students: "No students have checked in yet.",
+            marked_at: "Marked at"
         },
         teacher_submissions: {
             page_title: "Submissions",
@@ -1708,7 +1718,7 @@ const translations = {
             no_access_text: "You need to sign in.",
 
             load_error_title: "Failed to load users",
-            load_error_text: "Check backend or moderator access rights.",
+            load_error_text: "Check your connection or try again later.",
 
             role: "Role",
 
@@ -1726,15 +1736,12 @@ const translations = {
             ban: "Ban",
             unban: "Unban",
 
-            confirm_ban: "Ban this user?",
-            confirm_unban: "Unban this user?",
-
             role_updated: "User role updated.",
-            role_update_error: "Backend does not support role changes yet or an error occurred.",
+            role_update_error: "Failed to update the user role.",
 
             ban_success: "User has been blocked.",
             unban_success: "User has been unblocked.",
-            ban_error: "Backend does not support ban/unban yet or an error occurred.",
+            ban_error: "Failed to update the user status.",
 
             add_modal_title: "Add user",
             add_modal_desc: "Fill in the new user data.",
@@ -1755,7 +1762,7 @@ const translations = {
 
             create_success: "User created.",
             update_success: "User data updated.",
-            save_error: "Backend does not support creating/editing users yet or an error occurred."
+            save_error: "Failed to save user data."
         },
 
         moderator_courses: {
@@ -1929,6 +1936,7 @@ const translations = {
         },
 
         errors: {
+            USER_BLOCKED: "Your account has been blocked.",
             INVALID_CREDENTIALS: "Invalid email or password.",
             SERVER_ERROR: "Server error. Try again later.",
             UNAUTHORIZED: "Unauthorized. Redirecting to login...",

@@ -1,22 +1,22 @@
 :root {
     /* BACKGROUNDS*/
-    --bg-main: #0B1220;        /* Лівий бік (найтемніший, White Ebony) */
-    --bg-right: #111C2E;        /* Правий бік (трохи світліший, Big Stone второй) */
-    --bg-input: #172035;       /* Поле вводу (Big Stone) */
+    --bg-main: #0B1220; 
+    --bg-right: #111C2E;
+    --bg-input: #172035;
     --bg-modal: #1a1f2b;
 
     /* TEXT */
-    --text-main: #EBE5D5;      /* Основний білий заголовок (WhiteRock) */
-    --text-muted: #7A90AA;     /* Другорядний текст (Bali Hai) */
-    --text-gold: #E8A44A;      /* Золотий текст/акценти (Tulip Tree) */
-    --text-placeholder: #3D5470; /* Текст всередині інпутів (Fiord) */
+    --text-main: #EBE5D5;
+    --text-muted: #7A90AA;
+    --text-gold: #E8A44A;
+    --text-placeholder: #3D5470;
     --text-button: #1A1A1A;
  
     /* ACCENTS */
-    --accent-gold: var(--text-gold);    /* Основна кнопка "Увійти" */
-    --accent-gold-hover: #EDA94F; /* Колір кнопки при наведенні (Sandy Brown был(F0B060)) */
-    --border-main: rgba(255, 255, 255, 0.07);    /* Рамка інпутів (білий з 0.07 опасіті) */
-    --border-focus: var(--text-gold); /* Рамка при кліку на інпут */
+    --accent-gold: var(--text-gold);
+    --accent-gold-hover: #EDA94F;
+    --border-main: rgba(255, 255, 255, 0.07);
+    --border-focus: var(--text-gold);
     --progress-track: rgba(255, 255, 255, 0.05);
 
     /* LESSON TYPES & FORMATS */
@@ -27,8 +27,8 @@
     --color-exam: #e74c3c;
 
     /* STATUS */
-    --color-error: #802a2a;    /* Помилки (Sunglo старый E87070) */
-    --color-success: #106e52;  /* Успіх (Puerto Rico 4EC9A4) */
+    --color-error: #802a2a;
+    --color-success: #106e52;
 
     /* ШРИФТИ */
     --font-heading: 'Cormorant Garamond', serif;

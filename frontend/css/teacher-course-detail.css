@@ -101,6 +101,24 @@
     background: var(--course-accent, var(--accent-gold));
 }
 
+.course-back-link {
+    align-items: center;
+    color: var(--text-muted);
+    font-weight: 600;
+    transition: 0.2s ease;
+    white-space: nowrap;
+}
+
+.course-back-link.course-back-btn {
+    background: transparent;
+    padding: 0;
+}
+
+.course-back-link:hover {
+    color: var(--text-gold);
+    transform: translateX(-1px);
+}
+
 .teacher-course-stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -150,7 +168,8 @@
     align-items: start;
 }
 
-.teacher-course-main {
+.teacher-course-main,
+.teacher-course-side {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -438,6 +457,11 @@
     padding: 0.8rem 1rem;
     color: var(--text-main);
     font-family: var(--font-main);
+    outline: none;
+}
+
+.teacher-task-create-form textarea:focus {
+    border-color: var(--accent-gold);
 }
 
 .teacher-task-checkbox-label {
@@ -445,6 +469,13 @@
     align-items: center;
     gap: 0.6rem;
     padding-top: 1.6rem;
+}
+
+.teacher-task-checkbox-label input[type="checkbox"] {
+    width: 0.9rem;
+    height: 0.9rem;
+    accent-color: var(--accent-gold);
+    cursor: pointer;
 }
 
 .teacher-task-description {
@@ -523,11 +554,155 @@
     font-weight: 700;
 }
 
-@media (max-width: 1200px) {
+.teacher-attendance-side-card .teacher-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.teacher-attendance-more-link {
+    font-size: 0.9rem;
+    color: var(--text-gold);
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.teacher-attendance-more-link:hover {
+    color: var(--accent-gold-hover);
+    text-decoration: underline;
+}
+
+.teacher-attendance-preview-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.teacher-attendance-preview-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 1rem;
+    padding: 0.9rem;
+    border-radius: 0.8rem;
+    background: var(--bg-input);
+    border-left: 2px solid var(--course-accent, var(--accent-gold));
+}
+
+.teacher-attendance-preview-main {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.teacher-attendance-preview-title {
+    color: var(--text-main);
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.teacher-attendance-preview-meta {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.teacher-attendance-preview-time {
+    color: var(--text-gold);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.teacher-attendance-preview-status {
+    width: fit-content;
+    padding: 0.3rem 0.65rem;
+    border-radius: 1rem;
+    font-size: 0.7rem;
+    font-weight: 800;
+}
+
+.teacher-attendance-preview-status.open {
+    background: color-mix(in srgb, var(--accent-gold) 14%, transparent);
+    color: var(--accent-gold);
+}
+
+.teacher-attendance-preview-status.closed {
+    background: color-mix(in srgb, var(--text-muted) 14%, transparent);
+    color: var(--text-muted);
+}
+
+.teacher-attendance-preview-side {
+    flex-shrink: 0;
+    min-width: 5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.8rem;
+}
+
+.teacher-attendance-preview-badges {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.teacher-attendance-preview-badges .lesson-badge {
+    padding: 0.2rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.teacher-attendance-preview-badges .type-lecture,
+.teacher-attendance-preview-badges .type-practice,
+.teacher-attendance-preview-badges .type-lab {
+    background: color-mix(in srgb, var(--accent-gold) 14%, transparent);
+    color: var(--accent-gold);
+}
+
+.teacher-attendance-preview-badges .format-online {
+    background: color-mix(in srgb, var(--accent-gold) 14%, transparent);
+    color: var(--accent-gold);
+}
+
+.teacher-attendance-preview-badges .format-offline {
+    background: color-mix(in srgb, var(--text-muted) 14%, transparent);
+    color: var(--text-muted);
+}
+
+.teacher-attendance-preview-stat {
+    text-align: right;
+}
+
+.teacher-attendance-preview-stat strong {
+    display: block;
+    color: var(--text-main);
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.teacher-attendance-preview-stat span {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+@media (max-width: 1300px) {
     .teacher-course-layout {
         grid-template-columns: 1fr;
     }
 
+    .teacher-task-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 1200px) {
     .teacher-course-stats {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -543,11 +718,6 @@
         font-size: 2.2rem;
     }
 
-    .teacher-task-card {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
     .teacher-task-right,
     .teacher-student-progress {
         justify-content: flex-start;
@@ -559,34 +729,4 @@
         align-items: flex-start;
         flex-direction: column;
     }
-}
-.teacher-attendance-side-card {
-    margin-top: 1.5rem;
-}
-
-.teacher-attendance-side-text {
-    margin: 0 0 1rem;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    line-height: 1.5;
-}
-
-.teacher-attendance-side-link {
-    width: 100%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--course-accent, var(--accent-gold));
-    background: color-mix(in srgb, var(--course-accent, var(--accent-gold)) 12%, transparent);
-    color: var(--text-gold);
-    border-radius: 0.85rem;
-    padding: 0.85rem 1rem;
-    font-weight: 900;
-    text-decoration: none;
-    transition: 0.2s ease;
-}
-
-.teacher-attendance-side-link:hover {
-    transform: translateY(-1px);
-    background: color-mix(in srgb, var(--course-accent, var(--accent-gold)) 18%, transparent);
 }

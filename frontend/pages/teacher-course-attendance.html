@@ -107,19 +107,25 @@
     </div>
 
     <section class="teacher-attendance-page">
-        <a id="backToCourseLink" class="teacher-attendance-back" href="./teacher-courses.html">
-            ← Назад до курсу
-        </a>
-
         <header class="teacher-attendance-header">
+        <div class="teacher-attendance-header-top">
             <div>
-                <span class="teacher-attendance-label" data-i18n="teacher_attendance.page_label">Відвідуваність</span>
+                <span class="teacher-attendance-label" data-i18n="teacher_attendance.page_label">
+                    ВІДВІДУВАНІСТЬ
+                </span>
+
                 <h1 id="attendanceCourseTitle">Відвідуваність курсу</h1>
+
                 <p data-i18n="teacher_attendance.page_desc">
-                    Тут можна переглядати заняття курсу та відкривати або закривати відмітку відвідуваності для студентів.
+                    Переглядайте заняття курсу, відкривайте або закривайте відмітку та контролюйте присутність студентів.
                 </p>
             </div>
-        </header>
+
+            <button class="task-back-link task-back-btn" id="backToCourseBtn" type="button">
+                ← <span data-i18n="common.go_back">Назад</span>
+            </button>
+        </div>
+    </header>
 
         <section class="teacher-attendance-stats">
             <div class="teacher-attendance-stat">

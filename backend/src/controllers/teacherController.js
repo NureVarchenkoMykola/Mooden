@@ -336,12 +336,66 @@ exports.getCourseDetail = async (req, res) => {
             ORDER BY is_hidden ASC, created_at DESC
         `, [courseId, includeHiddenMaterials]);
 
+        const attendancePreview = await db.query(`
+            SELECT 
+                s.id AS schedule_id,
+                s.lesson_date,
+                s.time_start,
+                s.time_end,
+                s.lesson_type,
+                s.lesson_format,
+                s.room,
+                s.is_open_for_attendance,
+
+                g.name_${lang} AS group_name,
+
+                COUNT(DISTINCT st.user_id) AS total_students,
+                COUNT(DISTINCT a.student_id) AS present_count
+
+            FROM public.schedule s
+            LEFT JOIN public.groups g 
+                ON s.group_id = g.id
+
+            LEFT JOIN public.student_courses sc
+                ON sc.course_id = s.course_id
+
+            LEFT JOIN public.students st
+                ON st.user_id = sc.student_id
+                AND (
+                    s.group_id IS NULL
+                    OR st.group_id = s.group_id
+                )
+
+            LEFT JOIN public.attendance a
+                ON a.schedule_id = s.id
+                AND a.student_id = st.user_id
+
+            WHERE s.teacher_id = $1
+            AND s.course_id = $2
+            AND s.lesson_date >= CURRENT_DATE
+
+            GROUP BY 
+                s.id,
+                s.lesson_date,
+                s.time_start,
+                s.time_end,
+                s.lesson_type,
+                s.lesson_format,
+                s.room,
+                s.is_open_for_attendance,
+                g.name_${lang}
+
+            ORDER BY s.lesson_date ASC, s.time_start ASC
+            LIMIT 3
+        `, [userId, courseId]);
+
         res.json({
             user: { lang },
             course: courseInfo.rows[0],
             tasks: tasks.rows,
             students: students.rows,
-            materials: materials.rows
+            materials: materials.rows,
+            attendancePreview: attendancePreview.rows
         });
 
     } catch (err) {
@@ -877,6 +931,50 @@ exports.updateAttendanceStatus = async (req, res) => {
     }
 };
 
+async function createNewTaskNotification(courseId, taskId) {
+    const taskResult = await db.query(`
+        SELECT 
+            t.title_uk AS task_title_uk,
+            t.title_en AS task_title_en,
+            c.title_uk AS course_title_uk,
+            c.title_en AS course_title_en
+        FROM public.tasks t
+        JOIN public.courses c ON t.course_id = c.id
+        WHERE t.id = $1
+        AND t.course_id = $2
+    `, [taskId, courseId]);
+
+    if (taskResult.rows.length === 0) return;
+
+    const task = taskResult.rows[0];
+
+    const messageUk = `У курсі "${task.course_title_uk}" додано нове завдання: "${task.task_title_uk}".`;
+
+    const messageEn = `A new assignment has been added to the course "${task.course_title_en || task.course_title_uk}": "${task.task_title_en || task.task_title_uk}".`;
+
+    await db.query(`
+        INSERT INTO public.notifications 
+            (user_id, message_uk, message_en, is_read, created_at)
+        SELECT 
+            recipients.user_id,
+            $2,
+            $3,
+            false,
+            CURRENT_TIMESTAMP
+        FROM (
+            SELECT sc.student_id AS user_id
+            FROM public.student_courses sc
+            WHERE sc.course_id = $1
+
+            UNION
+
+            SELECT tc.teacher_id AS user_id
+            FROM public.teacher_courses tc
+            WHERE tc.course_id = $1
+        ) recipients
+    `, [courseId, messageUk, messageEn]);
+}
+
 exports.createCourseTask = async (req, res) => {
     const teacherId = req.user.id;
     const courseId = Number(req.params.id);
@@ -945,9 +1043,13 @@ exports.createCourseTask = async (req, res) => {
             Boolean(isExam)
         ]);
 
+        const task = result.rows[0];
+
+        await createNewTaskNotification(courseId, task.id);
+
         res.status(201).json({
             success: true,
-            task: result.rows[0]
+            task
         });
 
     } catch (err) {

@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let modalMode = "create";
 
     if (!usersList) {
-        console.error("Не знайдено #usersList");
+        console.error("[Moderator Users] #usersList element was not found.");
         return;
     }
 
@@ -48,18 +48,14 @@ document.addEventListener("DOMContentLoaded", () => {
         return document.documentElement.lang || "uk";
     }
 
-    function tr(path, fallback = "") {
+    function tr(path) {
         const lang = getCurrentLang();
 
-        if (typeof getTranslation === "function") {
-            const value = getTranslation(lang, path);
-
-            if (value && value !== path) {
-                return value;
-            }
+        if (typeof getTranslation !== "function") {
+            return path;
         }
 
-        return fallback || path;
+        return getTranslation(lang, path);
     }
 
     async function fetchJson(url, options = {}) {
@@ -83,14 +79,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return data;
     }
 
-    function showMessage(message, type = "success") {
-        if (typeof showToast === "function") {
-            showToast(message, type);
-        } else {
-            alert(message);
-        }
-    }
-
     function formatDate(dateValue) {
         if (!dateValue) {
             return "—";
@@ -110,9 +98,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function getRoleLabel(role) {
-        if (role === "student") return tr("moderator_users.role_student", "Студент");
-        if (role === "teacher") return tr("moderator_users.role_teacher", "Викладач");
-        if (role === "moderator") return tr("moderator_users.role_moderator", "Модератор");
+        if (role === "student") return tr("moderator_users.role_student");
+        if (role === "teacher") return tr("moderator_users.role_teacher");
+        if (role === "moderator") return tr("moderator_users.role_moderator");
 
         return role || "—";
     }
@@ -191,8 +179,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!filteredUsers.length) {
             usersList.innerHTML = `
                 <div class="moderator-users-empty">
-                    <h2>${tr("moderator_users.empty_title", "Користувачів не знайдено")}</h2>
-                    <p>${tr("moderator_users.empty_text", "Спробуйте змінити фільтр або пошуковий запит.")}</p>
+                    <h2>${tr("moderator_users.empty_title")}</h2>
+                    <p>${tr("moderator_users.empty_text")}</p>
                 </div>
             `;
             return;
@@ -209,18 +197,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     <div class="moderator-user-info">
                         <div class="moderator-user-title-row">
-                            <h2>${user.full_name || tr("moderator_users.unknown_user", "Невідомий користувач")}</h2>
+                            <h2>${user.full_name || tr("moderator_users.unknown_user")}</h2>
 
                             <span class="user-status-badge ${blocked ? "blocked" : "active"}">
                                 ${
                                     blocked
-                                        ? tr("moderator_users.blocked", "Заблоковано")
-                                        : tr("moderator_users.active", "Активний")
+                                        ? tr("moderator_users.blocked")
+                                        : tr("moderator_users.active")
                                 }
                             </span>
                         </div>
 
-                        <p>${user.email || tr("moderator_users.no_email", "Email не вказано")}</p>
+                        <p>${user.email || tr("moderator_users.no_email")}</p>
 
                         <div class="moderator-user-meta">
                             <span>${getRoleLabel(user.role)}</span>
@@ -231,31 +219,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     <div class="moderator-user-actions">
                         <label>
-                            <span>${tr("moderator_users.role", "Роль")}</span>
+                            <span>${tr("moderator_users.role")}</span>
 
                             <select class="role-select" data-user-id="${user.id}">
                                 <option value="student" ${user.role === "student" ? "selected" : ""}>
-                                    ${tr("moderator_users.role_student", "Студент")}
+                                    ${tr("moderator_users.role_student")}
                                 </option>
                                 <option value="teacher" ${user.role === "teacher" ? "selected" : ""}>
-                                    ${tr("moderator_users.role_teacher", "Викладач")}
+                                    ${tr("moderator_users.role_teacher")}
                                 </option>
                                 <option value="moderator" ${user.role === "moderator" ? "selected" : ""}>
-                                    ${tr("moderator_users.role_moderator", "Модератор")}
+                                    ${tr("moderator_users.role_moderator")}
                                 </option>
                             </select>
                         </label>
 
                         <div class="user-action-buttons">
                             <button class="edit-user-btn" type="button" data-user-id="${user.id}">
-                                ${tr("moderator_users.edit", "Редагувати")}
+                                ${tr("moderator_users.edit")}
                             </button>
 
                             <button class="block-user-btn ${blocked ? "unblock" : "block"}" type="button" data-user-id="${user.id}" data-blocked="${blocked}">
                                 ${
                                     blocked
-                                        ? tr("moderator_users.unban", "Розбанити")
-                                        : tr("moderator_users.ban", "Забанити")
+                                        ? tr("moderator_users.unban")
+                                        : tr("moderator_users.ban")
                                 }
                             </button>
                         </div>
@@ -286,20 +274,17 @@ document.addEventListener("DOMContentLoaded", () => {
                         })
                     });
 
-                    showMessage(tr("moderator_users.role_updated", "Роль користувача оновлено."), "success");
+                    showToast(tr("moderator_users.role_updated"), "success");
 
                     await loadUsers();
                 } catch (error) {
-                    console.error("[Moderator Users] Помилка зміни ролі:", error);
+                    console.error("[Moderator Users] Role update failed:", error);
 
                     if (oldUser) {
                         select.value = oldUser.role;
                     }
 
-                    showMessage(
-                        tr("moderator_users.role_update_error", "Backend ще не підтримує зміну ролі або сталася помилка."),
-                        "error"
-                    );
+                    showToast(tr("moderator_users.role_update_error"), "error");
 
                     select.disabled = false;
                 }
@@ -329,14 +314,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 const currentlyBlocked = button.dataset.blocked === "true";
                 const nextBlocked = !currentlyBlocked;
 
-                const confirmText = nextBlocked
-                    ? tr("moderator_users.confirm_ban", "Забанити цього користувача?")
-                    : tr("moderator_users.confirm_unban", "Розбанити цього користувача?");
-
-                if (!confirm(confirmText)) {
-                    return;
-                }
-
                 button.disabled = true;
 
                 try {
@@ -347,21 +324,18 @@ document.addEventListener("DOMContentLoaded", () => {
                         })
                     });
 
-                    showMessage(
+                    showToast(
                         nextBlocked
-                            ? tr("moderator_users.ban_success", "Користувача заблоковано.")
-                            : tr("moderator_users.unban_success", "Користувача розблоковано."),
+                            ? tr("moderator_users.ban_success")
+                            : tr("moderator_users.unban_success"),
                         "success"
                     );
 
                     await loadUsers();
                 } catch (error) {
-                    console.error("[Moderator Users] Помилка блокування:", error);
+                    console.error("[Moderator Users] Block status update failed:", error);
 
-                    showMessage(
-                        tr("moderator_users.ban_error", "Backend ще не підтримує бан/розбан або сталася помилка."),
-                        "error"
-                    );
+                    showToast(tr("moderator_users.ban_error"), "error");
 
                     button.disabled = false;
                 }
@@ -372,8 +346,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function openCreateModal() {
         modalMode = "create";
 
-        userModalTitle.textContent = tr("moderator_users.add_modal_title", "Додати користувача");
-        userModalDesc.textContent = tr("moderator_users.add_modal_desc", "Заповніть дані нового користувача.");
+        userModalTitle.textContent = tr("moderator_users.add_modal_title");
+        userModalDesc.textContent = tr("moderator_users.add_modal_desc");
 
         userIdInput.value = "";
         fullNameInput.value = "";
@@ -391,8 +365,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function openEditModal(user) {
         modalMode = "edit";
 
-        userModalTitle.textContent = tr("moderator_users.edit_modal_title", "Редагувати користувача");
-        userModalDesc.textContent = tr("moderator_users.edit_modal_desc", "Оновіть основні дані облікового запису.");
+        userModalTitle.textContent = tr("moderator_users.edit_modal_title");
+        userModalDesc.textContent = tr("moderator_users.edit_modal_desc");
 
         userIdInput.value = user.id;
         fullNameInput.value = user.full_name || "";
@@ -434,25 +408,22 @@ document.addEventListener("DOMContentLoaded", () => {
                     body: JSON.stringify(payload)
                 });
 
-                showMessage(tr("moderator_users.create_success", "Користувача створено."), "success");
+                showToast(tr("moderator_users.create_success"), "success");
             } else {
                 await fetchJson(`${API_BASE_URL}/moderator/users/${userId}`, {
                     method: "PATCH",
                     body: JSON.stringify(payload)
                 });
 
-                showMessage(tr("moderator_users.update_success", "Дані користувача оновлено."), "success");
+                showToast(tr("moderator_users.update_success"), "success");
             }
 
             closeModal();
             await loadUsers();
         } catch (error) {
-            console.error("[Moderator Users] Помилка збереження користувача:", error);
+            console.error("[Moderator Users] User save failed:", error);
 
-            showMessage(
-                tr("moderator_users.save_error", "Backend ще не підтримує створення/редагування користувачів або сталася помилка."),
-                "error"
-            );
+            showToast(tr("moderator_users.save_error"), "error");
         }
     }
 
@@ -462,8 +433,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!token) {
             usersList.innerHTML = `
                 <div class="moderator-users-empty">
-                    <h2>${tr("moderator_users.no_access_title", "Немає доступу")}</h2>
-                    <p>${tr("moderator_users.no_access_text", "Потрібно авторизуватися.")}</p>
+                    <h2>${tr("moderator_users.no_access_title")}</h2>
+                    <p>${tr("moderator_users.no_access_text")}</p>
                 </div>
             `;
             return;
@@ -472,8 +443,8 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             usersList.innerHTML = `
                 <div class="moderator-users-loading">
-                    <h2>${tr("moderator_users.loading_title", "Завантаження...")}</h2>
-                    <p>${tr("moderator_users.loading_text", "Отримуємо список користувачів.")}</p>
+                    <h2>${tr("moderator_users.loading_title")}</h2>
+                    <p>${tr("moderator_users.loading_text")}</p>
                 </div>
             `;
 
@@ -486,12 +457,12 @@ document.addEventListener("DOMContentLoaded", () => {
             updateStats();
             renderUsers();
         } catch (error) {
-            console.error("[Moderator Users] Помилка:", error);
+            console.error("[Moderator Users] Users loading failed:", error);
 
             usersList.innerHTML = `
                 <div class="moderator-users-empty">
-                    <h2>${tr("moderator_users.load_error_title", "Не вдалося завантажити користувачів")}</h2>
-                    <p>${tr("moderator_users.load_error_text", "Перевірте backend або права доступу модератора.")}</p>
+                    <h2>${tr("moderator_users.load_error_title")}</h2>
+                    <p>${tr("moderator_users.load_error_text")}</p>
                 </div>
             `;
         }

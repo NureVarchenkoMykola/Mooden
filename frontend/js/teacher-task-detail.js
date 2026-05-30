@@ -131,9 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         content.innerHTML = `
             <header class="teacher-task-hero">
-                <a class="teacher-task-back" href="./teacher-course-detail.html?id=${task.course_id}">
-                    ${getTranslation(lang, "teacher_task_detail.back_to_course")}
-                </a>
+                
 
                 <div class="teacher-task-hero-top">
                     <div>
@@ -143,13 +141,19 @@ document.addEventListener("DOMContentLoaded", () => {
                         <h1>${task.title || getTranslation(lang, "tasks.unknown_task")}</h1>
                     </div>
 
-                    <button type="button" class="teacher-task-edit-main-btn" id="taskEditBtn">
-                        ${
-                            isEditMode
-                                ? getTranslation(lang, "teacher_task_detail.cancel")
-                                : getTranslation(lang, "teacher_task_detail.edit")
-                        }
-                    </button>
+                    <div class="teacher-task-controls">
+                        <button class="task-back-link task-back-btn" type="button">
+                            ← ${getTranslation(lang, "common.go_back")}
+                        </button>    
+                    
+                        <button type="button" class="teacher-task-edit-main-btn" id="taskEditBtn">
+                            ${
+                                isEditMode
+                                    ? getTranslation(lang, "teacher_task_detail.cancel")
+                                    : getTranslation(lang, "teacher_task_detail.edit")
+                            }
+                        </button>
+                    </div>                   
                 </div>
 
                 <p>${task.description || getTranslation(lang, "teacher_course_detail.no_task_description")}</p>
@@ -281,6 +285,20 @@ document.addEventListener("DOMContentLoaded", () => {
     function bindEvents() {
         const editBtn = document.getElementById("taskEditBtn");
         const editForm = document.getElementById("editTaskForm");
+        const backBtn = document.querySelector(".task-back-btn");
+
+        if (backBtn) {
+            backBtn.addEventListener("click", () => {
+                const courseId = taskData?.task?.course_id;
+
+                if (courseId) {
+                    window.location.href = `./teacher-course-detail.html?id=${courseId}`;
+                    return;
+                }
+
+                window.location.href = "./teacher-courses.html";
+            });
+        }
 
         if (editBtn) {
             editBtn.addEventListener("click", () => {

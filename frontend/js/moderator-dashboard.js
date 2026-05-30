@@ -52,6 +52,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const data = await response.json().catch(() => ({}));
 
+        if (response.status === 401 || response.status === 403) {
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.href = "../index.html";
+            return null;
+        }
+
         if (!response.ok) {
             throw new Error(data.message || `Request failed: ${response.status}`);
         }
@@ -70,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return "—";
         }
 
-        return date.toLocaleDateString(getCurrentLang() === "en" ? "en-US" : "uk-UA", {
+        return date.toLocaleString(getCurrentLang() === "en" ? "en-US" : "uk-UA", {
             day: "2-digit",
             month: "short",
             year: "numeric",
@@ -180,12 +187,18 @@ document.addEventListener("DOMContentLoaded", () => {
         const token = getToken();
 
         if (!token) {
-            showError();
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.href = "../index.html";
             return;
         }
 
         try {
             const data = await fetchJson(`${API_BASE_URL}/moderator/dashboard`);
+
+            if (!data) {
+                return;
+            }
 
             renderStats(data.stats || {});
             renderActivity(data.activity || []);

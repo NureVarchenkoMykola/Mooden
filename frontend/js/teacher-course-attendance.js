@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const list = document.getElementById("attendanceLessonsList");
     const searchInput = document.getElementById("attendanceSearch");
     const filterSelect = document.getElementById("attendanceFilter");
-    const backLink = document.getElementById("backToCourseLink");
+    const backBtn = document.getElementById("backToCourseBtn");
     const courseTitleEl = document.getElementById("attendanceCourseTitle");
 
     const lessonsCountEl = document.getElementById("lessonsCount");
@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let lessons = [];
     let records = [];
     let courseTitle = "";
+    let expandedLessonId = null;
 
     if (!list) {
         console.error("Не знайдено #attendanceLessonsList");
@@ -78,6 +79,27 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         return String(timeValue).slice(0, 5);
+    }
+
+    function formatDateTime(dateValue) {
+        if (!dateValue) {
+            return "—";
+        }
+
+        const lang = getCurrentLang();
+        const date = new Date(dateValue);
+
+        if (Number.isNaN(date.getTime())) {
+            return String(dateValue);
+        }
+
+        return date.toLocaleString(lang === "en" ? "en-US" : "uk-UA", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
     }
 
     function getLessonTypeText(type) {
@@ -150,10 +172,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p>${safeTranslate("dashboard.status_loading", "Отримуємо актуальну інформацію...")}</p>
                 </div>
             `;
-
-            if (backLink) {
-                backLink.href = `./teacher-course-detail.html?id=${courseId}`;
-            }
 
             const data = await fetchJson(`${API_BASE_URL}/teacher/attendance?courseId=${courseId}`, token);
 
@@ -244,6 +262,46 @@ document.addEventListener("DOMContentLoaded", () => {
         bindAttendanceButtons();
     }
 
+    function renderLessonAttendanceDetails(scheduleId) {
+        const lessonRecords = records.filter(record => {
+            return String(record.schedule_id) === String(scheduleId);
+        });
+
+        const presentStudents = lessonRecords.filter(record => record.is_present === true);
+
+        if (!presentStudents.length) {
+            return `
+                <div class="teacher-attendance-details">
+                    <p class="teacher-attendance-details-empty">
+                        ${safeTranslate("teacher_attendance.no_present_students", "Поки що ніхто не відмітився.")}
+                    </p>
+                </div>
+            `;
+        }
+
+        return `
+            <div class="teacher-attendance-details">
+                <h3>${safeTranslate("teacher_attendance.present_students_title", "Студенти, які відмітились")}</h3>
+
+                <div class="teacher-attendance-students-list">
+                    ${presentStudents.map(student => `
+                        <div class="teacher-attendance-student-row">
+                            <div>
+                                <strong>${student.student_name || safeTranslate("teacher_course_detail.unknown_student", "Невідомий студент")}</strong>
+                                <span>${student.student_email || "—"}</span>
+                            </div>
+
+                            <p>
+                                ${safeTranslate("teacher_attendance.marked_at", "Відмічено")}:
+                                <strong>${formatDateTime(student.marked_at)}</strong>
+                            </p>
+                        </div>
+                    `).join("")}
+                </div>
+            </div>
+        `;
+    }
+
     function renderLessonCard(lesson) {
         const isOpen = lesson.is_open_for_attendance === true;
         const accent = lesson.color_accent || "#E8A44A";
@@ -251,6 +309,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const present = Number(lesson.present_count || 0);
         const absent = Number(lesson.absent_count || 0);
         const total = Number(lesson.total_students || 0);
+        const isExpanded = String(expandedLessonId) === String(lesson.schedule_id);
 
         return `
             <article class="teacher-attendance-card ${isOpen ? "is-open" : "is-closed"}" style="--attendance-accent: ${accent}">
@@ -299,18 +358,34 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 </div>
 
-                <button
-                    class="teacher-attendance-toggle-btn ${isOpen ? "close" : "open"}"
-                    type="button"
-                    data-schedule-id="${lesson.schedule_id}"
-                    data-open="${isOpen}"
-                >
-                    ${
-                        isOpen
-                            ? safeTranslate("teacher_attendance.close_btn", "Закрити відмітку")
-                            : safeTranslate("teacher_attendance.open_btn", "Відкрити відмітку")
-                    }
-                </button>
+                <div class="teacher-attendance-actions">
+                    <button
+                        class="teacher-attendance-info-btn"
+                        type="button"
+                        data-schedule-id="${lesson.schedule_id}"
+                    >
+                        ${
+                            isExpanded
+                                ? safeTranslate("teacher_attendance.hide_details_btn", "Сховати")
+                                : safeTranslate("teacher_attendance.show_details_btn", "Детальніше")
+                        }
+                    </button>
+
+                    <button
+                        class="teacher-attendance-toggle-btn ${isOpen ? "close" : "open"}"
+                        type="button"
+                        data-schedule-id="${lesson.schedule_id}"
+                        data-open="${isOpen}"
+                    >
+                        ${
+                            isOpen
+                                ? safeTranslate("teacher_attendance.close_btn", "Закрити відмітку")
+                                : safeTranslate("teacher_attendance.open_btn", "Відкрити відмітку")
+                        }
+                    </button>
+                </div>
+
+                ${isExpanded ? renderLessonAttendanceDetails(lesson.schedule_id) : ""}
             </article>
         `;
     }
@@ -323,6 +398,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 const newStatus = !isCurrentlyOpen;
 
                 await updateAttendanceStatus(scheduleId, newStatus, button);
+            });
+        });
+
+        document.querySelectorAll(".teacher-attendance-info-btn").forEach(button => {
+            button.addEventListener("click", () => {
+                const scheduleId = button.dataset.scheduleId;
+
+                expandedLessonId = String(expandedLessonId) === String(scheduleId)
+                    ? null
+                    : scheduleId;
+
+                renderLessons();
             });
         });
     }
@@ -367,6 +454,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function bindBackButton() {
+        if (!backBtn) {
+            return;
+        }
+
+        backBtn.addEventListener("click", () => {
+            if (courseId) {
+                window.location.href = `./teacher-course-detail.html?id=${courseId}`;
+                return;
+            }
+
+            window.location.href = "./teacher-courses.html";
+        });
+    }
+
     if (searchInput) {
         searchInput.addEventListener("input", renderLessons);
     }
@@ -379,5 +481,6 @@ document.addEventListener("DOMContentLoaded", () => {
         applyStaticTranslations(getCurrentLang());
     }
 
+    bindBackButton();
     loadAttendance();
 });
