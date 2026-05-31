@@ -399,6 +399,21 @@ document.addEventListener("DOMContentLoaded", () => {
             payload.password = passwordInput.value;
         }
 
+        if (!payload.full_name) {
+            showToast(tr("moderator_users.full_name_required"), "error");
+            return;
+        }
+
+        if (!payload.email) {
+            showToast(tr("moderator_users.email_required"), "error");
+            return;
+        }
+
+        if (modalMode === "create" && String(payload.password || "").length < 6) {
+            showToast(tr("moderator_users.password_too_short"), "error");
+            return;
+        }
+
         const userId = userIdInput.value;
 
         try {
@@ -422,6 +437,26 @@ document.addEventListener("DOMContentLoaded", () => {
             await loadUsers();
         } catch (error) {
             console.error("[Moderator Users] User save failed:", error);
+
+            if (error.message === "FULL_NAME_REQUIRED") {
+                showToast(tr("moderator_users.full_name_required"), "error");
+                return;
+            }
+
+            if (error.message === "EMAIL_REQUIRED") {
+                showToast(tr("moderator_users.email_required"), "error");
+                return;
+            }
+
+            if (error.message === "PASSWORD_TOO_SHORT") {
+                showToast(tr("moderator_users.password_too_short"), "error");
+                return;
+            }
+
+            if (error.message === "EMAIL_ALREADY_EXISTS") {
+                showToast(tr("moderator_users.email_already_exists"), "error");
+                return;
+            }
 
             showToast(tr("moderator_users.save_error"), "error");
         }

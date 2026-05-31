@@ -12,6 +12,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let activityItems = [];
 
+    if (!activityList) {
+        console.error("[Moderator Activity] #activityList element was not found.");
+        return;
+    }
+
     function getToken() {
         return localStorage.getItem("token") || sessionStorage.getItem("token");
     }
@@ -24,20 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         return document.documentElement.lang || "uk";
-    }
-
-    function tr(path, fallback = "") {
-        const lang = getCurrentLang();
-
-        if (typeof getTranslation === "function") {
-            const value = getTranslation(lang, path);
-
-            if (value && value !== path) {
-                return value;
-            }
-        }
-
-        return fallback || path;
     }
 
     async function fetchJson(url, options = {}) {
@@ -61,14 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return data;
     }
 
-    function showMessage(message, type = "success") {
-        if (typeof showToast === "function") {
-            showToast(message, type);
-        } else {
-            alert(message);
-        }
-    }
-
     function formatDate(dateValue) {
         if (!dateValue) {
             return "—";
@@ -89,70 +72,36 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function getActivityType(item) {
-        return item.type || item.activity_type || "submission";
-    }
-
     function getActivityIcon(type) {
         if (type === "submission") return "📤";
         if (type === "announcement") return "📢";
         if (type === "attendance") return "✅";
         if (type === "notification") return "🔔";
-        if (type === "system") return "⚙️";
 
         return "📌";
     }
 
     function getActivityTypeLabel(type) {
-        if (type === "submission") {
-            return tr("moderator_activity.type_submission", "Здана робота");
-        }
+        if (type === "submission") return getTranslation(getCurrentLang(), "moderator_activity.type_submission");
+        if (type === "announcement") return getTranslation(getCurrentLang(), "moderator_activity.type_announcement");
+        if (type === "attendance") return getTranslation(getCurrentLang(), "moderator_activity.type_attendance");
+        if (type === "notification") return getTranslation(getCurrentLang(), "moderator_activity.type_notification");
 
-        if (type === "announcement") {
-            return tr("moderator_activity.type_announcement", "Оголошення");
-        }
-
-        if (type === "attendance") {
-            return tr("moderator_activity.type_attendance", "Відвідуваність");
-        }
-
-        if (type === "notification") {
-            return tr("moderator_activity.type_notification", "Сповіщення");
-        }
-
-        if (type === "system") {
-            return tr("moderator_activity.type_system", "Системна подія");
-        }
-
-        return tr("moderator_activity.type_default", "Активність");
+        return getTranslation(getCurrentLang(), "moderator_activity.type_default");
     }
 
     function normalizeActivityItem(item) {
-        const type = getActivityType(item);
+        const type = item.type || item.activity_type || "system";
 
         return {
-            id: item.id || `${type}-${Math.random()}`,
+            id: item.id || `${type}-${crypto.randomUUID()}`,
             type,
-            title:
-                item.title ||
-                item.task_title ||
-                item.course_title ||
-                tr("moderator_activity.default_title", "Подія без назви"),
-            description:
-                item.description ||
-                item.message ||
-                item.student_name ||
-                item.author_name ||
-                "",
+            title: item.title || getTranslation(getCurrentLang(), "moderator_activity.default_title"),
+            description: item.description || "",
             student_name: item.student_name || "",
             course_title: item.course_title || item.course_name || "",
             author_name: item.author_name || "",
-            created_at:
-                item.created_at ||
-                item.submitted_at ||
-                item.updated_at ||
-                item.date ||
-                null
+            created_at: item.created_at || item.submitted_at || item.updated_at || item.date || null
         };
     }
 
@@ -207,14 +156,42 @@ document.addEventListener("DOMContentLoaded", () => {
         return result;
     }
 
+    function getActivityDescription(item) {
+        if (item.type === "attendance") {
+            if (item.description) {
+                return `${getTranslation(getCurrentLang(), "moderator_activity.desc_attendance")} <span class="activity-time-highlight">${item.description}</span>.`;
+            }
+
+            return getTranslation(getCurrentLang(), "moderator_activity.desc_attendance");
+        }
+
+        if (item.description) {
+            return item.description;
+        }
+
+        if (item.type === "submission") {
+            return getTranslation(getCurrentLang(), "moderator_activity.desc_submission");
+        }
+
+        if (item.type === "announcement") {
+            return getTranslation(getCurrentLang(), "moderator_activity.desc_announcement");
+        }
+
+        if (item.type === "notification") {
+            return getTranslation(getCurrentLang(), "moderator_activity.desc_notification");
+        }
+
+        return getTranslation(getCurrentLang(), "moderator_activity.desc_default");
+    }
+
     function renderActivity() {
         const filtered = getFilteredActivity();
 
         if (!filtered.length) {
             activityList.innerHTML = `
                 <div class="moderator-activity-empty">
-                    <h2>${tr("moderator_activity.empty_title", "Активності не знайдено")}</h2>
-                    <p>${tr("moderator_activity.empty_text", "Спробуйте змінити пошук або фільтр.")}</p>
+                    <h2>${getTranslation(getCurrentLang(), "moderator_activity.empty_title")}</h2>
+                    <p>${getTranslation(getCurrentLang(), "moderator_activity.empty_text")}</p>
                 </div>
             `;
             return;
@@ -255,34 +232,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }).join("");
     }
 
-    function getActivityDescription(item) {
-        if (item.type === "submission") {
-            return `${tr("moderator_activity.desc_submission", "Здано роботу")} ${item.title ? `«${item.title}»` : ""}.`;
-        }
-
-        if (item.type === "announcement") {
-            return `${tr("moderator_activity.desc_announcement", "Створено або опубліковано оголошення")} ${item.title ? `«${item.title}»` : ""}.`;
-        }
-
-        if (item.type === "attendance") {
-            return item.description || tr("moderator_activity.desc_attendance", "Змінено стан відмітки відвідуваності.");
-        }
-
-        if (item.type === "notification") {
-            return item.description || tr("moderator_activity.desc_notification", "Створено системне сповіщення.");
-        }
-
-        return item.description || tr("moderator_activity.desc_default", "Зафіксовано подію в системі.");
-    }
-
     async function loadActivity() {
         const token = getToken();
 
         if (!token) {
             activityList.innerHTML = `
                 <div class="moderator-activity-empty">
-                    <h2>${tr("moderator_activity.no_access_title", "Немає доступу")}</h2>
-                    <p>${tr("moderator_activity.no_access_text", "Потрібно авторизуватися як модератор.")}</p>
+                    <h2>${getTranslation(getCurrentLang(), "moderator_activity.no_access_title")}</h2>
+                    <p>${getTranslation(getCurrentLang(), "moderator_activity.no_access_text")}</p>
                 </div>
             `;
             return;
@@ -291,19 +248,12 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             activityList.innerHTML = `
                 <div class="moderator-activity-loading">
-                    <h2>${tr("moderator_activity.loading_title", "Завантаження...")}</h2>
-                    <p>${tr("moderator_activity.loading_text", "Отримуємо активність системи.")}</p>
+                    <h2>${getTranslation(getCurrentLang(), "moderator_activity.loading_title")}</h2>
+                    <p>${getTranslation(getCurrentLang(), "moderator_activity.loading_text")}</p>
                 </div>
             `;
 
-            let data;
-
-            try {
-                data = await fetchJson(`${API_BASE_URL}/moderator/activity`);
-            } catch (activityEndpointError) {
-                console.warn("[Moderator Activity] /moderator/activity недоступний, використовую dashboard fallback.");
-                data = await fetchJson(`${API_BASE_URL}/moderator/dashboard`);
-            }
+            const data = await fetchJson(`${API_BASE_URL}/moderator/activity`);
 
             const sourceItems = Array.isArray(data.activity)
                 ? data.activity
@@ -314,17 +264,14 @@ document.addEventListener("DOMContentLoaded", () => {
             updateStats();
             renderActivity();
         } catch (error) {
-            console.error("[Moderator Activity] Помилка:", error);
+            console.error("[Moderator Activity] Activity loading failed:", error);
 
-            showMessage(
-                tr("moderator_activity.load_error_toast", "Не вдалося завантажити активність."),
-                "error"
-            );
+            showToast(getTranslation(getCurrentLang(), "moderator_activity.load_error"), "error");
 
             activityList.innerHTML = `
                 <div class="moderator-activity-empty">
-                    <h2>${tr("moderator_activity.load_error_title", "Не вдалося завантажити активність")}</h2>
-                    <p>${tr("moderator_activity.load_error_text", "Перевірте backend або права доступу модератора.")}</p>
+                    <h2>${getTranslation(getCurrentLang(), "moderator_activity.load_error_title")}</h2>
+                    <p>${getTranslation(getCurrentLang(), "moderator_activity.load_error_text")}</p>
                 </div>
             `;
         }
@@ -345,13 +292,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (refreshActivityBtn) {
         refreshActivityBtn.addEventListener("click", async () => {
             refreshActivityBtn.disabled = true;
-            await loadActivity();
-            refreshActivityBtn.disabled = false;
 
-            showMessage(
-                tr("moderator_activity.refreshed", "Активність оновлено."),
-                "success"
-            );
+            try {
+                await loadActivity();
+                showToast(getTranslation(getCurrentLang(), "moderator_activity.refreshed"), "success");
+            } finally {
+                refreshActivityBtn.disabled = false;
+            }
         });
     }
 

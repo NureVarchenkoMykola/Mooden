@@ -685,7 +685,7 @@ const translations = {
             loading: "Завантаження...",
 
             no_activity: "Активності поки немає.",
-            no_announcements: "Оголошень поки немає.",
+            no_announcements: "Нових оголошень поки немає.",
 
             submission_default: "Здана робота",
             student_default: "Студент",
@@ -777,13 +777,19 @@ const translations = {
 
             create_success: "Користувача створено.",
             update_success: "Дані користувача оновлено.",
-            save_error: "Не вдалося зберегти дані користувача."
+            save_error: "Не вдалося зберегти дані користувача.",
+            full_name_required: "Вкажіть повне ім'я користувача.",
+            email_required: "Вкажіть email користувача.",
+            password_too_short: "Пароль має містити мінімум 6 символів.",
+            email_already_exists: "Користувач з таким email вже існує."
         },
 
         moderator_courses: {
             badge: "MODERATOR",
             title: "Курси",
             desc: "На цій сторінці модератор може переглядати курси платформи, редагувати їхні основні дані, зараховувати студентів і призначати викладачів.",
+
+            add_course: "+ Додати курс",
 
             stat_courses: "Курсів",
             stat_students: "Зарахувань студентів",
@@ -798,13 +804,17 @@ const translations = {
 
             loading_title: "Завантаження...",
             loading_text: "Отримуємо список курсів.",
+
             empty_title: "Курсів не знайдено",
             empty_text: "Спробуйте змінити пошук або сортування.",
+
             no_access_title: "Немає доступу",
             no_access_text: "Потрібно авторизуватися.",
-            load_error_title: "Не вдалося завантажити курси",
-            load_error_text: "Перевірте backend або права доступу модератора.",
 
+            load_error_title: "Не вдалося завантажити курси",
+            load_error_text: "Перевірте підключення або повторіть спробу пізніше.",
+
+            untitled: "Курс без назви",
             active: "Активний",
             hidden: "Прихований",
             no_description: "Опис курсу не вказано.",
@@ -815,14 +825,21 @@ const translations = {
 
             edit: "Редагувати",
             members: "Учасники",
+            hide_course: "Сховати",
+            show_course: "Показати",
+
+            add_modal_title: "Додати курс",
+            add_modal_desc: "Заповніть основну інформацію про новий курс.",
 
             edit_modal_title: "Редагувати курс",
             edit_modal_desc: "Оновіть основну інформацію про курс.",
+
             title_uk: "Назва українською",
             title_en: "Назва англійською",
             desc_uk: "Опис українською",
             desc_en: "Опис англійською",
-            course_color: "Колір курсу",
+            color: "Колір курсу",
+
             cancel: "Скасувати",
             save: "Зберегти",
 
@@ -830,6 +847,7 @@ const translations = {
             members_desc: "Керуйте студентами та викладачами, пов’язаними з курсом.",
             course_students: "Студенти курсу",
             course_teachers: "Викладачі курсу",
+
             add_student: "Зарахувати",
             add_teacher: "Призначити",
             remove_student: "Відрахувати",
@@ -840,24 +858,31 @@ const translations = {
             no_available_students: "Немає доступних студентів",
             no_available_teachers: "Немає доступних викладачів",
 
-            update_success: "Курс оновлено.",
-            update_error: "Backend ще не підтримує редагування курсів або сталася помилка.",
-            members_error: "Backend ще не підтримує перегляд учасників курсу.",
+            student_default: "Студент",
+            teacher_default: "Викладач",
 
             choose_student: "Оберіть студента.",
             choose_teacher: "Оберіть викладача.",
-            confirm_remove_student: "Відрахувати студента з курсу?",
-            confirm_remove_teacher: "Прибрати викладача з курсу?",
+
+            create_success: "Курс створено.",
+            update_success: "Курс оновлено.",
+            save_error: "Не вдалося зберегти курс.",
+
+            hide_success: "Курс приховано.",
+            show_success: "Курс показано.",
+            visibility_error: "Не вдалося змінити видимість курсу.",
+
+            members_error: "Не вдалося завантажити учасників курсу.",
 
             add_student_success: "Студента зараховано на курс.",
             remove_student_success: "Студента відраховано з курсу.",
             add_teacher_success: "Викладача призначено на курс.",
             remove_teacher_success: "Викладача прибрано з курсу.",
 
-            add_student_error: "Backend ще не підтримує зарахування студентів або сталася помилка.",
-            remove_student_error: "Backend ще не підтримує відрахування студентів або сталася помилка.",
-            add_teacher_error: "Backend ще не підтримує призначення викладачів або сталася помилка.",
-            remove_teacher_error: "Backend ще не підтримує видалення викладачів або сталася помилка."
+            add_student_error: "Не вдалося зарахувати студента.",
+            remove_student_error: "Не вдалося відрахувати студента.",
+            add_teacher_error: "Не вдалося призначити викладача.",
+            remove_teacher_error: "Не вдалося прибрати викладача."
         },
 
         moderator_activity: {
@@ -895,7 +920,6 @@ const translations = {
             type_announcement: "Оголошення",
             type_attendance: "Відвідуваність",
             type_notification: "Сповіщення",
-            type_system: "Системна подія",
             type_default: "Активність",
 
             default_title: "Подія без назви",
@@ -905,7 +929,7 @@ const translations = {
 
             desc_submission: "Здано роботу",
             desc_announcement: "Створено або опубліковано оголошення",
-            desc_attendance: "Змінено стан відмітки відвідуваності.",
+            desc_attendance: "Студент відмітив присутність на занятті.",
             desc_notification: "Створено системне сповіщення.",
             desc_default: "Зафіксовано подію в системі.",
 
@@ -934,7 +958,7 @@ const translations = {
             permission_courses_title: "Курси",
             permission_courses_text: "Перегляд курсів, редагування інформації, зарахування студентів і призначення викладачів.",
             permission_activity_title: "Активність",
-            permission_activity_text: "Перегляд системних подій, зданих робіт, оголошень та інших змін у платформі.",
+            permission_activity_text: "Перегляд зданих робіт, оголошень, відвідуваності та сповіщень у системі.",
             permission_communication_title: "Комунікація",
             permission_communication_text: "Перегляд оголошень і сповіщень, пов’язаних з роботою освітньої платформи.",
 
@@ -967,6 +991,8 @@ const translations = {
             SIDEBAR_ERROR: "Помилка завантаження бічного меню",
             WRONG_OLD_PASSWORD: "Поточний пароль введено невірно.",
             PASSWORD_UPDATE_ERROR: "Не вдалося оновити пароль.",
+            PASSWORD_FIELDS_REQUIRED: "Заповніть поточний та новий пароль.",
+            PASSWORD_TOO_SHORT: "Новий пароль має містити мінімум 6 символів.",
             COPY_ERROR: "Не вдалося скопіювати посилання.",
             SERVER_ERROR_COURSES: "Не вдалося завантажити список курсів.",
             SERVER_ERROR_TASKS: "Не вдалося завантажити список завдань.",
@@ -1670,7 +1696,7 @@ const translations = {
             loading: "Loading...",
 
             no_activity: "No activity yet.",
-            no_announcements: "No announcements yet.",
+            no_announcements: "No new announcements yet.",
 
             submission_default: "Submission",
             student_default: "Student",
@@ -1762,13 +1788,19 @@ const translations = {
 
             create_success: "User created.",
             update_success: "User data updated.",
-            save_error: "Failed to save user data."
+            save_error: "Failed to save user data.",
+            full_name_required: "Enter the user's full name.",
+            email_required: "Enter the user's email.",
+            password_too_short: "Password must contain at least 6 characters.",
+            email_already_exists: "A user with this email already exists."
         },
 
         moderator_courses: {
             badge: "MODERATOR",
             title: "Courses",
             desc: "On this page, the moderator can view platform courses, edit their main data, enroll students and assign teachers.",
+
+            add_course: "+ Add course",
 
             stat_courses: "Courses",
             stat_students: "Student enrollments",
@@ -1783,13 +1815,17 @@ const translations = {
 
             loading_title: "Loading...",
             loading_text: "Fetching the course list.",
+
             empty_title: "No courses found",
             empty_text: "Try changing search or sorting.",
+
             no_access_title: "No access",
             no_access_text: "You need to sign in.",
-            load_error_title: "Failed to load courses",
-            load_error_text: "Check backend or moderator access rights.",
 
+            load_error_title: "Failed to load courses",
+            load_error_text: "Check your connection or try again later.",
+
+            untitled: "Untitled course",
             active: "Active",
             hidden: "Hidden",
             no_description: "Course description is not specified.",
@@ -1800,14 +1836,21 @@ const translations = {
 
             edit: "Edit",
             members: "Members",
+            hide_course: "Hide",
+            show_course: "Show",
+
+            add_modal_title: "Add course",
+            add_modal_desc: "Fill in the main information for the new course.",
 
             edit_modal_title: "Edit course",
             edit_modal_desc: "Update the main course information.",
+
             title_uk: "Ukrainian title",
             title_en: "English title",
             desc_uk: "Ukrainian description",
             desc_en: "English description",
-            course_color: "Course color",
+            color: "Course color",
+
             cancel: "Cancel",
             save: "Save",
 
@@ -1815,6 +1858,7 @@ const translations = {
             members_desc: "Manage students and teachers related to the course.",
             course_students: "Course students",
             course_teachers: "Course teachers",
+
             add_student: "Enroll",
             add_teacher: "Assign",
             remove_student: "Remove",
@@ -1825,24 +1869,31 @@ const translations = {
             no_available_students: "No available students",
             no_available_teachers: "No available teachers",
 
-            update_success: "Course updated.",
-            update_error: "Backend does not support course editing yet or an error occurred.",
-            members_error: "Backend does not support viewing course members yet.",
+            student_default: "Student",
+            teacher_default: "Teacher",
 
             choose_student: "Choose a student.",
             choose_teacher: "Choose a teacher.",
-            confirm_remove_student: "Remove this student from the course?",
-            confirm_remove_teacher: "Remove this teacher from the course?",
+
+            create_success: "Course created.",
+            update_success: "Course updated.",
+            save_error: "Failed to save course.",
+
+            hide_success: "Course has been hidden.",
+            show_success: "Course has been shown.",
+            visibility_error: "Failed to update course visibility.",
+
+            members_error: "Failed to load course members.",
 
             add_student_success: "Student enrolled in the course.",
             remove_student_success: "Student removed from the course.",
             add_teacher_success: "Teacher assigned to the course.",
             remove_teacher_success: "Teacher removed from the course.",
 
-            add_student_error: "Backend does not support enrolling students yet or an error occurred.",
-            remove_student_error: "Backend does not support removing students yet or an error occurred.",
-            add_teacher_error: "Backend does not support assigning teachers yet or an error occurred.",
-            remove_teacher_error: "Backend does not support removing teachers yet or an error occurred."
+            add_student_error: "Failed to enroll student.",
+            remove_student_error: "Failed to remove student.",
+            add_teacher_error: "Failed to assign teacher.",
+            remove_teacher_error: "Failed to remove teacher."
         },
 
         moderator_activity: {
@@ -1880,7 +1931,6 @@ const translations = {
             type_announcement: "Announcement",
             type_attendance: "Attendance",
             type_notification: "Notification",
-            type_system: "System event",
             type_default: "Activity",
 
             default_title: "Untitled event",
@@ -1890,7 +1940,7 @@ const translations = {
 
             desc_submission: "Submitted work",
             desc_announcement: "Announcement was created or published",
-            desc_attendance: "Attendance mark status was changed.",
+            desc_attendance: "The student marked attendance for the lesson.",
             desc_notification: "System notification was created.",
             desc_default: "System event was recorded.",
 
@@ -1919,7 +1969,7 @@ const translations = {
             permission_courses_title: "Courses",
             permission_courses_text: "View courses, edit information, enroll students and assign teachers.",
             permission_activity_title: "Activity",
-            permission_activity_text: "View system events, submitted works, announcements and other platform changes.",
+            permission_activity_text: "View submissions, announcements, attendance and notifications in the system.",
             permission_communication_title: "Communication",
             permission_communication_text: "View announcements and notifications related to the educational platform.",
 
@@ -1953,6 +2003,8 @@ const translations = {
             SIDEBAR_ERROR: "Error loading sidebar menu",
             WRONG_OLD_PASSWORD: "Current password is incorrect.",
             PASSWORD_UPDATE_ERROR: "Failed to update password.",
+            PASSWORD_FIELDS_REQUIRED: "Fill in the current and new password.",
+            PASSWORD_TOO_SHORT: "The new password must contain at least 6 characters.",
             COPY_ERROR: "Failed to copy the link.",
             SERVER_ERROR_COURSES: "Failed to load the courses list.",
             SERVER_ERROR_TASKS: "Failed to load the tasks list.",

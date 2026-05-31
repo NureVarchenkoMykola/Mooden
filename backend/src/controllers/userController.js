@@ -12,10 +12,13 @@ exports.getSidebarData = async (req, res) => {
                 (
                     SELECT COUNT(*)
                     FROM public.tasks t
+                    JOIN public.courses c ON c.id = t.course_id
                     JOIN public.student_courses sc ON t.course_id = sc.course_id
                     LEFT JOIN public.grades gr ON gr.task_id = t.id AND gr.student_id = $1
                     LEFT JOIN public.submissions s ON s.task_id = t.id AND s.student_id = $1
                     WHERE sc.student_id = $1
+                    AND COALESCE(c.is_hidden, false) = false
+                    AND COALESCE(t.is_hidden, false) = false
                     AND gr.task_id IS NULL
                     AND s.id IS NULL
                 ) as badge_tasks,
@@ -27,7 +30,9 @@ exports.getSidebarData = async (req, res) => {
                         OR a.course_id IN (
                             SELECT sc.course_id
                             FROM public.student_courses sc
+                            JOIN public.courses c ON c.id = sc.course_id
                             WHERE sc.student_id = $1
+                            AND COALESCE(c.is_hidden, false) = false
                         )
                     )
                     AND NOT EXISTS (
@@ -66,11 +71,14 @@ exports.getSidebarData = async (req, res) => {
                     SELECT COUNT(*)
                     FROM public.submissions s
                     JOIN public.tasks tsk ON s.task_id = tsk.id
+                    JOIN public.courses c ON c.id = tsk.course_id
                     JOIN public.teacher_courses tc ON tsk.course_id = tc.course_id
                     LEFT JOIN public.grades g 
                         ON g.task_id = s.task_id 
                         AND g.student_id = s.student_id
                     WHERE tc.teacher_id = $1
+                    AND COALESCE(c.is_hidden, false) = false
+                    AND COALESCE(tsk.is_hidden, false) = false
                     AND g.task_id IS NULL
                 ) as badge_grading,
                 (
@@ -81,7 +89,9 @@ exports.getSidebarData = async (req, res) => {
                         OR a.course_id IN (
                             SELECT tc.course_id
                             FROM public.teacher_courses tc
+                            JOIN public.courses c ON c.id = tc.course_id
                             WHERE tc.teacher_id = $1
+                            AND COALESCE(c.is_hidden, false) = false
                         )
                     )
                     AND NOT EXISTS (
@@ -171,6 +181,14 @@ exports.getSidebarData = async (req, res) => {
 exports.changePassword = async (req, res) => {
     const userId = req.user.id;
     const { oldPassword, newPassword } = req.body;
+
+    if (!oldPassword || !newPassword) {
+        return res.status(400).json({ message: 'PASSWORD_FIELDS_REQUIRED' });
+    }
+
+    if (String(newPassword).length < 6) {
+        return res.status(400).json({ message: 'PASSWORD_TOO_SHORT' });
+    }
 
     try {
         const user = await db.query('SELECT password_hash FROM public.users WHERE id = $1', [userId]);
@@ -272,29 +290,68 @@ exports.getAnnouncements = async (req, res) => {
         );
 
         const lang = langResult.rows[0]?.lang || 'uk';
+        if (!['student', 'teacher', 'moderator'].includes(role)) {
+            return res.status(403).json({ message: 'ROLE_ERROR' });
+        }
 
-        const courseFilter = role === 'teacher'
-            ? `SELECT course_id FROM public.teacher_courses WHERE teacher_id = $1`
-            : `SELECT course_id FROM public.student_courses WHERE student_id = $1`;
+        let query;
+        let params = [userId];
 
-        const result = await db.query(`
-            SELECT 
-                a.id,
-                a.title_${lang} AS title,
-                a.content_${lang} AS content,
-                a.created_at,
-                u.full_name AS author_name,
-                c.title_${lang} AS course_name,
-                CASE WHEN ra.user_id IS NULL THEN false ELSE true END AS is_read
-            FROM public.announcements a
-            JOIN public.users u ON a.author_id = u.id
-            LEFT JOIN public.courses c ON a.course_id = c.id
-            LEFT JOIN public.read_announcements ra 
-                ON ra.announcement_id = a.id AND ra.user_id = $1
-            WHERE a.course_id IS NULL
-            OR a.course_id IN (${courseFilter})
-            ORDER BY a.created_at DESC
-        `, [userId]);
+        if (role === 'moderator') {
+            query = `
+                SELECT 
+                    a.id,
+                    a.title_${lang} AS title,
+                    a.content_${lang} AS content,
+                    a.created_at,
+                    u.full_name AS author_name,
+                    c.title_${lang} AS course_name,
+                    CASE WHEN ra.user_id IS NULL THEN false ELSE true END AS is_read
+                FROM public.announcements a
+                LEFT JOIN public.users u ON a.author_id = u.id
+                LEFT JOIN public.courses c ON a.course_id = c.id
+                LEFT JOIN public.read_announcements ra 
+                    ON ra.announcement_id = a.id AND ra.user_id = $1
+                ORDER BY a.created_at DESC
+            `;
+        } else {
+            const courseFilter = role === 'teacher'
+                ? `
+                    SELECT tc.course_id
+                    FROM public.teacher_courses tc
+                    JOIN public.courses c ON c.id = tc.course_id
+                    WHERE tc.teacher_id = $1
+                    AND COALESCE(c.is_hidden, false) = false
+                `
+                : `
+                    SELECT sc.course_id
+                    FROM public.student_courses sc
+                    JOIN public.courses c ON c.id = sc.course_id
+                    WHERE sc.student_id = $1
+                    AND COALESCE(c.is_hidden, false) = false
+                `;
+
+            query = `
+                SELECT 
+                    a.id,
+                    a.title_${lang} AS title,
+                    a.content_${lang} AS content,
+                    a.created_at,
+                    u.full_name AS author_name,
+                    c.title_${lang} AS course_name,
+                    CASE WHEN ra.user_id IS NULL THEN false ELSE true END AS is_read
+                FROM public.announcements a
+                LEFT JOIN public.users u ON a.author_id = u.id
+                LEFT JOIN public.courses c ON a.course_id = c.id
+                LEFT JOIN public.read_announcements ra 
+                    ON ra.announcement_id = a.id AND ra.user_id = $1
+                WHERE a.course_id IS NULL
+                OR a.course_id IN (${courseFilter})
+                ORDER BY a.created_at DESC
+            `;
+        }
+
+        const result = await db.query(query, params);
 
         res.json({
             user: { lang },
@@ -328,9 +385,32 @@ exports.markAllAnnouncementsRead = async (req, res) => {
     const role = req.user.role;
 
     try {
+        if (role === 'moderator') {
+            await db.query(`
+                INSERT INTO public.read_announcements (user_id, announcement_id)
+                SELECT $1, a.id
+                FROM public.announcements a
+                ON CONFLICT DO NOTHING
+            `, [userId]);
+
+            return res.json({ success: true });
+        }
+
         const courseFilter = role === 'teacher'
-            ? `SELECT course_id FROM public.teacher_courses WHERE teacher_id = $1`
-            : `SELECT course_id FROM public.student_courses WHERE student_id = $1`;
+            ? `
+                SELECT tc.course_id
+                FROM public.teacher_courses tc
+                JOIN public.courses c ON c.id = tc.course_id
+                WHERE tc.teacher_id = $1
+                AND COALESCE(c.is_hidden, false) = false
+            `
+            : `
+                SELECT sc.course_id
+                FROM public.student_courses sc
+                JOIN public.courses c ON c.id = sc.course_id
+                WHERE sc.student_id = $1
+                AND COALESCE(c.is_hidden, false) = false
+            `;
 
         await db.query(`
             INSERT INTO public.read_announcements (user_id, announcement_id)
@@ -360,6 +440,7 @@ exports.updateSettings = async (req, res) => {
 
         res.json({ success: true });
     } catch (err) {
+        console.error('[Dev Mode] User Settings Error:', err.message);
         res.status(500).json({ message: 'ERROR_UPDATE_SETTINGS' });
     }
 };

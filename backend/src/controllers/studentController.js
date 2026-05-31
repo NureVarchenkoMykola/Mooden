@@ -32,6 +32,7 @@ exports.getDashboardData = async (req, res) => {
             FROM public.courses c
             JOIN public.student_courses sc ON c.id = sc.course_id
             WHERE sc.student_id = $1
+            AND COALESCE(c.is_hidden, false) = false
         `, [userId]);
 
         const deadlines = await db.query(`
@@ -42,6 +43,7 @@ exports.getDashboardData = async (req, res) => {
             LEFT JOIN public.submissions s 
                 ON s.task_id = t.id AND s.student_id = $1
             WHERE sc.student_id = $1
+            AND COALESCE(c.is_hidden, false) = false
             AND t.is_hidden = false
             AND s.id IS NULL
             AND t.deadline >= CURRENT_DATE
@@ -61,7 +63,11 @@ exports.getDashboardData = async (req, res) => {
             JOIN public.users u ON a.author_id = u.id
             LEFT JOIN public.courses c ON a.course_id = c.id
             WHERE (a.course_id IS NULL OR a.course_id IN (
-                SELECT sc.course_id FROM public.student_courses sc WHERE sc.student_id = $1
+                SELECT sc.course_id
+                FROM public.student_courses sc
+                JOIN public.courses c ON c.id = sc.course_id
+                WHERE sc.student_id = $1
+                AND COALESCE(c.is_hidden, false) = false
             ))
             AND NOT EXISTS (
                 SELECT 1 FROM public.read_announcements ra 
@@ -124,7 +130,13 @@ exports.getProfileData = async (req, res) => {
             SELECT 
                 (SELECT ROUND(AVG(grade_value), 1) FROM public.grades WHERE student_id = $1) as avg_grade,
                 (SELECT COUNT(*) FROM public.submissions WHERE student_id = $1) as completed_tasks,
-                (SELECT COUNT(*) FROM public.student_courses WHERE student_id = $1) as active_courses
+                (
+                    SELECT COUNT(*)
+                    FROM public.student_courses sc
+                    JOIN public.courses c ON c.id = sc.course_id
+                    WHERE sc.student_id = $1
+                    AND COALESCE(c.is_hidden, false) = false
+                ) as active_courses
         `, [userId]);
 
         const attendanceRes = await db.query(`
@@ -166,6 +178,7 @@ exports.getProfileData = async (req, res) => {
             FROM public.courses c
             JOIN public.student_courses sc ON c.id = sc.course_id
             WHERE sc.student_id = $1
+            AND COALESCE(c.is_hidden, false) = false
             ORDER BY sc.progress_percent ASC
             LIMIT 3
         `, [userId]);
@@ -178,6 +191,7 @@ exports.getProfileData = async (req, res) => {
             LEFT JOIN public.submissions s 
                 ON s.task_id = t.id AND s.student_id = $1
             WHERE sc.student_id = $1
+            AND COALESCE(c.is_hidden, false) = false
             AND t.is_hidden = false
             AND s.id IS NULL
             AND t.deadline >= CURRENT_DATE
@@ -197,6 +211,7 @@ exports.getProfileData = async (req, res) => {
             FROM public.courses c
             JOIN public.student_courses sc ON c.id = sc.course_id
             WHERE sc.student_id = $1 AND sc.progress_percent = 100
+            AND COALESCE(c.is_hidden, false) = false
         `, [userId]);
 
         const finalSkills = skills.rows
@@ -216,6 +231,7 @@ exports.getProfileData = async (req, res) => {
             JOIN public.tasks t ON g.task_id = t.id
             JOIN public.courses c ON t.course_id = c.id
             WHERE g.student_id = $1
+            AND COALESCE(c.is_hidden, false) = false
             ORDER BY g.created_at DESC
         `, [userId]);
 
@@ -228,26 +244,28 @@ exports.getProfileData = async (req, res) => {
         `, [userId]);
 
         const activityHistory = await db.query(`
-            (SELECT 
+            SELECT 
                 'grade' as type, 
                 g.grade_value as value, 
                 t.title_${lang} as title, 
                 g.created_at as date
             FROM public.grades g
             JOIN public.tasks t ON g.task_id = t.id
-            WHERE g.student_id = $1)
-            
+            JOIN public.courses c ON c.id = t.course_id
+            WHERE g.student_id = $1
+            AND COALESCE(c.is_hidden, false) = false
+
             UNION ALL
-            
-            (SELECT 
+
+            SELECT 
                 'achievement' as type, 
                 NULL as value, 
                 a.title_${lang} as title, 
                 sa.earned_at as date
             FROM public.student_achievements sa
             JOIN public.achievements a ON sa.achievement_id = a.id
-            WHERE sa.student_id = $1)
-            
+            WHERE sa.student_id = $1
+
             ORDER BY date DESC LIMIT 15
         `, [userId]);
 
@@ -306,6 +324,7 @@ exports.getAllCourses = async (req, res) => {
             FROM public.courses c
             JOIN public.student_courses sc ON c.id = sc.course_id
             WHERE sc.student_id = $1
+            AND COALESCE(c.is_hidden, false) = false
             ORDER BY sc.progress_percent ASC
         `, [userId]);
 
@@ -348,6 +367,7 @@ exports.getAllTasks = async (req, res) => {
             LEFT JOIN public.grades g ON t.id = g.task_id AND g.student_id = $1
             LEFT JOIN public.submissions s ON t.id = s.task_id AND s.student_id = $1
             WHERE sc.student_id = $1
+            AND COALESCE(c.is_hidden, false) = false
             AND t.is_hidden = false
             ORDER BY t.deadline ASC
         `, [userId]);
@@ -392,7 +412,9 @@ exports.getSchedule = async (req, res) => {
             JOIN public.courses c ON s.course_id = c.id
             JOIN public.users u ON s.teacher_id = u.id
             JOIN public.students st ON s.group_id = st.group_id
-            WHERE st.user_id = $1 AND s.lesson_date BETWEEN $2 AND $3
+            WHERE st.user_id = $1
+            AND COALESCE(c.is_hidden, false) = false
+            AND s.lesson_date BETWEEN $2 AND $3
             ORDER BY s.lesson_date ASC, s.time_start ASC
         `, [userId, from, to]);
 
@@ -417,7 +439,13 @@ exports.getGradesPageData = async (req, res) => {
             SELECT 
                 (SELECT ROUND(AVG(grade_value), 1) FROM public.grades WHERE student_id = $1) as avg_grade,
                 (SELECT COUNT(*) FROM public.grades WHERE student_id = $1) as graded_count,
-                (SELECT COUNT(*) FROM public.student_courses WHERE student_id = $1) as courses_count,
+                (
+                    SELECT COUNT(*)
+                    FROM public.student_courses sc
+                    JOIN public.courses c ON c.id = sc.course_id
+                    WHERE sc.student_id = $1
+                    AND COALESCE(c.is_hidden, false) = false
+                ) as courses_count,
                 (SELECT MAX(grade_value) FROM public.grades WHERE student_id = $1) as best_grade
         `, [userId]);
 
@@ -431,6 +459,7 @@ exports.getGradesPageData = async (req, res) => {
             JOIN public.tasks t ON g.task_id = t.id
             JOIN public.courses c ON t.course_id = c.id
             WHERE g.student_id = $1
+            AND COALESCE(c.is_hidden, false) = false
             ORDER BY g.created_at DESC
         `, [userId]);
 
@@ -478,7 +507,10 @@ exports.getTaskDetail = async (req, res) => {
             JOIN public.student_courses sc ON c.id = sc.course_id
             LEFT JOIN public.grades g ON t.id = g.task_id AND g.student_id = $1
             LEFT JOIN public.submissions s ON t.id = s.task_id AND s.student_id = $1
-            WHERE t.id = $2 AND sc.student_id = $1 AND t.is_hidden = false
+            WHERE t.id = $2
+            AND sc.student_id = $1
+            AND COALESCE(c.is_hidden, false) = false
+            AND t.is_hidden = false
         `, [userId, taskId]);
 
         if (result.rows.length === 0) {
@@ -498,11 +530,23 @@ exports.markAttendance = async (req, res) => {
 
     try {
         const checkLesson = await db.query(`
-            SELECT id FROM public.schedule 
-            WHERE id = $1 AND is_open_for_attendance = true
-            AND lesson_date = CURRENT_DATE
-            AND CURRENT_TIME BETWEEN time_start AND time_end
-        `, [scheduleId]);
+            SELECT s.id
+            FROM public.schedule s
+            JOIN public.courses c ON c.id = s.course_id
+            JOIN public.student_courses sc 
+                ON sc.course_id = s.course_id
+                AND sc.student_id = $2
+            JOIN public.students st ON st.user_id = $2
+            WHERE s.id = $1
+            AND COALESCE(c.is_hidden, false) = false
+            AND s.is_open_for_attendance = true
+            AND s.lesson_date = CURRENT_DATE
+            AND CURRENT_TIME BETWEEN s.time_start AND s.time_end
+            AND (
+                s.group_id IS NULL
+                OR s.group_id = st.group_id
+            )
+        `, [scheduleId, userId]);
 
         if (checkLesson.rows.length === 0) {
             return res.status(400).json({ message: 'ATTENDANCE_CLOSED' });
@@ -534,6 +578,7 @@ exports.getCourseDetail = async (req, res) => {
             FROM public.courses c
             JOIN public.student_courses sc ON c.id = sc.course_id
             WHERE c.id = $1 AND sc.student_id = $2
+            AND COALESCE(c.is_hidden, false) = false
         `, [courseId, userId]);
 
         if (courseInfo.rows.length === 0) {
@@ -544,6 +589,7 @@ exports.getCourseDetail = async (req, res) => {
             SELECT id, title_${lang} AS title, file_url, material_type 
             FROM public.course_materials 
             WHERE course_id = $1 
+            AND COALESCE(is_hidden, false) = false
             ORDER BY created_at DESC
         `, [courseId]);
 
@@ -574,8 +620,11 @@ exports.getCourseDetail = async (req, res) => {
                 s.is_open_for_attendance AS can_mark,
                 CASE WHEN a.marked_at IS NOT NULL THEN true ELSE false END AS is_present
             FROM public.schedule s
+            JOIN public.courses c ON c.id = s.course_id
             LEFT JOIN public.attendance a ON s.id = a.schedule_id AND a.student_id = $2
-            WHERE s.course_id = $1 AND s.lesson_date <= CURRENT_DATE
+            WHERE s.course_id = $1
+            AND COALESCE(c.is_hidden, false) = false
+            AND s.lesson_date <= CURRENT_DATE
             ORDER BY s.lesson_date DESC, s.time_start DESC
             LIMIT 3
         `, [courseId, userId]);
@@ -606,8 +655,14 @@ exports.getCourseAttendance = async (req, res) => {
                    CASE WHEN a.marked_at IS NOT NULL THEN true ELSE false END AS is_present,
                    s.is_open_for_attendance AS can_mark
             FROM public.schedule s
+            JOIN public.courses c ON c.id = s.course_id
+            JOIN public.student_courses sc 
+                ON sc.course_id = s.course_id
+                AND sc.student_id = $2
             LEFT JOIN public.attendance a ON s.id = a.schedule_id AND a.student_id = $2
-            WHERE s.course_id = $1 AND s.lesson_date <= CURRENT_DATE
+            WHERE s.course_id = $1
+            AND COALESCE(c.is_hidden, false) = false
+            AND s.lesson_date <= CURRENT_DATE
             ORDER BY s.lesson_date DESC, s.time_start DESC
         `, [courseId, userId]);
 
@@ -710,8 +765,12 @@ exports.submitTask = async (req, res) => {
         const taskAccess = await db.query(`
             SELECT t.id
             FROM public.tasks t
+            JOIN public.courses c ON c.id = t.course_id
             JOIN public.student_courses sc ON t.course_id = sc.course_id
-            WHERE t.id = $1 AND sc.student_id = $2 AND t.is_hidden = false
+            WHERE t.id = $1
+            AND sc.student_id = $2
+            AND COALESCE(c.is_hidden, false) = false
+            AND t.is_hidden = false
         `, [taskId, userId]);
 
         if (taskAccess.rows.length === 0) {

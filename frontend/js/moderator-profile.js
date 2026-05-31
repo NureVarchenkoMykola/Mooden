@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const content = document.getElementById("moderatorProfileContent");
 
     const editProfileForm = document.getElementById("moderatorEditProfileForm");
-    const moderatorUserIdInput = document.getElementById("moderatorUserId");
     const moderatorEditFullName = document.getElementById("moderatorEditFullName");
     const moderatorEditEmail = document.getElementById("moderatorEditEmail");
     const moderatorEditLang = document.getElementById("moderatorEditLang");
@@ -16,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     if (!content) {
-        console.error("Не знайдено #moderatorProfileContent");
+        console.error("[Moderator Profile] #moderatorProfileContent element was not found.");
         return;
     }
 
@@ -32,28 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         return document.documentElement.lang || "uk";
-    }
-
-    function tr(path, fallback = "") {
-        const lang = getCurrentLang();
-
-        if (typeof getTranslation === "function") {
-            const value = getTranslation(lang, path);
-
-            if (value && value !== path) {
-                return value;
-            }
-        }
-
-        return fallback || path;
-    }
-
-    function showMessage(message, type = "success") {
-        if (typeof showToast === "function") {
-            showToast(message, type);
-        } else {
-            alert(message);
-        }
     }
 
     async function fetchJson(url, options = {}) {
@@ -75,31 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         return data;
-    }
-
-    function decodeTokenPayload(token) {
-        try {
-            const payload = token.split(".")[1];
-
-            if (!payload) {
-                return null;
-            }
-
-            const normalizedPayload = payload
-                .replace(/-/g, "+")
-                .replace(/_/g, "/");
-
-            return JSON.parse(atob(normalizedPayload));
-        } catch (error) {
-            return null;
-        }
-    }
-
-    function getCurrentUserIdFromToken() {
-        const token = getToken();
-        const payload = token ? decodeTokenPayload(token) : null;
-
-        return payload?.id || payload?.userId || payload?.sub || null;
     }
 
     function getInitials(name) {
@@ -130,14 +82,32 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        moderatorUserIdInput.value = currentModerator.id || "";
         moderatorEditFullName.value = currentModerator.full_name || "";
         moderatorEditEmail.value = currentModerator.email || "";
         moderatorEditLang.value = currentModerator.lang || "uk";
+        updateSidebarProfile();
     }
 
-    function renderProfile(dashboardData = {}) {
-        const stats = dashboardData.stats || {};
+    function updateSidebarProfile() {
+        const profileName = document.getElementById("profileName");
+        const profileRole = document.getElementById("profileGroup") || document.getElementById("profileRole");
+        const avatarInitial = document.getElementById("avatarInitial");
+
+        if (profileName) {
+            profileName.textContent = currentModerator.full_name || "...";
+        }
+
+        if (profileRole) {
+            profileRole.textContent = currentModerator.sub_info || getTranslation(getCurrentLang(), "moderator_profile.sub_info");
+        }
+
+        if (avatarInitial) {
+            avatarInitial.textContent = getInitials(currentModerator.full_name);
+        }
+    }
+
+    function renderProfile(profileData = {}) {
+        const stats = profileData.stats || {};
 
         const totalUsers = Number(stats.totalUsers || 0);
         const totalCourses = Number(stats.totalCourses || 0);
@@ -152,19 +122,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 <div class="moderator-profile-main">
                     <span class="moderator-profile-badge">
-                        ${tr("moderator_profile.role_badge", "Профіль модератора")}
+                        ${getTranslation(getCurrentLang(), "moderator_profile.role_badge")}
                     </span>
 
-                    <h1>${currentModerator.full_name || tr("moderator_profile.fallback_name", "Модератор")}</h1>
+                    <h1>${currentModerator.full_name || getTranslation(getCurrentLang(), "moderator_profile.fallback_name")}</h1>
 
                     <p>
-                        ${currentModerator.sub_info || tr("moderator_profile.sub_info", "Модератор системи")}
+                        ${currentModerator.sub_info || getTranslation(getCurrentLang(), "moderator_profile.sub_info")}
                     </p>
 
                     <div class="moderator-profile-tags">
-                        <span>📧 ${currentModerator.email || tr("moderator_profile.no_email", "Email не вказано")}</span>
+                        <span>📧 ${currentModerator.email || getTranslation(getCurrentLang(), "moderator_profile.no_email")}</span>
                         <span>🌐 ${currentModerator.lang || "uk"}</span>
-                        <span>${tr("moderator_profile.role_tag", "🛡️ moderator")}</span>
+                        <span>${getTranslation(getCurrentLang(), "moderator_profile.role_tag")}</span>
                     </div>
                 </div>
             </header>
@@ -174,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span>👥</span>
                     <div>
                         <strong>${totalUsers}</strong>
-                        <p>${tr("moderator_profile.stat_users", "Користувачів")}</p>
+                        <p>${getTranslation(getCurrentLang(), "moderator_profile.stat_users")}</p>
                     </div>
                 </div>
 
@@ -182,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span>📚</span>
                     <div>
                         <strong>${totalCourses}</strong>
-                        <p>${tr("moderator_profile.stat_courses", "Курсів")}</p>
+                        <p>${getTranslation(getCurrentLang(), "moderator_profile.stat_courses")}</p>
                     </div>
                 </div>
 
@@ -190,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span>📢</span>
                     <div>
                         <strong>${totalAnnouncements}</strong>
-                        <p>${tr("moderator_profile.stat_announcements", "Оголошень")}</p>
+                        <p>${getTranslation(getCurrentLang(), "moderator_profile.stat_announcements")}</p>
                     </div>
                 </div>
 
@@ -198,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span>✅</span>
                     <div>
                         <strong>${openAttendance}</strong>
-                        <p>${tr("moderator_profile.stat_attendance", "Відкритих відміток")}</p>
+                        <p>${getTranslation(getCurrentLang(), "moderator_profile.stat_attendance")}</p>
                     </div>
                 </div>
             </section>
@@ -206,12 +176,12 @@ document.addEventListener("DOMContentLoaded", () => {
             <section class="moderator-profile-layout">
                 <div class="moderator-profile-card">
                     <div class="moderator-profile-card-header">
-                        <h2>${tr("moderator_profile.info_title", "Особиста інформація")}</h2>
+                        <h2>${getTranslation(getCurrentLang(), "moderator_profile.info_title")}</h2>
                     </div>
 
                     <div class="moderator-profile-info-grid">
                         <div>
-                            <span>${tr("moderator_profile.full_name", "ПІБ")}</span>
+                            <span>${getTranslation(getCurrentLang(), "moderator_profile.full_name")}</span>
                             <strong>${currentModerator.full_name || "—"}</strong>
                         </div>
 
@@ -221,12 +191,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
 
                         <div>
-                            <span>${tr("moderator_profile.role", "Роль")}</span>
-                            <strong>${tr("moderator_profile.role_value", "Модератор")}</strong>
+                            <span>${getTranslation(getCurrentLang(), "moderator_profile.role")}</span>
+                            <strong>${getTranslation(getCurrentLang(), "moderator_profile.role_value")}</strong>
                         </div>
 
                         <div>
-                            <span>${tr("moderator_profile.lang", "Мова інтерфейсу")}</span>
+                            <span>${getTranslation(getCurrentLang(), "moderator_profile.lang")}</span>
                             <strong>${currentModerator.lang || "uk"}</strong>
                         </div>
                     </div>
@@ -234,39 +204,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 <div class="moderator-profile-card">
                     <div class="moderator-profile-card-header">
-                        <h2>${tr("moderator_profile.permissions_title", "Зона відповідальності")}</h2>
+                        <h2>${getTranslation(getCurrentLang(), "moderator_profile.permissions_title")}</h2>
                     </div>
 
                     <div class="moderator-profile-permissions">
                         <div class="moderator-permission-item">
                             <span>👥</span>
                             <div>
-                                <strong>${tr("moderator_profile.permission_users_title", "Користувачі")}</strong>
-                                <p>${tr("moderator_profile.permission_users_text", "Перегляд користувачів, редагування даних, зміна ролей, блокування та розблокування облікових записів.")}</p>
+                                <strong>${getTranslation(getCurrentLang(), "moderator_profile.permission_users_title")}</strong>
+                                <p>${getTranslation(getCurrentLang(), "moderator_profile.permission_users_text")}</p>
                             </div>
                         </div>
 
                         <div class="moderator-permission-item">
                             <span>📚</span>
                             <div>
-                                <strong>${tr("moderator_profile.permission_courses_title", "Курси")}</strong>
-                                <p>${tr("moderator_profile.permission_courses_text", "Перегляд курсів, редагування інформації, зарахування студентів і призначення викладачів.")}</p>
+                                <strong>${getTranslation(getCurrentLang(), "moderator_profile.permission_courses_title")}</strong>
+                                <p>${getTranslation(getCurrentLang(), "moderator_profile.permission_courses_text")}</p>
                             </div>
                         </div>
 
                         <div class="moderator-permission-item">
                             <span>📌</span>
                             <div>
-                                <strong>${tr("moderator_profile.permission_activity_title", "Активність")}</strong>
-                                <p>${tr("moderator_profile.permission_activity_text", "Перегляд системних подій, зданих робіт, оголошень та інших змін у платформі.")}</p>
+                                <strong>${getTranslation(getCurrentLang(), "moderator_profile.permission_activity_title")}</strong>
+                                <p>${getTranslation(getCurrentLang(), "moderator_profile.permission_activity_text")}</p>
                             </div>
                         </div>
 
                         <div class="moderator-permission-item">
                             <span>🔔</span>
                             <div>
-                                <strong>${tr("moderator_profile.permission_communication_title", "Комунікація")}</strong>
-                                <p>${tr("moderator_profile.permission_communication_text", "Перегляд оголошень і сповіщень, пов’язаних з роботою освітньої платформи.")}</p>
+                                <strong>${getTranslation(getCurrentLang(), "moderator_profile.permission_communication_title")}</strong>
+                                <p>${getTranslation(getCurrentLang(), "moderator_profile.permission_communication_text")}</p>
                             </div>
                         </div>
                     </div>
@@ -281,57 +251,42 @@ document.addEventListener("DOMContentLoaded", () => {
         const token = getToken();
 
         if (!token) {
-            showEmpty(tr("errors.UNAUTHORIZED", "Не авторизовано"));
+            showEmpty(getTranslation(getCurrentLang(), "errors.UNAUTHORIZED"));
             return;
         }
 
         try {
             content.innerHTML = `
                 <div class="moderator-profile-loading">
-                    <h2>${tr("profile.loading", "Завантаження...")}</h2>
-                    <p>${tr("dashboard.status_loading", "Отримуємо актуальну інформацію...")}</p>
+                    <h2>${getTranslation(getCurrentLang(), "profile.loading")}</h2>
+                    <p>${getTranslation(getCurrentLang(), "dashboard.status_loading")}</p>
                 </div>
             `;
 
-            const sidebarData = await fetchJson(`${API_BASE_URL}/user/sidebar`);
-            const dashboardData = await fetchJson(`${API_BASE_URL}/moderator/dashboard`);
-
-            const tokenUserId = getCurrentUserIdFromToken();
-            const users = Array.isArray(dashboardData.users) ? dashboardData.users : [];
-
-            let currentUser = null;
-
-            if (tokenUserId) {
-                currentUser = users.find(user => String(user.id) === String(tokenUserId));
-            }
-
-            if (!currentUser) {
-                currentUser = users.find(user => user.full_name === sidebarData.full_name);
-            }
+            const data = await fetchJson(`${API_BASE_URL}/moderator/profile`);
+            const moderator = data.moderator || {};
 
             currentModerator = {
-                id: currentUser?.id || tokenUserId || null,
-                full_name: sidebarData.full_name || currentUser?.full_name || tr("moderator_profile.fallback_name", "Модератор"),
-                email: currentUser?.email || tr("moderator_profile.no_email", "Email не вказано"),
-                lang: sidebarData.lang || dashboardData.user?.lang || currentUser?.lang || "uk",
-                sub_info: sidebarData.sub_info || tr("moderator_profile.sub_info", "Модератор системи")
+                id: moderator.id || null,
+                full_name: moderator.full_name || getTranslation(getCurrentLang(), "moderator_profile.fallback_name"),
+                email: moderator.email || "",
+                lang: moderator.lang || "uk",
+                sub_info: getTranslation(getCurrentLang(), "moderator_profile.sub_info")
             };
 
-            renderProfile(dashboardData);
+            renderProfile(data);
         } catch (error) {
-            console.error("[Moderator Profile] Помилка:", error);
+            console.error("[Moderator Profile] Profile loading failed:", error);
 
             showEmpty(
-                tr("moderator_profile.unavailable_title", "Профіль недоступний"),
-                tr("moderator_profile.unavailable_text", "Не вдалося завантажити профіль модератора.")
+                getTranslation(getCurrentLang(), "moderator_profile.unavailable_title"),
+                getTranslation(getCurrentLang(), "moderator_profile.unavailable_text")
             );
         }
     }
 
     async function updateProfile(event) {
         event.preventDefault();
-
-        const userId = moderatorUserIdInput.value || currentModerator.id;
 
         const payload = {
             full_name: moderatorEditFullName.value.trim(),
@@ -340,37 +295,34 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         if (!payload.full_name || !payload.email) {
-            showMessage(tr("moderator_profile.validation_error", "Заповніть ПІБ та email."), "error");
+            showToast(getTranslation(getCurrentLang(), "moderator_profile.validation_error"), "error");
             return;
         }
 
         try {
-            if (!userId) {
-                throw new Error("USER_ID_NOT_FOUND");
-            }
-
-            await fetchJson(`${API_BASE_URL}/moderator/users/${userId}`, {
+            const data = await fetchJson(`${API_BASE_URL}/moderator/profile`, {
                 method: "PATCH",
                 body: JSON.stringify(payload)
             });
 
             currentModerator = {
                 ...currentModerator,
-                ...payload
+                ...(data.moderator || payload)
             };
 
             localStorage.setItem("mooden-lang", payload.lang);
+            document.documentElement.lang = payload.lang;
 
             if (typeof applyStaticTranslations === "function") {
                 applyStaticTranslations(payload.lang);
             }
 
-            showMessage(tr("moderator_profile.update_success", "Профіль оновлено."), "success");
+            showToast(getTranslation(payload.lang, "moderator_profile.update_success"), "success");
 
             await loadProfile();
         } catch (error) {
-            console.error("[Moderator Profile] Помилка оновлення:", error);
-            showMessage(tr("moderator_profile.update_error", "Не вдалося оновити профіль модератора."), "error");
+            console.error("[Moderator Profile] Profile update failed:", error);
+            showToast(getTranslation(getCurrentLang(), "moderator_profile.update_error"), "error");
         }
     }
 
@@ -385,6 +337,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loadProfile();
 
     if (typeof initGlobalPasswordChange === "function") {
-        initGlobalPasswordChange("moderatorChangePasswordForm");
+        initGlobalPasswordChange("changePasswordForm");
     }
 });

@@ -2,12 +2,14 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mooden | Профіль модератора</title>
     <meta name="page-role" content="moderator">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../assets/icons/favicon.png">
 
     <script src="../js/config.js"></script>
     <script src="../js/translations.js"></script>
@@ -19,7 +21,6 @@
 
     <link rel="stylesheet" href="../css/variables.css">
     <link rel="stylesheet" href="../css/global.css">
-    <link rel="stylesheet" href="../css/student-dashboard.css">
     <link rel="stylesheet" href="../css/moderator-profile.css">
 </head>
 
@@ -52,12 +53,12 @@
         <nav class="nav-menu">
             <p class="nav-label" data-i18n="common.nav_label_community">СПІЛЬНОТА</p>
 
-            <a href="./announcements.html" class="nav-link">
+            <a href="./moderator-announcements.html" class="nav-link">
                 <span data-i18n="common.nav_announcements">📢 Оголошення</span>
                 <span class="badge-count" id="announcementsBadge">0</span>
             </a>
 
-            <a href="./notifications.html" class="nav-link">
+            <a href="./moderator-notifications.html" class="nav-link">
                 <span data-i18n="common.nav_notifications">🔔 Сповіщення</span>
                 <span class="badge-count" id="notifBadge">0</span>
             </a>
@@ -70,7 +71,7 @@
 
             <div class="user-meta">
                 <p class="user-name" id="profileName">...</p>
-                <p class="user-sub" id="profileGroup" data-i18n="dashboard.user_loading">Завантаження...</p>
+                <p class="user-sub" id="profileRole" data-i18n="dashboard.user_loading">Завантаження...</p>
             </div>
         </a>
 
@@ -119,8 +120,6 @@
             </div>
 
             <form id="moderatorEditProfileForm" class="moderator-profile-settings-form">
-                <input type="hidden" id="moderatorUserId">
-
                 <div class="moderator-profile-input-group">
                     <label data-i18n="moderator_profile.full_name">ПІБ</label>
                     <input
@@ -163,7 +162,7 @@
                 <h2 data-i18n="profile.settings_security">🛡️ Безпека та доступ</h2>
             </div>
 
-            <form id="moderatorChangePasswordForm" class="moderator-profile-settings-form">
+            <form id="changePasswordForm" class="moderator-profile-settings-form">
                 <div class="moderator-profile-input-group">
                     <label data-i18n="profile.label_old_password">Поточний пароль</label>
 
@@ -202,6 +201,7 @@
                             type="password"
                             data-type="new-password"
                             id="newPassword"
+                            minlength="6"
                             placeholder="••••••••"
                             required
                         >

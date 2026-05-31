@@ -9,7 +9,7 @@ router.get('/profile', auth, studentController.getProfileData);
 router.get('/courses', auth, studentController.getAllCourses);
 router.get('/tasks', auth, studentController.getAllTasks);
 router.get('/schedule', auth, studentController.getSchedule);
-router.get('/grades', auth, studentController.getGradesPageData)
+router.get('/grades', auth, studentController.getGradesPageData);
 router.get('/tasks/:id', auth, studentController.getTaskDetail);
 router.post('/attendance/mark', auth, studentController.markAttendance);
 router.get('/courses/:id/detail', auth, studentController.getCourseDetail);

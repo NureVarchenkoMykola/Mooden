@@ -59,7 +59,7 @@
     flex: 0 0 auto;
     background: var(--bg-input);
     border: 1px solid var(--border-main);
-    border-left: 1px solid var(--accent);
+    border-left: 2px solid var(--accent);
     padding: 0.8rem 1rem;
     border-radius: 0.8rem;
     display: flex;

@@ -205,9 +205,7 @@
 
 
 @media (max-width: 768px) {
-    .announcement-stat-card {
+    .notification-stat-card {
         gap: 0.5rem;
     }
-
-
 }

@@ -11,6 +11,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     initControls();
 });
 
+function formatLocalDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+function getLessonDateKey(value) {
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return String(value).split("T")[0];
+    }
+
+    return formatLocalDate(date);
+}
+
 async function loadSchedule() {
     const container = document.getElementById("scheduleDays");
     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
@@ -23,12 +41,12 @@ async function loadSchedule() {
     updateWeekLabel(monday, sunday, lang);
 
     try {
-        const fromDate = monday.toISOString().split('T')[0];
-        const toDate = sunday.toISOString().split('T')[0];
+        const fromDate = formatLocalDate(monday);
+        const toDate = formatLocalDate(sunday);
 
         const response = await fetch(`${API_BASE_URL}/student/schedule?from=${fromDate}&to=${toDate}`, {
             headers: { 'Authorization': `Bearer ${token}` }
-        })
+        });
 
         if (!response.ok) {
             const errorData = await response.json();
@@ -44,7 +62,7 @@ async function loadSchedule() {
             return;
         }
         const data = await response.json();
-        allLessons = data.schedule;
+        allLessons = Array.isArray(data.schedule) ? data.schedule : [];
 
         renderScheduleGrid(monday, lang);
 
@@ -64,9 +82,9 @@ function renderScheduleGrid(monday, lang) {
     for (let i = 0; i < 7; i++) {
         const currentDate = new Date(monday);
         currentDate.setDate(monday.getDate() + i);
-        const dateStr = currentDate.toISOString().split('T')[0];
-        
-        const dayLessons = allLessons.filter(l => l.lesson_date.startsWith(dateStr));
+        const dateStr = formatLocalDate(currentDate);
+
+        const dayLessons = allLessons.filter(l => getLessonDateKey(l.lesson_date) === dateStr);
 
         const dayHtml = `
             <article class="day-card">
@@ -103,7 +121,7 @@ function renderScheduleGrid(monday, lang) {
 async function loadTodayLessons() {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
     const lang = document.documentElement.lang || "uk";
-    const todayStr = new Date().toLocaleDateString('en-CA');
+    const todayStr = formatLocalDate(new Date());
 
     try {
         const response = await fetch(`${API_BASE_URL}/student/schedule?from=${todayStr}&to=${todayStr}`, {
@@ -112,7 +130,7 @@ async function loadTodayLessons() {
 
         if (!response.ok) {
             const errorData = await response.json();
-                showToast(getTranslation(lang, `errors.${errorData.message}`), 'error');
+            showToast(getTranslation(lang, `errors.${errorData.message}`), 'error');
             console.error(`[Dev Mode] Today lessons fetch failed. Status: ${response.status}, Code: ${errorData.message}`);
 
             if (response.status === 401 || response.status === 403) {
@@ -123,7 +141,7 @@ async function loadTodayLessons() {
             return;
         }
         const data = await response.json();
-        todayLessonsData = data.schedule;
+        todayLessonsData = Array.isArray(data.schedule) ? data.schedule : [];
         renderTodayPanel(lang);
 
     } catch (err) {
@@ -133,14 +151,10 @@ async function loadTodayLessons() {
 }
 
 function renderTodayPanel(lang) {
-    const today = new Date();
-    const todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
-    
+    const todayStr = formatLocalDate(new Date());
+
     const todayItems = todayLessonsData.filter(l => {
-        const lessonDate = new Date(l.lesson_date);
-        const lessonDateStr = lessonDate.getFullYear() + '-' + String(lessonDate.getMonth() + 1).padStart(2, '0') + '-' + String(lessonDate.getDate()).padStart(2, '0');
-        
-        return lessonDateStr === todayStr;
+        return getLessonDateKey(l.lesson_date) === todayStr;
     });
     
     document.getElementById('todayCount').textContent = todayItems.length;
