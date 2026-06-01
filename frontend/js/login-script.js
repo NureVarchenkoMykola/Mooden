@@ -4,10 +4,11 @@ async function loadStats() {
         const data = await response.json();
 
         document.getElementById('count-students').textContent = data.students;
-        document.getElementById('count-hours').textContent = data.hours;
+        document.getElementById('count-courses').textContent = data.courses;
         document.getElementById('count-tasks').textContent = data.tasks;
     } catch (error) {
-    console.warn('[Dev Mode] Login statistics failed to load. Using placeholders.');    }
+        console.warn('[Dev Mode] Login Stats Error:', error.message);
+    }
 }
 
 const loginForm = document.getElementById('loginForm');

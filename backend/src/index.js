@@ -4,10 +4,11 @@ const path = require('path');
 require('dotenv').config();
 
 const authRoutes = require('./routes/authRoutes');
+const publicRoutes = require('./routes/publicRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 const teacherRoutes = require('./routes/teacherRoutes');
-const userRoutes = require('./routes/userRoutes');
 const moderatorRoutes = require('./routes/moderatorRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
@@ -16,15 +17,11 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use('/api', authRoutes);
+app.use('/api', publicRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/teacher', teacherRoutes);
 app.use('/api/moderator', moderatorRoutes);
 app.use('/api/user', userRoutes);
-
-// Статистика (винести пізніше)
-app.get('/api/stats', (req, res) => {
-    res.json({ students: "2.4K", hours: "123,456", tasks: "228" });
-});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
