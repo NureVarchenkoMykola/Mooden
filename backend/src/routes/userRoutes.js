@@ -12,5 +12,7 @@ router.get('/announcements', auth, userController.getAnnouncements);
 router.post('/announcements/:id/read', auth, userController.markAnnouncementRead);
 router.post('/announcements/read-all', auth, userController.markAllAnnouncementsRead);
 router.patch('/settings', auth, userController.updateSettings);
+router.get('/announcement-courses', auth, userController.getAnnouncementCourses);
+router.post('/announcements', auth, userController.createAnnouncement);
 
 module.exports = router;

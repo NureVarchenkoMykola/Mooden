@@ -103,11 +103,21 @@
             <div class="logo-mobile">Mooden</div>
         </div>
 
-        <header class="announcements-header">
-            <h1 data-i18n="announcements.title">Оголошення</h1>
-            <p class="header-desc" data-i18n="announcements.subtitle">
-                Усі важливі повідомлення курсів та платформи
-            </p>
+        <header class="announcements-header announcement-create-header">
+            <div>
+                <h1 data-i18n="announcements.title">Оголошення</h1>
+                <p class="header-desc" data-i18n="announcements.subtitle">
+                    Усі важливі повідомлення курсів та платформи
+                </p>
+            </div>
+
+            <button
+                id="openAnnouncementModalBtn"
+                class="announcement-primary-btn"
+                type="button"
+                data-i18n="announcements.create_btn">
+                + Створити оголошення
+            </button>
         </header>
 
         <section class="announcements-stats">
@@ -168,6 +178,89 @@
         </section>
     </main>
 
+    <div class="announcement-modal-overlay" id="announcementModalOverlay">
+        <div class="announcement-modal">
+            <div class="announcement-modal-header">
+                <div>
+                    <h2 data-i18n="announcements.create_modal_title">Створити оголошення</h2>
+                    <p data-i18n="announcements.create_modal_desc">
+                        Заповніть дані оголошення.
+                    </p>
+                </div>
+
+                <button class="announcement-modal-close" id="closeAnnouncementModalBtn" type="button">×</button>
+            </div>
+
+            <form id="announcementForm" class="announcement-form">
+                <label>
+                    <span data-i18n="announcements.course">Курс</span>
+                    <select id="announcementCourseInput" required>
+                        <option value="" data-i18n="profile.loading">Завантаження...</option>
+                    </select>
+                </label>
+
+                <label>
+                    <span data-i18n="announcements.title_uk">Заголовок українською</span>
+                    <input
+                        id="announcementTitleUkInput"
+                        type="text"
+                        placeholder="Наприклад, Оновлення платформи"
+                        data-i18n-placeholder="announcements.title_uk_placeholder"
+                        required
+                    >
+                </label>
+
+                <label>
+                    <span data-i18n="announcements.title_en">Заголовок англійською</span>
+                    <input
+                        id="announcementTitleEnInput"
+                        type="text"
+                        placeholder="For example, Platform update"
+                        data-i18n-placeholder="announcements.title_en_placeholder"
+                        required
+                    >
+                </label>
+
+                <label>
+                    <span data-i18n="announcements.content_uk">Текст українською</span>
+                    <textarea
+                        id="announcementContentUkInput"
+                        placeholder="Введіть текст оголошення українською..."
+                        data-i18n-placeholder="announcements.content_uk_placeholder"
+                        required
+                    ></textarea>
+                </label>
+
+                <label>
+                    <span data-i18n="announcements.content_en">Текст англійською</span>
+                    <textarea
+                        id="announcementContentEnInput"
+                        placeholder="Enter announcement text in English..."
+                        data-i18n-placeholder="announcements.content_en_placeholder"
+                        required
+                    ></textarea>
+                </label>
+
+                <div class="announcement-modal-actions">
+                    <button
+                        type="button"
+                        class="announcement-secondary-btn"
+                        id="cancelAnnouncementModalBtn"
+                        data-i18n="moderator_users.cancel">
+                        Скасувати
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="announcement-primary-btn"
+                        data-i18n="announcements.create_submit">
+                        Створити
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
     <script src="../js/user-announcements.js"></script>
+    <script src="../js/user-announcement-create.js"></script>
 </body>
 </html>

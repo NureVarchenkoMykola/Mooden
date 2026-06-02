@@ -652,7 +652,27 @@ const translations = {
             filter_unread: "Непрочитані",
             filter_read: "Прочитані",
             mark_all: "Позначити всі як прочитані",
-            empty: "Оголошень поки немає"
+            empty: "Оголошень поки немає",
+            create_btn: "+ Створити оголошення",
+            create_modal_title: "Створити оголошення",
+            create_modal_desc: "Заповніть дані оголошення.",
+            course: "Курс",
+            course_all: "Для всіх",
+            title_uk: "Заголовок українською",
+            title_en: "Заголовок англійською",
+            content_uk: "Текст українською",
+            content_en: "Текст англійською",
+            title_uk_placeholder: "Наприклад, Оновлення платформи",
+            title_en_placeholder: "For example, Platform update",
+            content_uk_placeholder: "Введіть текст оголошення українською...",
+            content_en_placeholder: "Enter announcement text in English...",
+            create_submit: "Створити",
+            create_success: "Оголошення створено.",
+            create_error: "Не вдалося створити оголошення.",
+            fields_required: "Заповніть усі поля оголошення.",
+            courses_load_error: "Не вдалося завантажити курси.",
+            course_required_for_teacher: "Викладач повинен обрати курс.",
+            no_courses_available: "Немає доступних курсів."
         },
         moderator_nav: {
              dashboard: "🛡️ Панель",
@@ -1030,7 +1050,10 @@ const translations = {
             EMPTY_SUBMISSION: "Додайте файл або коментар до роботи.",
             SUBMISSION_COMMENT_TOO_LONG: "Коментар занадто довгий",
             NOTIFICATIONS_ERROR: "Не вдалося завантажити сповіщення.",
-            NOTIFICATION_READ_ERROR: "Не вдалося оновити статус сповіщення."
+            NOTIFICATION_READ_ERROR: "Не вдалося оновити статус сповіщення.",
+            ANNOUNCEMENT_FIELDS_REQUIRED: "Заповніть усі поля оголошення.",
+            ANNOUNCEMENT_CREATE_ERROR: "Не вдалося створити оголошення.",
+            COURSE_REQUIRED_FOR_TEACHER: "Викладач повинен обрати курс."
         }
     },
     en: {
@@ -1683,7 +1706,27 @@ const translations = {
             filter_unread: "Unread",
             filter_read: "Read",
             mark_all: "Mark all as read",
-            empty: "No announcements yet"
+            empty: "No announcements yet",
+            create_btn: "+ Create announcement",
+            create_modal_title: "Create announcement",
+            create_modal_desc: "Fill in the announcement data.",
+            course: "Course",
+            course_all: "For everyone",
+            title_uk: "Title in Ukrainian",
+            title_en: "Title in English",
+            content_uk: "Text in Ukrainian",
+            content_en: "Text in English",
+            title_uk_placeholder: "For example, Platform update",
+            title_en_placeholder: "For example, Platform update",
+            content_uk_placeholder: "Enter announcement text in Ukrainian...",
+            content_en_placeholder: "Enter announcement text in English...",
+            create_submit: "Create",
+            create_success: "Announcement has been created.",
+            create_error: "Failed to create announcement.",
+            fields_required: "Fill in all announcement fields.",
+            courses_load_error: "Failed to load courses.",
+            course_required_for_teacher: "Teacher must select a course.",
+            no_courses_available: "No available courses."
         },
         moderator_nav: {
             dashboard: "🛡️ Panel",
@@ -2062,7 +2105,10 @@ const translations = {
             EMPTY_SUBMISSION: "Add a file or a comment to submit your work.",
             SUBMISSION_COMMENT_TOO_LONG: "Comment is too long",
             NOTIFICATIONS_ERROR: "Failed to load notifications.",
-            NOTIFICATION_READ_ERROR: "Failed to update notification status."
+            NOTIFICATION_READ_ERROR: "Failed to update notification status.",
+            ANNOUNCEMENT_FIELDS_REQUIRED: "Fill in all announcement fields.",
+            ANNOUNCEMENT_CREATE_ERROR: "Failed to create announcement.",
+            COURSE_REQUIRED_FOR_TEACHER: "Teacher must select a course."
         }
     }
 };

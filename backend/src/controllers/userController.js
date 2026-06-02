@@ -444,3 +444,122 @@ exports.updateSettings = async (req, res) => {
         res.status(500).json({ message: 'ERROR_UPDATE_SETTINGS' });
     }
 };
+
+exports.getAnnouncementCourses = async (req, res) => {
+    const userId = req.user.id;
+    const role = req.user.role;
+
+    try {
+        let result;
+
+        if (role === 'moderator') {
+            result = await db.query(`
+                SELECT id, title_uk, title_en
+                FROM public.courses
+                WHERE COALESCE(is_hidden, false) = false
+                ORDER BY title_uk ASC
+            `);
+        } else if (role === 'teacher') {
+            result = await db.query(`
+                SELECT c.id, c.title_uk, c.title_en
+                FROM public.courses c
+                JOIN public.teacher_courses tc ON tc.course_id = c.id
+                WHERE tc.teacher_id = $1
+                AND COALESCE(c.is_hidden, false) = false
+                ORDER BY c.title_uk ASC
+            `, [userId]);
+        } else {
+            return res.status(403).json({ message: 'ACCESS_DENIED' });
+        }
+
+        res.json({
+            courses: result.rows
+        });
+    } catch (err) {
+        console.error('[User Controller] Announcement courses load error:', err.message);
+        res.status(500).json({ message: 'ANNOUNCEMENT_COURSES_ERROR' });
+    }
+};
+
+exports.createAnnouncement = async (req, res) => {
+    const userId = req.user.id;
+    const role = req.user.role;
+
+    const {
+        title_uk,
+        title_en,
+        content_uk,
+        content_en,
+        course_id
+    } = req.body;
+
+    if (!['moderator', 'teacher'].includes(role)) {
+        return res.status(403).json({ message: 'ACCESS_DENIED' });
+    }
+
+    if (!title_uk || !title_en || !content_uk || !content_en) {
+        return res.status(400).json({ message: 'ANNOUNCEMENT_FIELDS_REQUIRED' });
+    }
+
+    try {
+        const normalizedCourseId = course_id ? Number(course_id) : null;
+
+        if (role === 'teacher' && !normalizedCourseId) {
+            return res.status(403).json({ message: 'COURSE_REQUIRED_FOR_TEACHER' });
+        }
+
+        if (normalizedCourseId) {
+            let courseResult;
+
+            if (role === 'moderator') {
+                courseResult = await db.query(`
+                    SELECT id
+                    FROM public.courses
+                    WHERE id = $1
+                    AND COALESCE(is_hidden, false) = false
+                `, [normalizedCourseId]);
+            } else {
+                courseResult = await db.query(`
+                    SELECT c.id
+                    FROM public.courses c
+                    JOIN public.teacher_courses tc ON tc.course_id = c.id
+                    WHERE c.id = $1
+                    AND tc.teacher_id = $2
+                    AND COALESCE(c.is_hidden, false) = false
+                `, [normalizedCourseId, userId]);
+            }
+
+            if (courseResult.rows.length === 0) {
+                return res.status(404).json({ message: 'COURSE_NOT_FOUND' });
+            }
+        }
+
+        const result = await db.query(`
+            INSERT INTO public.announcements (
+                title_uk,
+                title_en,
+                content_uk,
+                content_en,
+                author_id,
+                course_id
+            )
+            VALUES ($1, $2, $3, $4, $5, $6)
+            RETURNING id
+        `, [
+            title_uk.trim(),
+            title_en.trim(),
+            content_uk.trim(),
+            content_en.trim(),
+            userId,
+            normalizedCourseId
+        ]);
+
+        res.status(201).json({
+            success: true,
+            announcementId: result.rows[0].id
+        });
+    } catch (err) {
+        console.error('[User Controller] Announcement create error:', err.message);
+        res.status(500).json({ message: 'ANNOUNCEMENT_CREATE_ERROR' });
+    }
+};
